@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792082063822,
+      "tag": "0000_matrimony_member_privacy_schema",
+      "breakpoints": true
+    }
+  ]
+}

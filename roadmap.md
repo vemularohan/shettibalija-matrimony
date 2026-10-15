@@ -1,0 +1,4 @@
+- [ ] Build branded matrimony home, responsive navigation, and content/policy pages.
+- [ ] Enable account sign-in and establish member, privacy, discovery, and membership data structures in Lovable Cloud.
+- [ ] Implement registration, profile edit, approved-profile search, member details, and safe photo access controls.
+- [ ] Review mobile/desktop behavior, metadata, and key flows; identify payment/admin features that need owner credentials or configuration.
