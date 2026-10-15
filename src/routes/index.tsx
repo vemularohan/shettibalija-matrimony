@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProfileCard } from "@/components/profiles/profile-card";
+import { ProfileCard, type PublicProfileCardData } from "@/components/profiles/profile-card";
 import { EmptyState, ErrorState } from "@/components/shared/empty-state";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { supabase } from "@/integrations/supabase/client";
+import { DEMO_PROFILES } from "@/data/demo-profiles";
 import { SITE_NAME, SITE_NAME_TE, SITE_TAGLINE } from "@/lib/site";
 import { EDUCATION_OPTIONS, OCCUPATION_OPTIONS, STATES } from "@/lib/options";
 import { formatINRFromPaise } from "@/lib/format";
@@ -54,26 +55,45 @@ function HomePage() {
   const recent = useQuery({
     queryKey: ["recent-profiles"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("approved_matrimonial_profiles")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(8);
-      if (error) throw error;
-      return data ?? [];
+      let realProfiles: PublicProfileCardData[] = [];
+      try {
+        const { data, error } = await supabase
+          .from("approved_matrimonial_profiles")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(8);
+        if (!error && data) {
+          realProfiles = data.filter((p): p is typeof p & { id: string } => Boolean(p.id));
+        }
+      } catch {
+        // Fallback to demo profiles
+      }
+      const realIds = new Set(realProfiles.map((p) => p.id));
+      const demoToAdd = DEMO_PROFILES.filter((d) => !realIds.has(d.id));
+      return [...realProfiles, ...demoToAdd].slice(0, 8);
     },
   });
 
   const featured = useQuery({
     queryKey: ["featured-profiles"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("approved_matrimonial_profiles")
-        .select("*")
-        .order("created_at", { ascending: true })
-        .limit(4);
-      if (error) throw error;
-      return data ?? [];
+      let realProfiles: PublicProfileCardData[] = [];
+      try {
+        const { data, error } = await supabase
+          .from("approved_matrimonial_profiles")
+          .select("*")
+          .order("created_at", { ascending: true })
+          .limit(4);
+        if (!error && data) {
+          realProfiles = data.filter((p): p is typeof p & { id: string } => Boolean(p.id));
+        }
+      } catch {
+        // Fallback to demo profiles
+      }
+      const realIds = new Set(realProfiles.map((p) => p.id));
+      const demoPool = [...DEMO_PROFILES.slice(8, 14), ...DEMO_PROFILES.slice(0, 8)];
+      const demoToAdd = demoPool.filter((d) => !realIds.has(d.id));
+      return [...realProfiles, ...demoToAdd].slice(0, 4);
     },
   });
 
@@ -329,7 +349,12 @@ function ProfileStrip({
   muted = false,
 }: {
   title: string;
-  query: ReturnType<typeof useQuery<Awaited<ReturnType<typeof loadProfiles>>>>;
+  query: {
+    isLoading: boolean;
+    isError: boolean;
+    data?: PublicProfileCardData[] | undefined;
+    refetch: () => unknown;
+  };
   actions: ReturnType<typeof useProfileActions>;
   muted?: boolean;
 }) {

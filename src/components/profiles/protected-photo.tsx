@@ -111,10 +111,13 @@ export function ProtectedPhoto({
           <div
             className={cn(
               "flex items-center justify-center rounded-full bg-white/70 shadow-xs border border-primary/10 text-primary/70 transition",
-              compact ? "h-16 w-16" : "h-24 w-24"
+              compact ? "h-16 w-16" : "h-24 w-24",
             )}
           >
-            <UserRound className={cn(compact ? "h-8 w-8" : "h-12 w-12", "stroke-[1.6]")} aria-hidden />
+            <UserRound
+              className={cn(compact ? "h-8 w-8" : "h-12 w-12", "stroke-[1.6]")}
+              aria-hidden
+            />
           </div>
           <span className="mt-2.5 font-serif text-lg font-semibold tracking-wide text-primary">
             {initials(displayName)}

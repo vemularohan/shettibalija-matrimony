@@ -49,7 +49,14 @@ export function ProfileCard({
         compact
       />
       <div className="flex flex-1 flex-col p-4">
-        <p className="text-xs font-semibold tracking-wide text-primary">{profile.profile_code}</p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-semibold tracking-wide text-primary">{profile.profile_code}</p>
+          {profile.is_demo ? (
+            <span className="inline-flex items-center rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 border border-amber-200/80">
+              Demo
+            </span>
+          ) : null}
+        </div>
         <h3 className="mt-1 font-serif text-xl text-foreground">
           {name}, {profile.age ?? "—"}
         </h3>

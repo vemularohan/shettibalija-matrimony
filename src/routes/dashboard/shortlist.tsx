@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Heart, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProfileCard } from "@/components/profiles/profile-card";
+import { ProfileCard, type PublicProfileCardData } from "@/components/profiles/profile-card";
 import { EmptyState, ErrorState } from "@/components/shared/empty-state";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { supabase } from "@/integrations/supabase/client";
+import { findDemoProfile, isDemoId } from "@/data/demo-profiles";
 
 export const Route = createFileRoute("/dashboard/shortlist")({
   component: DashboardShortlistPage,
@@ -18,22 +19,39 @@ function DashboardShortlistPage() {
   const actions = useProfileActions();
 
   const shortlistQuery = useQuery({
-    queryKey: ["shortlist-profiles", user?.id],
-    enabled: Boolean(user?.id),
+    queryKey: ["shortlist-profiles", user?.id, Array.from(actions.shortlistedIds).join(",")],
     queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from("shortlisted_profiles")
-        .select("profile_id, created_at, approved_matrimonial_profiles(*)")
-        .eq("owner_id", user.id)
-        .order("created_at", { ascending: false });
+      let dbProfiles: PublicProfileCardData[] = [];
+      if (user) {
+        try {
+          const { data, error } = await supabase
+            .from("shortlisted_profiles")
+            .select("profile_id, created_at, approved_matrimonial_profiles(*)")
+            .eq("owner_id", user.id)
+            .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return (
-        data
-          ?.map((row) => row.approved_matrimonial_profiles)
-          .filter((p): p is NonNullable<typeof p> => Boolean(p && p.id)) ?? []
-      );
+          if (!error && data) {
+            dbProfiles = data
+              .map((row) => row.approved_matrimonial_profiles)
+              .filter((p): p is NonNullable<typeof p> =>
+                Boolean(p && p.id),
+              ) as PublicProfileCardData[];
+          }
+        } catch {
+          // Continue to include demo profiles
+        }
+      }
+
+      const dbIds = new Set(dbProfiles.map((p) => p.id));
+      const demoProfiles: PublicProfileCardData[] = [];
+      for (const id of actions.shortlistedIds) {
+        if (isDemoId(id) && !dbIds.has(id)) {
+          const found = findDemoProfile(id);
+          if (found) demoProfiles.push(found);
+        }
+      }
+
+      return [...dbProfiles, ...demoProfiles];
     },
   });
 

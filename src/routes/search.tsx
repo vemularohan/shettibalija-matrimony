@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProfileCard } from "@/components/profiles/profile-card";
+import { ProfileCard, type PublicProfileCardData } from "@/components/profiles/profile-card";
 import { EmptyState, ErrorState } from "@/components/shared/empty-state";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { supabase } from "@/integrations/supabase/client";
+import { filterDemoProfiles } from "@/data/demo-profiles";
 import { validateSearchParams, type SearchParams } from "@/lib/search-params";
 import { SITE_NAME } from "@/lib/site";
 import { EDUCATION_OPTIONS, OCCUPATION_OPTIONS, STATES } from "@/lib/options";
@@ -79,32 +80,51 @@ function SearchPage() {
   const profilesQuery = useQuery({
     queryKey: ["search-profiles", searchParams],
     queryFn: async () => {
-      let query = supabase.from("approved_matrimonial_profiles").select("*");
+      let realProfiles: PublicProfileCardData[] = [];
+      try {
+        let query = supabase.from("approved_matrimonial_profiles").select("*");
 
-      if (searchParams.gender) {
-        query = query.eq("gender", searchParams.gender);
-      }
-      if (searchParams.minAge != null) {
-        query = query.gte("age", searchParams.minAge);
-      }
-      if (searchParams.maxAge != null) {
-        query = query.lte("age", searchParams.maxAge);
-      }
-      if (searchParams.state) {
-        query = query.eq("state", searchParams.state);
-      }
-      if (searchParams.education) {
-        query = query.eq("education", searchParams.education);
-      }
-      if (searchParams.occupation) {
-        query = query.eq("occupation", searchParams.occupation);
+        if (searchParams.gender) {
+          query = query.eq("gender", searchParams.gender);
+        }
+        if (searchParams.minAge != null) {
+          query = query.gte("age", searchParams.minAge);
+        }
+        if (searchParams.maxAge != null) {
+          query = query.lte("age", searchParams.maxAge);
+        }
+        if (searchParams.state) {
+          query = query.eq("state", searchParams.state);
+        }
+        if (searchParams.education) {
+          query = query.eq("education", searchParams.education);
+        }
+        if (searchParams.occupation) {
+          query = query.eq("occupation", searchParams.occupation);
+        }
+
+        query = query.order("created_at", { ascending: false }).limit(40);
+
+        const { data, error } = await query;
+        if (!error && data) {
+          realProfiles = data.filter((p): p is typeof p & { id: string } => Boolean(p.id));
+        }
+      } catch {
+        // Continue with demo profiles
       }
 
-      query = query.order("created_at", { ascending: false }).limit(40);
+      const filteredDemo = filterDemoProfiles({
+        gender: searchParams.gender,
+        minAge: searchParams.minAge,
+        maxAge: searchParams.maxAge,
+        state: searchParams.state,
+        education: searchParams.education,
+        occupation: searchParams.occupation,
+      });
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return data ?? [];
+      const realIds = new Set(realProfiles.map((p) => p.id));
+      const combined = [...realProfiles, ...filteredDemo.filter((d) => !realIds.has(d.id))];
+      return combined;
     },
   });
 

@@ -2,6 +2,7 @@ import type { PublicProfileCardData } from "@/components/profiles/profile-card";
 
 export type DemoProfile = PublicProfileCardData & {
   is_demo: true;
+  about_me?: string;
   community: string;
   mother_tongue: string;
   languages: string[];
@@ -42,7 +43,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
-    family_summary: "Father is an executive in the state cooperative bank; mother is a homemaker. Traditional values with a modern, progressive outlook.",
+    about_me:
+      "Namaste! I am working as a Software Engineer in Hyderabad. I am positive-minded, value work-life balance, and love Telugu culture, classical music, and cooking. Looking for an understanding and respectful partner.",
+    family_summary:
+      "Father is an executive in the state cooperative bank; mother is a homemaker. Traditional values with a modern, progressive outlook.",
     partner_preferences: {
       min_age: 26,
       max_age: 30,
@@ -74,7 +78,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
-    family_summary: "Well-settled doctor family. Father is a retired veterinary officer; elder brother is an architect in Bengaluru.",
+    about_me:
+      "Doctor currently pursuing DNB residency in Visakhapatnam. Compassionate, career-focused, and grounded in family values. Seeking a supportive life partner from a cultured family.",
+    family_summary:
+      "Well-settled doctor family. Father is a retired veterinary officer; elder brother is an architect in Bengaluru.",
     partner_preferences: {
       min_age: 28,
       max_age: 32,
@@ -106,7 +113,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
-    family_summary: "Respectable nuclear family. Father manages family wholesale business; mother is a government high school teacher.",
+    about_me:
+      "Working as a Quality Analyst in Rajahmundry. Calm, caring nature with an appreciation for literature, gardening, and spending quiet moments with family. Looking for a dependable partner.",
+    family_summary:
+      "Respectable nuclear family. Father manages family wholesale business; mother is a government high school teacher.",
     partner_preferences: {
       min_age: 26,
       max_age: 30,
@@ -138,7 +148,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
-    family_summary: "Close-knit cultured family. Father is an electrical contractor; one younger sister completing B.Tech.",
+    about_me:
+      "Finance professional with an MBA, working in Vijayawada. Ambitious yet traditional, fond of travel and badminton. Looking for a partner who believes in mutual respect and shared growth.",
+    family_summary:
+      "Close-knit cultured family. Father is an electrical contractor; one younger sister completing B.Tech.",
     partner_preferences: {
       min_age: 27,
       max_age: 31,
@@ -170,7 +183,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
-    family_summary: "Academically oriented family. Both parents are gazetted officers in Telangana state education department.",
+    about_me:
+      "VLSI engineer residing in Warangal. Passionate about electronics technology, Telangana culture, and weekend road trips. Seeking an educated and broad-minded companion.",
+    family_summary:
+      "Academically oriented family. Both parents are gazetted officers in Telangana state education department.",
     partner_preferences: {
       min_age: 29,
       max_age: 33,
@@ -202,7 +218,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
-    family_summary: "Father is an agricultural landholder and civil contractor; mother is a homemaker. Well connected in the community.",
+    about_me:
+      "Architect based in Tirupati. Creative, enthusiastic, and devoted to family. Looking for a life partner with positive energy and mutual understanding.",
+    family_summary:
+      "Father is an agricultural landholder and civil contractor; mother is a homemaker. Well connected in the community.",
     partner_preferences: {
       min_age: 26,
       max_age: 30,
@@ -234,7 +253,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
-    family_summary: "Upper middle class family. Father retired from APSRTC central workshop; mother active in community social service.",
+    about_me:
+      "Chartered Accountant working with a Big 4 firm in Hyderabad. Simple lifestyle, professional drive, and strong connection with our community traditions. Seeking a mature, well-settled life partner.",
+    family_summary:
+      "Upper middle class family. Father retired from APSRTC central workshop; mother active in community social service.",
     partner_preferences: {
       min_age: 30,
       max_age: 34,
@@ -268,7 +290,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
-    family_summary: "Father is a retired revenue inspector; mother is a homemaker. One elder brother married and settled in the US.",
+    about_me:
+      "NIT Warangal graduate working as a Senior Software Developer in Hyderabad. Love tech innovations, marathon runs, and spending festive holidays in our native town. Looking for an educated, caring bride.",
+    family_summary:
+      "Father is a retired revenue inspector; mother is a homemaker. One elder brother married and settled in the US.",
     partner_preferences: {
       min_age: 23,
       max_age: 27,
@@ -300,7 +325,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
-    family_summary: "Reputed family from Guntur district. Father owns agricultural lands and cold storage; mother homemaker.",
+    about_me:
+      "Consultant General Surgeon in Vijayawada. Calm-minded, focused on medical service, and respect family elders deeply. Seeking an understanding partner from a good family background.",
+    family_summary:
+      "Reputed family from Guntur district. Father owns agricultural lands and cold storage; mother homemaker.",
     partner_preferences: {
       min_age: 24,
       max_age: 28,
@@ -332,7 +360,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
-    family_summary: "Father is an executive engineer in Roads & Buildings; mother is an associate professor in Andhra University.",
+    about_me:
+      "Product Manager in Hyderabad with an engineering and IIM MBA background. Enjoy strategy games, weekend tennis, and travel. Seeking a compatible and cheerful partner.",
+    family_summary:
+      "Father is an executive engineer in Roads & Buildings; mother is an associate professor in Andhra University.",
     partner_preferences: {
       min_age: 23,
       max_age: 27,
@@ -364,7 +395,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
-    family_summary: "Traditional Godavari/Krishna rooted family. Father is a retired LIC branch manager; mother homemaker.",
+    about_me:
+      "Assistant Executive Engineer in AP State Government, Nellore. Rooted in traditional values, enjoy classical Telugu literature and social work. Looking for an educated life partner.",
+    family_summary:
+      "Traditional Godavari/Krishna rooted family. Father is a retired LIC branch manager; mother homemaker.",
     partner_preferences: {
       min_age: 25,
       max_age: 29,
@@ -396,7 +430,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
-    family_summary: "Upper-middle class family. Father owns shipping clearance logistics firm; mother manages home. One younger sister married.",
+    about_me:
+      "Cloud Architect in Visakhapatnam. Passionate about technology, beach sunsets, and photography. Seeking an affectionate, educated partner to share life's journey.",
+    family_summary:
+      "Upper-middle class family. Father owns shipping clearance logistics firm; mother manages home. One younger sister married.",
     partner_preferences: {
       min_age: 24,
       max_age: 28,
@@ -428,7 +465,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
-    family_summary: "Principled Telangana family. Father is a retired headmaster; mother is an active member of self-help group federations.",
+    about_me:
+      "Nationalized bank branch manager in Karimnagar. Principled, financially grounded, and dedicated to family happiness. Looking for an educated bride with good family traditions.",
+    family_summary:
+      "Principled Telangana family. Father is a retired headmaster; mother is an active member of self-help group federations.",
     partner_preferences: {
       min_age: 22,
       max_age: 26,
@@ -460,7 +500,10 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
-    family_summary: "Well-established family with roots in West Godavari. Owns house in Kukatpally, Hyderabad. Father retired commercial tax officer.",
+    about_me:
+      "Lead Data Scientist in Hyderabad with MS degree. Balanced outlook on career and personal life, fond of fitness and reading. Looking for a companion with shared values.",
+    family_summary:
+      "Well-established family with roots in West Godavari. Owns house in Kukatpally, Hyderabad. Father retired commercial tax officer.",
     partner_preferences: {
       min_age: 26,
       max_age: 30,
@@ -502,10 +545,18 @@ export function filterDemoProfiles(filters?: DemoSearchFilter): DemoProfile[] {
     if (filters.state && profile.state !== filters.state) {
       return false;
     }
-    if (filters.education && profile.education && !profile.education.toLowerCase().includes(filters.education.toLowerCase())) {
+    if (
+      filters.education &&
+      profile.education &&
+      !profile.education.toLowerCase().includes(filters.education.toLowerCase())
+    ) {
       return false;
     }
-    if (filters.occupation && profile.occupation && !profile.occupation.toLowerCase().includes(filters.occupation.toLowerCase())) {
+    if (
+      filters.occupation &&
+      profile.occupation &&
+      !profile.occupation.toLowerCase().includes(filters.occupation.toLowerCase())
+    ) {
       return false;
     }
     return true;
@@ -517,7 +568,7 @@ export function findDemoProfile(idOrCode: string): DemoProfile | undefined {
   return DEMO_PROFILES.find(
     (p) =>
       p.id.toLowerCase() === normalized ||
-      (p.profile_code && p.profile_code.toLowerCase() === normalized)
+      (p.profile_code && p.profile_code.toLowerCase() === normalized),
   );
 }
 
