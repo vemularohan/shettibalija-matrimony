@@ -12,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ShettibalijaLogo } from "@/components/brand/logo";
 
 const items = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -28,18 +29,31 @@ const items = [
 
 export function MemberSidebar({ className }: { className?: string }) {
   return (
-    <nav className={cn("grid gap-1", className)} aria-label="Member">
-      {items.map((item) => (
-        <Link
-          key={item.to}
-          to={item.to}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-primary"
-          activeProps={{ className: "bg-muted text-primary font-medium" }}
-        >
-          <item.icon className="h-4 w-4" />
-          {item.label}
-        </Link>
-      ))}
-    </nav>
+    <div className={cn("space-y-3", className)}>
+      <div className="flex items-center gap-2.5 px-2 pb-3 border-b">
+        <ShettibalijaLogo size="sm" linkToHome />
+        <div className="min-w-0">
+          <p className="font-serif text-sm font-bold text-[#32105F] truncate leading-tight">
+            Shettibalija
+          </p>
+          <p className="text-[10px] text-[#D9A514] font-semibold truncate">
+            శెట్టిబలిజ మ్యాట్రిమోనీ
+          </p>
+        </div>
+      </div>
+      <nav className="grid gap-1" aria-label="Member">
+        {items.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-[#32105F] transition-colors"
+            activeProps={{ className: "bg-[#32105F]/10 text-[#32105F] font-semibold" }}
+          >
+            <item.icon className="h-4 w-4" />
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+    </div>
   );
 }

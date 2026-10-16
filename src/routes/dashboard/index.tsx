@@ -26,6 +26,8 @@ import {
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { profileCompletion } from "@/lib/profile-completion";
 import { formatHeight, locationLine } from "@/lib/format";
+import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SITE_NAME_TE } from "@/lib/site";
 
 export const Route = createFileRoute("/dashboard/")({
   component: DashboardOverviewPage,
@@ -56,31 +58,34 @@ function DashboardOverviewPage() {
       {/* Welcome Banner */}
       <div className="rounded-3xl border bg-gradient-to-r from-[#fdfbf7] to-[#f7f2ea] p-6 shadow-sm sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-gold-foreground">
-              Member Portal
-            </span>
-            <h1 className="mt-1 font-serif text-3xl font-bold text-primary">
-              Welcome,{" "}
-              {account?.full_name ||
-                profile?.display_name ||
-                user?.email?.split("@")[0] ||
-                "Member"}
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {profile?.profile_code ? (
-                <>
-                  Profile Code:{" "}
-                  <span className="font-semibold text-foreground">{profile.profile_code}</span>{" "}
-                  •{" "}
-                </>
-              ) : null}
-              {membershipQuery.data ? (
-                <span className="text-emerald-700 font-medium">Active Member</span>
-              ) : (
-                <span>Basic Registration</span>
-              )}
-            </p>
+          <div className="flex items-start sm:items-center gap-4">
+            <ShettibalijaLogo size="lg" className="shrink-0 drop-shadow-xs" priority />
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#D9A514]">
+                {SITE_NAME_TE} • Member Portal
+              </span>
+              <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-[#32105F]">
+                Welcome,{" "}
+                {account?.full_name ||
+                  profile?.display_name ||
+                  user?.email?.split("@")[0] ||
+                  "Member"}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {profile?.profile_code ? (
+                  <>
+                    Profile Code:{" "}
+                    <span className="font-semibold text-foreground">{profile.profile_code}</span>{" "}
+                    •{" "}
+                  </>
+                ) : null}
+                {membershipQuery.data ? (
+                  <span className="text-emerald-700 font-medium">Active Member</span>
+                ) : (
+                  <span>Basic Registration</span>
+                )}
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2">

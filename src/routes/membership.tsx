@@ -213,6 +213,7 @@ function MembershipPage() {
                       </Button>
                     ) : (
                       <Button
+                        variant="premium"
                         className="w-full"
                         onClick={() => {
                           toast.info(

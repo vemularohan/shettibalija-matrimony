@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
-import { SITE_NAME, SITE_NAME_TE, COMMUNITY_NAME } from "@/lib/site";
-import { EDUCATION_OPTIONS, OCCUPATION_OPTIONS, STATES } from "@/lib/options";
+import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
+import { ShettibalijaLogo } from "@/components/brand/logo";
+import { DetailedProfileForm } from "@/components/profile/detailed-profile-form";
+import {
+  type DetailedProfileFormData,
+  INITIAL_DETAILED_FORM_DATA,
+} from "@/lib/detailed-profile-types";
+import { saveDetailedMatrimonialProfile } from "@/lib/detailed-profile-api";
 
 export const Route = createFileRoute("/register")({
   component: RegisterPage,
@@ -25,19 +31,15 @@ function RegisterPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [gender, setGender] = useState<"bride" | "groom">("bride");
-  const [age, setAge] = useState("24");
-  const [state, setState] = useState("Andhra Pradesh");
-  const [city, setCity] = useState("");
-  const [education, setEducation] = useState("B.Tech");
-  const [occupation, setOccupation] = useState("Software Professional");
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const [initialData, setInitialData] = useState<DetailedProfileFormData>(() => ({
+    ...INITIAL_DETAILED_FORM_DATA,
+  }));
 
   useEffect(() => {
     if (!loading && user) {
@@ -45,19 +47,47 @@ function RegisterPage() {
     }
   }, [user, loading, navigate]);
 
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
+  // Read query parameters from Hero Photo Gallery quick registration card
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const qName = params.get("name");
+      const qPhone = params.get("mobile") || params.get("phone");
+      const qGender = params.get("gender");
+
+      setInitialData((prev) => ({
+        ...prev,
+        fullName: qName || prev.fullName,
+        contactNumber: qPhone || prev.contactNumber,
+        gender: qGender === "groom" ? "groom" : "bride",
+      }));
+    }
+  }, []);
+
+  async function handleProfileSubmit(formData: DetailedProfileFormData) {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    const parsedAge = Number(age);
-    if (!parsedAge || parsedAge < 18 || parsedAge > 80) {
-      setErrorMessage("Please enter a valid age between 18 and 80.");
+    if (!email.trim() || !email.includes("@")) {
+      const msg = "Please enter a valid email address.";
+      setErrorMessage(msg);
+      toast.error(msg);
+      window.scrollTo({ top: 100, behavior: "smooth" });
       return;
     }
 
     if (password.length < 6) {
-      setErrorMessage("Password must be at least 6 characters.");
+      const msg = "Password must be at least 6 characters.";
+      setErrorMessage(msg);
+      toast.error(msg);
+      window.scrollTo({ top: 100, behavior: "smooth" });
+      return;
+    }
+
+    if (!formData.declarationAccepted) {
+      const msg = "You must accept the declaration to submit your profile.";
+      setErrorMessage(msg);
+      toast.error(msg);
       return;
     }
 
@@ -69,9 +99,9 @@ function RegisterPage() {
         password,
         options: {
           data: {
-            full_name: fullName.trim(),
-            phone: phone.trim(),
-            gender,
+            full_name: formData.fullName.trim(),
+            phone: formData.contactNumber.trim(),
+            gender: formData.gender,
           },
         },
       });
@@ -83,41 +113,28 @@ function RegisterPage() {
         throw new Error("Registration failed to create an account.");
       }
 
-      // If user session was immediately established, create their base profile records
+      // If user session was immediately established, save full 10 sections into Supabase
       if (authData.session) {
         try {
-          await supabase.from("profiles").upsert({
-            id: newUser.id,
-            full_name: fullName.trim(),
-            phone: phone.trim() || null,
-            gender,
-            account_type: "individual",
+          await saveDetailedMatrimonialProfile({
+            userId: newUser.id,
+            formData,
           });
-
-          await supabase.from("matrimonial_profiles").insert({
-            owner_id: newUser.id,
-            display_name: fullName.trim(),
-            gender,
-            age: parsedAge,
-            community: COMMUNITY_NAME,
-            state: state || null,
-            city: city.trim() || null,
-            education: education || null,
-            occupation: occupation || null,
-            marital_status: "never_married",
-            mother_tongue: "Telugu",
-            visibility: "visible",
-            photo_visibility: "members",
-          });
-        } catch {
-          // If profile insert fails because of RLS or trigger, don't crash registration
+        } catch (saveErr) {
+          console.warn("Error saving detailed profile after signup:", saveErr);
         }
 
-        toast.success("Account created successfully!");
+        toast.success("Account and matrimonial profile created successfully!");
         void navigate({ to: "/dashboard" });
       } else {
+        // Save form draft locally so user has all data when they log in after email confirmation
+        try {
+          localStorage.setItem("sbm_detailed_profile_draft_v1", JSON.stringify(formData));
+        } catch {
+          // ignore
+        }
         setSuccessMessage(
-          "Your account has been registered! Please check your email for a confirmation link to activate your account.",
+          "Your account has been registered! Please check your email for a confirmation link to activate your profile.",
         );
         toast.success("Account registered. Please verify your email.");
       }
@@ -131,206 +148,102 @@ function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-16rem)] items-center justify-center px-4 py-12 bg-muted/30">
-      <Card className="w-full max-w-xl shadow-md">
-        <CardHeader className="text-center space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-gold-foreground">
-            {SITE_NAME_TE}
-          </p>
-          <CardTitle className="font-serif text-3xl text-primary">
-            Create Your Matrimony Profile
-          </CardTitle>
-          <CardDescription>
-            Join verified Shettibalija families seeking marriage alliances
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {errorMessage ? (
-            <div
-              className="mb-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
-              role="alert"
-            >
-              {errorMessage}
+    <div className="min-h-[calc(100vh-16rem)] px-4 py-8 bg-muted/30">
+      <div className="mx-auto max-w-4xl space-y-6">
+        <div className="text-center space-y-2 flex flex-col items-center">
+          <ShettibalijaLogo size="lg" linkToHome priority />
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#D9A514]">
+              {SITE_NAME_TE}
+            </p>
+            <h1 className="font-serif text-3xl font-bold text-[#32105F] md:text-4xl">
+              Create Your Matrimonial Profile
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+              Join verified Shettibalija families seeking marriage alliances with complete details
+              in Telugu and English.
+            </p>
+          </div>
+        </div>
+
+        {errorMessage ? (
+          <div
+            className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
+            role="alert"
+          >
+            {errorMessage}
+          </div>
+        ) : null}
+
+        {successMessage ? (
+          <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-6 text-center text-sm text-emerald-800 space-y-3">
+            <p className="font-medium text-base">{successMessage}</p>
+            <Button asChild variant="outline">
+              <Link to="/login">Proceed to Login</Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Account Login Credentials Card */}
+            <Card className="bg-white border-[#E8E2D8] shadow-sm rounded-2xl">
+              <CardHeader className="pb-3 border-b border-[#D9A514]/20 mb-4">
+                <CardTitle className="text-lg font-serif font-bold text-[#32105F]">
+                  Account Credentials (Login Info)
+                </CardTitle>
+                <CardDescription>
+                  Your email and password to access and update your matrimony account
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reg-email">Email Address *</Label>
+                    <Input
+                      id="reg-email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      placeholder="e.g. name@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={submitting}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reg-password">Password (min 6 characters) *</Label>
+                    <Input
+                      id="reg-password"
+                      type="password"
+                      required
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      disabled={submitting}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 10-Section Matrimonial Biodata Form */}
+            <DetailedProfileForm
+              initialData={initialData}
+              onSave={handleProfileSubmit}
+              isSubmitting={submitting}
+              submitButtonText="Register & Create Profile"
+            />
+
+            <div className="text-center text-sm text-muted-foreground pt-2">
+              Already registered?{" "}
+              <Link to="/login" className="font-medium text-primary hover:underline">
+                Sign In to Your Account
+              </Link>
             </div>
-          ) : null}
-
-          {successMessage ? (
-            <div className="mb-4 rounded-lg bg-emerald-50 border border-emerald-200 p-4 text-center text-sm text-emerald-800">
-              <p className="font-medium">{successMessage}</p>
-              <Button asChild className="mt-4" variant="outline">
-                <Link to="/login">Go to Login</Link>
-              </Button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-name">Full Name *</Label>
-                  <Input
-                    id="reg-name"
-                    required
-                    placeholder="Enter candidate name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-gender">Profile For *</Label>
-                  <select
-                    id="reg-gender"
-                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value as "bride" | "groom")}
-                    disabled={submitting}
-                  >
-                    <option value="bride">Bride (Female)</option>
-                    <option value="groom">Groom (Male)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-email">Email Address *</Label>
-                  <Input
-                    id="reg-email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-phone">Phone Number</Label>
-                  <Input
-                    id="reg-phone"
-                    type="tel"
-                    placeholder="e.g. 9876543210"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    disabled={submitting}
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-age">Age (Years) *</Label>
-                  <Input
-                    id="reg-age"
-                    type="number"
-                    min={18}
-                    max={75}
-                    required
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    disabled={submitting}
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-password">Password (min 6 chars) *</Label>
-                  <Input
-                    id="reg-password"
-                    type="password"
-                    required
-                    autoComplete="new-password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={submitting}
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-state">State *</Label>
-                  <select
-                    id="reg-state"
-                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    disabled={submitting}
-                  >
-                    {STATES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-city">City / District</Label>
-                  <Input
-                    id="reg-city"
-                    placeholder="e.g. Hyderabad, Rajahmundry"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    disabled={submitting}
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-edu">Education</Label>
-                  <select
-                    id="reg-edu"
-                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm"
-                    value={education}
-                    onChange={(e) => setEducation(e.target.value)}
-                    disabled={submitting}
-                  >
-                    {EDUCATION_OPTIONS.map((edu) => (
-                      <option key={edu} value={edu}>
-                        {edu}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="reg-occ">Occupation</Label>
-                  <select
-                    id="reg-occ"
-                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm"
-                    value={occupation}
-                    onChange={(e) => setOccupation(e.target.value)}
-                    disabled={submitting}
-                  >
-                    {OCCUPATION_OPTIONS.map((occ) => (
-                      <option key={occ} value={occ}>
-                        {occ}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <Button type="submit" className="w-full" disabled={submitting}>
-                  {submitting ? "Creating Profile..." : "Register Profile"}
-                </Button>
-              </div>
-
-              <div className="text-center text-sm text-muted-foreground">
-                Already registered?{" "}
-                <Link to="/login" className="font-medium text-primary hover:underline">
-                  Sign In
-                </Link>
-              </div>
-            </form>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -11,6 +11,10 @@ export type SearchParams = {
   maritalStatus?: string | undefined;
   motherTongue?: string | undefined;
   community?: string | undefined;
+  foodHabit?: string | undefined;
+  gothram?: string | undefined;
+  star?: string | undefined;
+  rashi?: string | undefined;
   page?: number | undefined;
 };
 
@@ -37,6 +41,10 @@ export function validateSearchParams(search: Record<string, unknown>): SearchPar
     maritalStatus: asString(search["maritalStatus"]),
     motherTongue: asString(search["motherTongue"]),
     community: asString(search["community"]),
+    foodHabit: asString(search["foodHabit"]),
+    gothram: asString(search["gothram"]),
+    star: asString(search["star"]),
+    rashi: asString(search["rashi"]),
     page: asNumber(search["page"]),
   };
 }

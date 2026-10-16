@@ -18,7 +18,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
-import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
+import { SITE_LOGO_URL, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 
 function NotFoundComponent() {
   return (
@@ -91,12 +91,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "author", content: SITE_NAME },
       { property: "og:title", content: SITE_NAME },
       { property: "og:description", content: SITE_TAGLINE },
+      { property: "og:image", content: SITE_LOGO_URL },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: SITE_LOGO_URL },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: SITE_LOGO_URL, type: "image/png" },
+      { rel: "apple-touch-icon", href: SITE_LOGO_URL },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap",

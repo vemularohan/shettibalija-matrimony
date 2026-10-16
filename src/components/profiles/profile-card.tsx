@@ -16,7 +16,8 @@ export type PublicProfileCardData = {
   city: string | null;
   state: string | null;
   family_summary: string | null;
-  is_demo?: boolean;
+  is_demo?: boolean | undefined;
+  interest_tag?: string | null | undefined;
 };
 
 export function ProfileCard({
@@ -38,7 +39,7 @@ export function ProfileCard({
   return (
     <article
       className={cn(
-        "flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:shadow-md",
+        "flex h-full flex-col overflow-hidden rounded-2xl border border-[#E8E2D8] bg-white shadow-sm transition-all hover:shadow-md hover:border-[#D9A514]/60",
         className,
       )}
     >
@@ -50,14 +51,16 @@ export function ProfileCard({
       />
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold tracking-wide text-primary">{profile.profile_code}</p>
+          <p className="text-xs font-semibold tracking-wide text-[#32105F]">
+            {profile.profile_code}
+          </p>
           {profile.is_demo ? (
             <span className="inline-flex items-center rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 border border-amber-200/80">
               Demo
             </span>
           ) : null}
         </div>
-        <h3 className="mt-1 font-serif text-xl text-foreground">
+        <h3 className="mt-1 font-serif text-xl font-bold text-[#32105F]">
           {name}, {profile.age ?? "—"}
         </h3>
         <p className="mt-1 text-sm text-muted-foreground">

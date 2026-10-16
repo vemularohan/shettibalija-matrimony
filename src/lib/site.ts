@@ -1,6 +1,8 @@
 export const SITE_NAME = "Shettibalija Matrimony";
-export const SITE_NAME_TE = "శెట్టిబలిజ సంఘం";
-export const SITE_TAGLINE = "A trusted matrimonial platform for the Shettibalija community";
+export const SITE_NAME_TE = "శెట్టిబలిజ మ్యాట్రిమోనీ";
+export const SITE_TAGLINE = "Find your perfect life partner within the Shettibalija community.";
+export const SITE_TAGLINE_TE = "శెట్టిబలిజ సమాజంలో మీకు సరైన జీవిత భాగస్వామిని కనుగొనండి.";
+export const SITE_LOGO_URL = "/logo.png";
 export const COMMUNITY_NAME = "Shettibalija";
 export const PHOTO_BUCKET = "matrimony-photos";
 export const PAGE_SIZE = 12;

@@ -13,6 +13,29 @@ export type DemoProfile = PublicProfileCardData & {
   moderation_status: "approved";
   visibility: "visible";
   photo_visibility: "members";
+  star?: string;
+  rashi?: string;
+  gothram?: string;
+  horoscope_available?: boolean;
+  designation?: string;
+  job_location?: string;
+  salary_amount?: string;
+  salary_currency?: string;
+  salary_period?: string;
+  employment_type?: string;
+  complexion?: string;
+  community_profession?: string;
+  food_habit?: string;
+  smoking_habit?: string;
+  drinking_habit?: string;
+  father_name?: string;
+  father_profession?: string;
+  mother_name?: string;
+  mother_profession?: string;
+  brothers_details?: string;
+  sisters_details?: string;
+  family_type?: string;
+  family_location?: string;
   partner_preferences?: {
     min_age?: number;
     max_age?: number;
@@ -21,6 +44,10 @@ export type DemoProfile = PublicProfileCardData & {
     education?: string;
     occupation?: string;
     preferred_locations?: string[];
+    marital_statuses?: string[];
+    preferred_food_habit?: string;
+    preferred_gothram?: string;
+    other_preferences?: string;
   };
 };
 
@@ -520,13 +547,291 @@ export const DEMO_PROFILES: DemoProfile[] = [
   },
 ];
 
+const DEMO_INTEREST_TAGS: Record<string, string> = {
+  "demo-sbm-01": "#ClassicalMusic",
+  "demo-sbm-02": "#Reading",
+  "demo-sbm-03": "#Gardening",
+  "demo-sbm-04": "#Badminton",
+  "demo-sbm-05": "#Robotics",
+  "demo-sbm-06": "#Architecture",
+  "demo-sbm-07": "#Singing",
+  "demo-sbm-08": "#Marathon",
+  "demo-sbm-09": "#Chess",
+  "demo-sbm-10": "#Tennis",
+  "demo-sbm-11": "#SocialWork",
+  "demo-sbm-12": "#Photography",
+  "demo-sbm-13": "#Volleyball",
+  "demo-sbm-14": "#Fitness",
+};
+
+const DEMO_EXTRAS: Record<
+  string,
+  {
+    star: string;
+    rashi: string;
+    gothram: string;
+    food_habit: string;
+    community_profession: string;
+    complexion: string;
+    father_name: string;
+    father_profession: string;
+    mother_name: string;
+    mother_profession: string;
+    family_type: string;
+    family_location: string;
+    salary_amount: string;
+    employment_type: string;
+  }
+> = {
+  "demo-sbm-01": {
+    star: "Rohini",
+    rashi: "Vrishabha",
+    gothram: "Janakula",
+    food_habit: "vegetarian",
+    community_profession: "Employee",
+    complexion: "fair",
+    father_name: "Ramakrishna R.",
+    father_profession: "Bank Executive",
+    mother_name: "Saraswathi R.",
+    mother_profession: "Homemaker",
+    family_type: "nuclear",
+    family_location: "Hyderabad",
+    salary_amount: "14 Lakhs",
+    employment_type: "private",
+  },
+  "demo-sbm-02": {
+    star: "Swati",
+    rashi: "Tula",
+    gothram: "Kasyapa",
+    food_habit: "vegetarian",
+    community_profession: "Doctor",
+    complexion: "wheatish",
+    father_name: "Koteswara Rao K.",
+    father_profession: "Retired Veterinary Officer",
+    mother_name: "Lakshmi K.",
+    mother_profession: "Homemaker",
+    family_type: "joint",
+    family_location: "Visakhapatnam",
+    salary_amount: "11 Lakhs",
+    employment_type: "government",
+  },
+  "demo-sbm-03": {
+    star: "Punarvasu",
+    rashi: "Mithuna",
+    gothram: "Atreya",
+    food_habit: "non_vegetarian",
+    community_profession: "Banking",
+    complexion: "wheatish",
+    father_name: "Satyanarayana M.",
+    father_profession: "Businessman",
+    mother_name: "Padmavathi M.",
+    mother_profession: "Teacher",
+    family_type: "nuclear",
+    family_location: "Vijayawada",
+    salary_amount: "9 Lakhs",
+    employment_type: "private",
+  },
+  "demo-sbm-04": {
+    star: "Uttara Phalguni",
+    rashi: "Kanya",
+    gothram: "Bharadwaja",
+    food_habit: "non_vegetarian",
+    community_profession: "Employee",
+    complexion: "fair",
+    father_name: "Appa Rao P.",
+    father_profession: "Govt Employee",
+    mother_name: "Subhadra P.",
+    mother_profession: "Homemaker",
+    family_type: "nuclear",
+    family_location: "Rajahmundry",
+    salary_amount: "12 Lakhs",
+    employment_type: "private",
+  },
+  "demo-sbm-05": {
+    star: "Anuradha",
+    rashi: "Vrischika",
+    gothram: "Gautama",
+    food_habit: "non_vegetarian",
+    community_profession: "Employee",
+    complexion: "wheatish",
+    father_name: "Venkateswarlu V.",
+    father_profession: "Engineer (Retd)",
+    mother_name: "Anasuya V.",
+    mother_profession: "Homemaker",
+    family_type: "nuclear",
+    family_location: "Bengaluru",
+    salary_amount: "22 Lakhs",
+    employment_type: "private",
+  },
+  "demo-sbm-06": {
+    star: "Hasta",
+    rashi: "Kanya",
+    gothram: "Janakula",
+    food_habit: "vegetarian",
+    community_profession: "Contractor",
+    complexion: "fair",
+    father_name: "Nageswara Rao T.",
+    father_profession: "Civil Contractor",
+    mother_name: "Gayatri T.",
+    mother_profession: "Lecturer",
+    family_type: "joint",
+    family_location: "Kakinada",
+    salary_amount: "10 Lakhs",
+    employment_type: "self_employed",
+  },
+  "demo-sbm-07": {
+    star: "Revati",
+    rashi: "Meena",
+    gothram: "Kasyapa",
+    food_habit: "non_vegetarian",
+    community_profession: "Employee",
+    complexion: "fair",
+    father_name: "Bhaskara Rao CH.",
+    father_profession: "Education Department",
+    mother_name: "Durga CH.",
+    mother_profession: "Homemaker",
+    family_type: "nuclear",
+    family_location: "Guntur",
+    salary_amount: "7.5 Lakhs",
+    employment_type: "government",
+  },
+  "demo-sbm-08": {
+    star: "Shravana",
+    rashi: "Makara",
+    gothram: "Atreya",
+    food_habit: "non_vegetarian",
+    community_profession: "Employee",
+    complexion: "wheatish",
+    father_name: "Suryanarayana S.",
+    father_profession: "Senior Officer",
+    mother_name: "Vijaya S.",
+    mother_profession: "Homemaker",
+    family_type: "nuclear",
+    family_location: "Hyderabad",
+    salary_amount: "28 Lakhs",
+    employment_type: "private",
+  },
+  "demo-sbm-09": {
+    star: "Pushya",
+    rashi: "Karkataka",
+    gothram: "Bharadwaja",
+    food_habit: "vegetarian",
+    community_profession: "Doctor",
+    complexion: "fair",
+    father_name: "Venkata Rao D.",
+    father_profession: "Physician",
+    mother_name: "Bhavani D.",
+    mother_profession: "Homemaker",
+    family_type: "nuclear",
+    family_location: "Visakhapatnam",
+    salary_amount: "18 Lakhs",
+    employment_type: "professional",
+  },
+  "demo-sbm-10": {
+    star: "Chitra",
+    rashi: "Tula",
+    gothram: "Gautama",
+    food_habit: "non_vegetarian",
+    community_profession: "Employee",
+    complexion: "wheatish",
+    father_name: "Srirama Murthy B.",
+    father_profession: "Revenue Department",
+    mother_name: "Kalyani B.",
+    mother_profession: "Homemaker",
+    family_type: "joint",
+    family_location: "Amaravati",
+    salary_amount: "15 Lakhs",
+    employment_type: "government",
+  },
+  "demo-sbm-11": {
+    star: "Magha",
+    rashi: "Simha",
+    gothram: "Janakula",
+    food_habit: "non_vegetarian",
+    community_profession: "Business",
+    complexion: "wheatish",
+    father_name: "Veera Venkata Rao Y.",
+    father_profession: "Business Owner",
+    mother_name: "Rajeswari Y.",
+    mother_profession: "Homemaker",
+    family_type: "joint",
+    family_location: "Rajahmundry",
+    salary_amount: "20 Lakhs",
+    employment_type: "business",
+  },
+  "demo-sbm-12": {
+    star: "Ashwini",
+    rashi: "Mesha",
+    gothram: "Kasyapa",
+    food_habit: "vegetarian",
+    community_profession: "Employee",
+    complexion: "fair",
+    father_name: "Prabhakara Rao K.",
+    father_profession: "Auditor",
+    mother_name: "Mangathayaru K.",
+    mother_profession: "Homemaker",
+    family_type: "nuclear",
+    family_location: "Bengaluru",
+    salary_amount: "24 Lakhs",
+    employment_type: "private",
+  },
+  "demo-sbm-13": {
+    star: "Dhanishta",
+    rashi: "Makara",
+    gothram: "Atreya",
+    food_habit: "non_vegetarian",
+    community_profession: "Employee",
+    complexion: "wheatish",
+    father_name: "Subrahmanyam G.",
+    father_profession: "Port Trust Executive",
+    mother_name: "Kameswari G.",
+    mother_profession: "Homemaker",
+    family_type: "nuclear",
+    family_location: "Visakhapatnam",
+    salary_amount: "16 Lakhs",
+    employment_type: "private",
+  },
+  "demo-sbm-14": {
+    star: "Arudra",
+    rashi: "Mithuna",
+    gothram: "Bharadwaja",
+    food_habit: "vegetarian",
+    community_profession: "Employee",
+    complexion: "fair",
+    father_name: "Krishna Mohan N.",
+    father_profession: "College Principal",
+    mother_name: "Geetha N.",
+    mother_profession: "Teacher",
+    family_type: "nuclear",
+    family_location: "Vijayawada",
+    salary_amount: "12 Lakhs",
+    employment_type: "government",
+  },
+};
+
+for (const profile of DEMO_PROFILES) {
+  profile.interest_tag = DEMO_INTEREST_TAGS[profile.id] ?? "#Community";
+  const extra = DEMO_EXTRAS[profile.id];
+  if (extra) {
+    Object.assign(profile, extra);
+    profile.horoscope_available = true;
+  }
+}
+
 export type DemoSearchFilter = {
   gender?: string | undefined;
   minAge?: number | undefined;
   maxAge?: number | undefined;
+  minHeight?: number | undefined;
+  maxHeight?: number | undefined;
   state?: string | undefined;
   education?: string | undefined;
   occupation?: string | undefined;
+  maritalStatus?: string | undefined;
+  foodHabit?: string | undefined;
+  gothram?: string | undefined;
+  star?: string | undefined;
+  rashi?: string | undefined;
 };
 
 export function filterDemoProfiles(filters?: DemoSearchFilter): DemoProfile[] {
@@ -542,7 +847,40 @@ export function filterDemoProfiles(filters?: DemoSearchFilter): DemoProfile[] {
     if (filters.maxAge != null && profile.age != null && profile.age > filters.maxAge) {
       return false;
     }
+    if (
+      filters.minHeight != null &&
+      profile.height_cm != null &&
+      profile.height_cm < filters.minHeight
+    ) {
+      return false;
+    }
+    if (
+      filters.maxHeight != null &&
+      profile.height_cm != null &&
+      profile.height_cm > filters.maxHeight
+    ) {
+      return false;
+    }
+    if (filters.maritalStatus && profile.marital_status !== filters.maritalStatus) {
+      return false;
+    }
     if (filters.state && profile.state !== filters.state) {
+      return false;
+    }
+    if (filters.foodHabit && profile.food_habit && profile.food_habit !== filters.foodHabit) {
+      return false;
+    }
+    if (
+      filters.gothram &&
+      profile.gothram &&
+      !profile.gothram.toLowerCase().includes(filters.gothram.toLowerCase())
+    ) {
+      return false;
+    }
+    if (filters.star && profile.star && profile.star !== filters.star) {
+      return false;
+    }
+    if (filters.rashi && profile.rashi && profile.rashi !== filters.rashi) {
       return false;
     }
     if (

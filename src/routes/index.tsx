@@ -12,6 +12,8 @@ import { EmptyState, ErrorState } from "@/components/shared/empty-state";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_PROFILES } from "@/data/demo-profiles";
+import { HeroPhotoGallery } from "@/components/home/hero-photo-gallery";
+import { useLanguage } from "@/lib/i18n";
 import { SITE_NAME, SITE_NAME_TE, SITE_TAGLINE } from "@/lib/site";
 import { EDUCATION_OPTIONS, OCCUPATION_OPTIONS, STATES } from "@/lib/options";
 import { formatINRFromPaise } from "@/lib/format";
@@ -110,103 +112,110 @@ function HomePage() {
     },
   });
 
+  const { t } = useLanguage();
+
+  const galleryProfiles = useQuery({
+    queryKey: ["hero-gallery-profiles"],
+    queryFn: async () => {
+      let realProfiles: PublicProfileCardData[] = [];
+      try {
+        const { data, error } = await supabase
+          .from("approved_matrimonial_profiles")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(14);
+        if (!error && data) {
+          realProfiles = data.filter((p): p is typeof p & { id: string } => Boolean(p.id));
+        }
+      } catch {
+        // Fallback to demo profiles
+      }
+      const realIds = new Set(realProfiles.map((p) => p.id));
+      const demoToAdd = DEMO_PROFILES.filter((d) => !realIds.has(d.id));
+      return [...realProfiles, ...demoToAdd];
+    },
+  });
+
   return (
     <div>
-      <section className="border-b bg-[linear-gradient(180deg,#fffaf5_0%,#fcfbf8_100%)]">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-[1.1fr_0.9fr] md:py-16">
-          <div>
-            <p className="text-sm text-gold-foreground">{SITE_NAME_TE}</p>
-            <h1 className="mt-2 font-serif text-4xl leading-tight text-primary md:text-5xl">
-              Find Your Perfect Life Partner
-            </h1>
-            <p className="mt-4 max-w-xl text-lg text-muted-foreground">{SITE_TAGLINE}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button asChild size="lg">
-                <Link to="/search">Search Profiles</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to="/register">Create Your Profile</Link>
-              </Button>
-            </div>
+      {/* Matrimonial Photo Gallery Hero Section */}
+      <HeroPhotoGallery profiles={galleryProfiles.data ?? DEMO_PROFILES} />
+
+      {/* Quick Search Strip */}
+      <section className="border-b bg-card py-5 shadow-xs">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-serif text-lg font-semibold text-primary">{t("searchTitle")}</h2>
+            <Link
+              to="/search"
+              className="text-xs font-medium text-muted-foreground hover:text-primary"
+            >
+              Advanced Search →
+            </Link>
           </div>
-          <form onSubmit={onSearch} className="rounded-2xl border bg-card p-5 shadow-sm">
-            <h2 className="font-serif text-2xl">Search profiles</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <Field label="Looking for">
-                <select
-                  className={selectClass}
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                >
-                  <option value="">Bride or Groom</option>
-                  <option value="bride">Bride</option>
-                  <option value="groom">Groom</option>
-                </select>
-              </Field>
-              <Field label="Location">
-                <select
-                  className={selectClass}
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                >
-                  <option value="">Any state</option>
-                  {STATES.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="Min age">
-                <Input
-                  type="number"
-                  min={18}
-                  max={70}
-                  value={minAge}
-                  onChange={(e) => setMinAge(e.target.value)}
-                />
-              </Field>
-              <Field label="Max age">
-                <Input
-                  type="number"
-                  min={18}
-                  max={70}
-                  value={maxAge}
-                  onChange={(e) => setMaxAge(e.target.value)}
-                />
-              </Field>
-              <Field label="Education">
-                <select
-                  className={selectClass}
-                  value={education}
-                  onChange={(e) => setEducation(e.target.value)}
-                >
-                  <option value="">Any</option>
-                  {EDUCATION_OPTIONS.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="Occupation">
-                <select
-                  className={selectClass}
-                  value={occupation}
-                  onChange={(e) => setOccupation(e.target.value)}
-                >
-                  <option value="">Any</option>
-                  {OCCUPATION_OPTIONS.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </Field>
+          <form onSubmit={onSearch} className="grid items-end gap-3 sm:grid-cols-2 md:grid-cols-6">
+            <Field label={t("lookingFor")}>
+              <select
+                className={selectClass}
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+              >
+                <option value="">{t("brideOrGroom")}</option>
+                <option value="bride">{t("bride")}</option>
+                <option value="groom">{t("groom")}</option>
+              </select>
+            </Field>
+            <Field label={t("location")}>
+              <select
+                className={selectClass}
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+              >
+                <option value="">{t("anyState")}</option>
+                {STATES.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label={t("minAge")}>
+              <Input
+                type="number"
+                min={18}
+                max={70}
+                value={minAge}
+                onChange={(e) => setMinAge(e.target.value)}
+              />
+            </Field>
+            <Field label={t("maxAge")}>
+              <Input
+                type="number"
+                min={18}
+                max={70}
+                value={maxAge}
+                onChange={(e) => setMaxAge(e.target.value)}
+              />
+            </Field>
+            <Field label={t("education")}>
+              <select
+                className={selectClass}
+                value={education}
+                onChange={(e) => setEducation(e.target.value)}
+              >
+                <option value="">{t("any")}</option>
+                {EDUCATION_OPTIONS.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <div>
+              <Button type="submit" className="w-full h-9">
+                {t("searchProfiles")}
+              </Button>
             </div>
-            <Button type="submit" className="mt-4 w-full">
-              Search Profiles
-            </Button>
           </form>
         </div>
       </section>

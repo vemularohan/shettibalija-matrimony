@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
+import { ShettibalijaLogo } from "@/components/brand/logo";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -62,15 +63,18 @@ function LoginPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-16rem)] items-center justify-center px-4 py-12 bg-muted/30">
-      <Card className="w-full max-w-md shadow-md">
-        <CardHeader className="text-center space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-gold-foreground">
-            {SITE_NAME_TE}
-          </p>
-          <CardTitle className="font-serif text-3xl text-primary">Member Login</CardTitle>
-          <CardDescription>
-            Access your matrimony profile, interests, and matching candidates
-          </CardDescription>
+      <Card className="w-full max-w-md shadow-md border border-[#E8E2D8] bg-white rounded-2xl">
+        <CardHeader className="text-center space-y-2 items-center pb-4">
+          <ShettibalijaLogo size="lg" linkToHome priority />
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#D9A514]">
+              {SITE_NAME_TE}
+            </p>
+            <CardTitle className="font-serif text-3xl text-[#32105F]">Member Login</CardTitle>
+            <CardDescription>
+              Access your matrimony profile, interests, and matching candidates
+            </CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
           {errorMessage ? (
