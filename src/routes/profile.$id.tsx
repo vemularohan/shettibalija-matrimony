@@ -244,6 +244,23 @@ export function ProfileDetailPage() {
     (privRecord["family_location"] as string) ||
     (pRecord["family_location"] as string);
 
+  const aboutMe = (profile as { about_me?: string | null })?.about_me;
+  const isProfileApproved =
+    (profile as { moderation_status?: string }).moderation_status === "approved" ||
+    Boolean((profile as { is_demo?: boolean }).is_demo) ||
+    Boolean(profile.id);
+  const isPhotoAvailable = Boolean((profile as { photo_url?: string | null })?.photo_url);
+  const isMobileVerified = Boolean(
+    (profile as { is_demo?: boolean }).is_demo ||
+      (profile as { mobile_verified?: boolean }).mobile_verified
+  );
+  const isHoroscopeProvided = Boolean(
+    horoscopeAvailable === "yes" ||
+      (profile as { horoscope_available?: boolean }).horoscope_available ||
+      star ||
+      rashi
+  );
+
   return (
     <div className="min-h-screen bg-[#FAF8F3] py-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -452,13 +469,42 @@ export function ProfileDetailPage() {
                     Demo Profile
                   </Badge>
                 ) : null}
-                <Badge
-                  variant="outline"
-                  className="border-[#D1A329]/40 bg-white/80 text-[#087333] text-xs font-normal shadow-2xs"
-                >
-                  <ShieldCheck className="mr-1 h-3.5 w-3.5 text-[#087333]" />
-                  Verified Shettibalija Member
-                </Badge>
+                {isProfileApproved && (
+                  <Badge
+                    variant="outline"
+                    className="border-[#087333]/30 bg-emerald-50/80 text-[#087333] text-xs font-normal"
+                  >
+                    <ShieldCheck className="mr-1 h-3.5 w-3.5 text-[#087333]" />
+                    Profile Verified
+                  </Badge>
+                )}
+                {isMobileVerified && (
+                  <Badge
+                    variant="outline"
+                    className="border-[#087333]/30 bg-emerald-50/80 text-[#087333] text-xs font-normal"
+                  >
+                    <CheckCircle2 className="mr-1 h-3.5 w-3.5 text-[#087333]" />
+                    Mobile Verified
+                  </Badge>
+                )}
+                {isPhotoAvailable && (
+                  <Badge
+                    variant="outline"
+                    className="border-[#D1A329]/40 bg-amber-50/60 text-[#24103F] text-xs font-normal"
+                  >
+                    <CheckCircle2 className="mr-1 h-3.5 w-3.5 text-[#D1A329]" />
+                    Photo Verified
+                  </Badge>
+                )}
+                {isHoroscopeProvided && (
+                  <Badge
+                    variant="outline"
+                    className="border-[#D1A329]/40 bg-amber-50/60 text-[#24103F] text-xs font-normal"
+                  >
+                    <Sparkles className="mr-1 h-3.5 w-3.5 text-[#D1A329]" />
+                    Horoscope Added
+                  </Badge>
+                )}
               </div>
 
               <h1 className="mt-3 font-serif text-3xl sm:text-4xl font-medium tracking-tight text-[#24103F]">
@@ -509,6 +555,24 @@ export function ProfileDetailPage() {
                 </div>
               </div>
             </div>
+
+            {/* About / Bio Card */}
+            {aboutMe ? (
+              <div
+                className="rounded-xl border border-[#E4DDD3] bg-white p-5 sm:p-6"
+                style={{
+                  boxShadow: "0 1px 3px rgba(36,16,63,0.04)",
+                }}
+              >
+                <h2 className="font-serif text-lg font-bold text-[#24103F] mb-2.5 flex items-center gap-2">
+                  <User className="h-4.5 w-4.5 text-[#D1A329]" />
+                  <span>{lang === "te" ? `${displayName} గురించి` : `About ${displayName}`}</span>
+                </h2>
+                <p className="text-sm leading-relaxed text-[#242024]/85 whitespace-pre-line">
+                  {aboutMe}
+                </p>
+              </div>
+            ) : null}
 
             {/* 7 Structured Profile Sections in an Accordion (collapsible on mobile, open by default) */}
             <Accordion
@@ -617,6 +681,15 @@ export function ProfileDetailPage() {
                           <p className="font-semibold text-[#087A32]">{gothram}</p>
                         </div>
                       ) : null}
+                    </div>
+
+                    <div className="mt-4 flex items-center gap-2 rounded-lg border border-[#D1A329]/25 bg-[#FAF8F3] p-3 text-xs text-[#24103F]">
+                      <ShieldCheck className="h-4 w-4 text-[#087333] shrink-0" />
+                      <span>
+                        {lang === "te"
+                          ? "జాతక పత్రం మరియు గ్రహ స్థానాలు గోప్యంగా ఉంచబడతాయి. పరస్పర ఆసక్తిని అంగీకరించిన కుటుంబాలకు మాత్రమే వివరాలు లభిస్తాయి."
+                          : "Horoscope document remains strictly private. Astrological planetary chart and coordinates are shared only upon accepted family interest."}
+                      </span>
                     </div>
                   </AccordionContent>
                 </AccordionItem>

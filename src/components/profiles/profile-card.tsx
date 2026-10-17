@@ -19,6 +19,13 @@ export type PublicProfileCardData = {
   is_demo?: boolean | undefined;
   interest_tag?: string | null | undefined;
   photo_url?: string | null | undefined;
+  star?: string | null | undefined;
+  rashi?: string | null | undefined;
+  gothram?: string | null | undefined;
+  marital_status?: string | null | undefined;
+  about_me?: string | null | undefined;
+  gender?: string | null | undefined;
+  horoscope_available?: boolean | undefined;
 };
 
 export function ProfileCard({

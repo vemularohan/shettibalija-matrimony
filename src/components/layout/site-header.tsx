@@ -48,10 +48,11 @@ export function SiteHeader() {
 
   const navLinks = [
     { to: "/", label: lang === "te" ? "హోమ్" : "Home" },
-    { to: "/search", label: lang === "te" ? "మ్యాచ్‌లు" : "Find Matches" },
+    { to: "/search", label: lang === "te" ? "ప్రొఫైల్స్ శోధన" : "Search Profiles" },
     { to: "/#how-it-works", label: lang === "te" ? "విధానం" : "How It Works" },
     { to: "/membership", label: lang === "te" ? "సభ్యత్వం" : "Membership" },
-    { to: "/about", label: lang === "te" ? "మా గురించి" : "About" },
+    { to: "/#success-stories", label: lang === "te" ? "విజయ గాథలు" : "Success Stories" },
+    { to: "/about", label: lang === "te" ? "మా గురించి" : "About Us" },
   ];
 
   return (
@@ -81,12 +82,12 @@ export function SiteHeader() {
         </Link>
 
         {/* Center: Desktop Nav */}
-        <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary Navigation">
+        <nav className="hidden items-center gap-5 xl:gap-6 lg:flex" aria-label="Primary Navigation">
           {navLinks.map((item) => (
             <Link
-              key={item.to}
+              key={item.label}
               to={item.to}
-              className="text-[13px] font-medium text-[#6B6570] hover:text-[#242024] transition-colors duration-150"
+              className="text-[13px] font-medium text-[#6B6570] hover:text-[#24103F] transition-colors duration-150"
               activeProps={{ className: "text-[#24103F] font-semibold" }}
             >
               {item.label}
@@ -148,17 +149,17 @@ export function SiteHeader() {
                 asChild
                 variant="ghost"
                 size="sm"
-                className="h-8 text-xs text-[#6B6570] hover:text-[#242024]"
+                className="h-8 text-xs font-medium text-[#242024] hover:text-[#24103F]"
               >
                 <Link to="/login">{lang === "te" ? "లాగిన్" : "Login"}</Link>
               </Button>
               <Button
                 asChild
                 size="sm"
-                className="h-8 rounded-md bg-[#24103F] px-4 text-xs font-semibold text-white hover:bg-[#311552] transition-all shadow-[0_1px_4px_rgba(36,16,63,0.18)] active:translate-y-px"
+                className="h-8 rounded-md bg-[#24103F] px-3.5 text-xs font-semibold text-white hover:bg-[#311552] transition-all shadow-xs active:translate-y-px"
               >
                 <Link to="/register">
-                  {lang === "te" ? "ప్రొఫైల్ సృష్టించండి" : "Create Profile"}
+                  {lang === "te" ? "ఉచిత రిజిస్ట్రేషన్" : "Register Free"}
                 </Link>
               </Button>
             </div>
@@ -272,7 +273,7 @@ export function SiteHeader() {
                       className="h-10 rounded-md bg-[#24103F] text-white text-sm font-semibold hover:bg-[#311552]"
                     >
                       <Link to="/register" onClick={() => setOpen(false)}>
-                        {lang === "te" ? "ప్రొఫైల్ సృష్టించండి" : "Create Profile"}
+                        {lang === "te" ? "ఉచిత రిజిస్ట్రేషన్" : "Register Free"}
                       </Link>
                     </Button>
                     <Button

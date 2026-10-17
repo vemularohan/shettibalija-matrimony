@@ -15,6 +15,11 @@ export type SearchParams = {
   gothram?: string | undefined;
   star?: string | undefined;
   rashi?: string | undefined;
+  query?: string | undefined;
+  profileId?: string | undefined;
+  photoOnly?: boolean | undefined;
+  horoscopeOnly?: boolean | undefined;
+  sort?: string | undefined;
   page?: number | undefined;
 };
 
@@ -25,6 +30,12 @@ function asString(value: unknown): string | undefined {
 function asNumber(value: unknown): number | undefined {
   const num = typeof value === "number" ? value : typeof value === "string" ? Number(value) : NaN;
   return Number.isFinite(num) ? num : undefined;
+}
+
+function asBoolean(value: unknown): boolean | undefined {
+  if (value === true || value === "true" || value === 1 || value === "1") return true;
+  if (value === false || value === "false" || value === 0 || value === "0") return false;
+  return undefined;
 }
 
 export function validateSearchParams(search: Record<string, unknown>): SearchParams {
@@ -45,6 +56,11 @@ export function validateSearchParams(search: Record<string, unknown>): SearchPar
     gothram: asString(search["gothram"]),
     star: asString(search["star"]),
     rashi: asString(search["rashi"]),
+    query: asString(search["query"]),
+    profileId: asString(search["profileId"]),
+    photoOnly: asBoolean(search["photoOnly"]),
+    horoscopeOnly: asBoolean(search["horoscopeOnly"]),
+    sort: asString(search["sort"]),
     page: asNumber(search["page"]),
   };
 }

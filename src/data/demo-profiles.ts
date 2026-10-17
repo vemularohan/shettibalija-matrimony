@@ -838,12 +838,53 @@ export type DemoSearchFilter = {
   gothram?: string | undefined;
   star?: string | undefined;
   rashi?: string | undefined;
+  query?: string | undefined;
+  profileId?: string | undefined;
+  photoOnly?: boolean | undefined;
+  horoscopeOnly?: boolean | undefined;
 };
 
 export function filterDemoProfiles(filters?: DemoSearchFilter): DemoProfile[] {
   if (!filters) return DEMO_PROFILES;
 
   return DEMO_PROFILES.filter((profile) => {
+    // 1. Profile ID Search
+    if (filters.profileId) {
+      const qId = filters.profileId.trim().toLowerCase();
+      const matchId =
+        profile.id.toLowerCase().includes(qId) ||
+        (profile.profile_code && profile.profile_code.toLowerCase().includes(qId));
+      if (!matchId) return false;
+    }
+
+    // 2. Keyword Search
+    if (filters.query) {
+      const q = filters.query.trim().toLowerCase();
+      const searchable = [
+        profile.display_name,
+        profile.occupation,
+        profile.education,
+        profile.city,
+        profile.state,
+        profile.about_me,
+        profile.family_summary,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      if (!searchable.includes(q)) return false;
+    }
+
+    // 3. Photo Only
+    if (filters.photoOnly && !profile.photo_url) {
+      return false;
+    }
+
+    // 4. Horoscope Only
+    if (filters.horoscopeOnly && !profile.horoscope_available) {
+      return false;
+    }
+
     if (filters.gender && profile.gender !== filters.gender) {
       return false;
     }

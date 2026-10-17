@@ -1,20 +1,39 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { FormEvent, useState, useEffect } from "react";
-import { Search, Filter, RotateCcw, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { FormEvent, useState, useEffect, useMemo } from "react";
+import {
+  Search,
+  Filter,
+  RotateCcw,
+  SlidersHorizontal,
+  X,
+  Heart,
+  ArrowRight,
+  ShieldCheck,
+  MapPin,
+  Briefcase,
+  GraduationCap,
+  Sparkles,
+  Send,
+  Eye,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ProfileCard, type PublicProfileCardData } from "@/components/profiles/profile-card";
+import { ProtectedPhoto } from "@/components/profiles/protected-photo";
+import { type PublicProfileCardData } from "@/components/profiles/profile-card";
 import { EmptyState, ErrorState } from "@/components/shared/empty-state";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { supabase } from "@/integrations/supabase/client";
-import { filterDemoProfiles } from "@/data/demo-profiles";
+import { filterDemoProfiles, type DemoProfile } from "@/data/demo-profiles";
 import { validateSearchParams, type SearchParams } from "@/lib/search-params";
 import { SITE_NAME } from "@/lib/site";
+import { formatHeight, locationLine } from "@/lib/format";
+import { useLanguage } from "@/lib/i18n";
 import {
   EDUCATION_OPTIONS,
   OCCUPATION_OPTIONS,
@@ -41,58 +60,43 @@ function SearchPage() {
   const searchParams = Route.useSearch();
   const navigate = useNavigate();
   const actions = useProfileActions();
+  const { lang } = useLanguage();
 
+  // Local filter states
+  const [keyword, setKeyword] = useState(searchParams.query ?? "");
+  const [profileId, setProfileId] = useState(searchParams.profileId ?? "");
   const [gender, setGender] = useState(searchParams.gender ?? "");
   const [minAge, setMinAge] = useState(searchParams.minAge ? String(searchParams.minAge) : "");
   const [maxAge, setMaxAge] = useState(searchParams.maxAge ? String(searchParams.maxAge) : "");
-  const [state, setState] = useState(searchParams.state ?? "");
-  const [education, setEducation] = useState(searchParams.education ?? "");
-  const [occupation, setOccupation] = useState(searchParams.occupation ?? "");
-
-  // Extended matrimonial filters
-  const [maritalStatus, setMaritalStatus] = useState(searchParams.maritalStatus ?? "");
-  const [foodHabit, setFoodHabit] = useState(searchParams.foodHabit ?? "");
-  const [gothram, setGothram] = useState(searchParams.gothram ?? "");
-  const [star, setStar] = useState(searchParams.star ?? "");
-  const [rashi, setRashi] = useState(searchParams.rashi ?? "");
   const [minHeight, setMinHeight] = useState(
     searchParams.minHeight ? String(searchParams.minHeight) : "",
   );
   const [maxHeight, setMaxHeight] = useState(
     searchParams.maxHeight ? String(searchParams.maxHeight) : "",
   );
+  const [state, setState] = useState(searchParams.state ?? "");
+  const [education, setEducation] = useState(searchParams.education ?? "");
+  const [occupation, setOccupation] = useState(searchParams.occupation ?? "");
+  const [maritalStatus, setMaritalStatus] = useState(searchParams.maritalStatus ?? "");
+  const [foodHabit, setFoodHabit] = useState(searchParams.foodHabit ?? "");
+  const [gothram, setGothram] = useState(searchParams.gothram ?? "");
+  const [star, setStar] = useState(searchParams.star ?? "");
+  const [rashi, setRashi] = useState(searchParams.rashi ?? "");
+  const [photoOnly, setPhotoOnly] = useState(Boolean(searchParams.photoOnly));
+  const [horoscopeOnly, setHoroscopeOnly] = useState(Boolean(searchParams.horoscopeOnly));
+  const [sortBy, setSortBy] = useState(searchParams.sort ?? "recommended");
+
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const [showMoreFilters, setShowMoreFilters] = useState(
-    Boolean(
-      searchParams.maritalStatus ||
-      searchParams.foodHabit ||
-      searchParams.gothram ||
-      searchParams.star ||
-      searchParams.rashi ||
-      searchParams.minHeight ||
-      searchParams.maxHeight,
-    ),
-  );
 
-  const activeFilterCount = [
-    gender,
-    minAge || maxAge,
-    state,
-    education,
-    occupation,
-    maritalStatus,
-    minHeight || maxHeight,
-    foodHabit,
-    star,
-    rashi,
-    gothram,
-  ].filter(Boolean).length;
-
-  // Synchronize local form when searchParams change in the URL
+  // Sync state when URL search params change
   useEffect(() => {
+    setKeyword(searchParams.query ?? "");
+    setProfileId(searchParams.profileId ?? "");
     setGender(searchParams.gender ?? "");
     setMinAge(searchParams.minAge ? String(searchParams.minAge) : "");
     setMaxAge(searchParams.maxAge ? String(searchParams.maxAge) : "");
+    setMinHeight(searchParams.minHeight ? String(searchParams.minHeight) : "");
+    setMaxHeight(searchParams.maxHeight ? String(searchParams.maxHeight) : "");
     setState(searchParams.state ?? "");
     setEducation(searchParams.education ?? "");
     setOccupation(searchParams.occupation ?? "");
@@ -101,34 +105,79 @@ function SearchPage() {
     setGothram(searchParams.gothram ?? "");
     setStar(searchParams.star ?? "");
     setRashi(searchParams.rashi ?? "");
-    setMinHeight(searchParams.minHeight ? String(searchParams.minHeight) : "");
-    setMaxHeight(searchParams.maxHeight ? String(searchParams.maxHeight) : "");
+    setPhotoOnly(Boolean(searchParams.photoOnly));
+    setHoroscopeOnly(Boolean(searchParams.horoscopeOnly));
+    setSortBy(searchParams.sort ?? "recommended");
   }, [searchParams]);
 
-  function handleSearchSubmit(event: FormEvent) {
-    event.preventDefault();
+  // Active filter count
+  const activeFilterCount = [
+    keyword,
+    profileId,
+    gender,
+    minAge || maxAge,
+    minHeight || maxHeight,
+    state,
+    education,
+    occupation,
+    maritalStatus,
+    foodHabit,
+    gothram,
+    star,
+    rashi,
+    photoOnly,
+    horoscopeOnly,
+  ].filter(Boolean).length;
+
+  function executeSearch(overrides?: Partial<SearchParams>) {
     void navigate({
       to: "/search",
       search: {
-        gender: gender || undefined,
-        minAge: minAge ? Number(minAge) : undefined,
-        maxAge: maxAge ? Number(maxAge) : undefined,
-        minHeight: minHeight ? Number(minHeight) : undefined,
-        maxHeight: maxHeight ? Number(maxHeight) : undefined,
-        state: state || undefined,
-        education: education || undefined,
-        occupation: occupation || undefined,
-        maritalStatus: maritalStatus || undefined,
-        foodHabit: foodHabit || undefined,
-        gothram: gothram || undefined,
-        star: star || undefined,
-        rashi: rashi || undefined,
+        query: overrides?.query !== undefined ? overrides.query : keyword || undefined,
+        profileId:
+          overrides?.profileId !== undefined ? overrides.profileId : profileId || undefined,
+        gender: overrides?.gender !== undefined ? overrides.gender : gender || undefined,
+        minAge: overrides?.minAge !== undefined ? overrides.minAge : minAge ? Number(minAge) : undefined,
+        maxAge: overrides?.maxAge !== undefined ? overrides.maxAge : maxAge ? Number(maxAge) : undefined,
+        minHeight:
+          overrides?.minHeight !== undefined ? overrides.minHeight : minHeight ? Number(minHeight) : undefined,
+        maxHeight:
+          overrides?.maxHeight !== undefined ? overrides.maxHeight : maxHeight ? Number(maxHeight) : undefined,
+        state: overrides?.state !== undefined ? overrides.state : state || undefined,
+        education:
+          overrides?.education !== undefined ? overrides.education : education || undefined,
+        occupation:
+          overrides?.occupation !== undefined ? overrides.occupation : occupation || undefined,
+        maritalStatus:
+          overrides?.maritalStatus !== undefined
+            ? overrides.maritalStatus
+            : maritalStatus || undefined,
+        foodHabit:
+          overrides?.foodHabit !== undefined ? overrides.foodHabit : foodHabit || undefined,
+        gothram: overrides?.gothram !== undefined ? overrides.gothram : gothram || undefined,
+        star: overrides?.star !== undefined ? overrides.star : star || undefined,
+        rashi: overrides?.rashi !== undefined ? overrides.rashi : rashi || undefined,
+        photoOnly:
+          overrides?.photoOnly !== undefined ? overrides.photoOnly : photoOnly || undefined,
+        horoscopeOnly:
+          overrides?.horoscopeOnly !== undefined
+            ? overrides.horoscopeOnly
+            : horoscopeOnly || undefined,
+        sort: overrides?.sort !== undefined ? overrides.sort : sortBy || undefined,
         page: 1,
       },
     });
   }
 
+  function handleFilterSubmit(e: FormEvent) {
+    e.preventDefault();
+    executeSearch();
+    setMobileFilterOpen(false);
+  }
+
   function handleResetFilters() {
+    setKeyword("");
+    setProfileId("");
     setGender("");
     setMinAge("");
     setMaxAge("");
@@ -142,6 +191,9 @@ function SearchPage() {
     setGothram("");
     setStar("");
     setRashi("");
+    setPhotoOnly(false);
+    setHoroscopeOnly(false);
+    setSortBy("recommended");
     void navigate({
       to: "/search",
       search: {},
@@ -190,10 +242,12 @@ function SearchPage() {
           realProfiles = data.filter((p): p is typeof p & { id: string } => Boolean(p.id));
         }
       } catch {
-        // Continue with demo profiles
+        // Fallback to demo profiles
       }
 
       const filteredDemo = filterDemoProfiles({
+        query: searchParams.query,
+        profileId: searchParams.profileId,
         gender: searchParams.gender,
         minAge: searchParams.minAge,
         maxAge: searchParams.maxAge,
@@ -207,529 +261,274 @@ function SearchPage() {
         gothram: searchParams.gothram,
         star: searchParams.star,
         rashi: searchParams.rashi,
+        photoOnly: searchParams.photoOnly,
+        horoscopeOnly: searchParams.horoscopeOnly,
       });
 
       const realIds = new Set(realProfiles.map((p) => p.id));
       const combined = [...realProfiles, ...filteredDemo.filter((d) => !realIds.has(d.id))];
+
+      // Client-side sorting
+      if (searchParams.sort === "age_asc") {
+        combined.sort((a, b) => (a.age ?? 0) - (b.age ?? 0));
+      } else if (searchParams.sort === "age_desc") {
+        combined.sort((a, b) => (b.age ?? 0) - (a.age ?? 0));
+      }
+
       return combined;
     },
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3]">
-      {/* Top Banner - Editorial, warm ivory */}
-      <div className="border-b border-[#E4DDD3] bg-[#FAF8F3] pt-24 pb-10 px-4 sm:px-6">
-        <div className="mx-auto max-w-6xl">
-          <p className="text-[11px] font-semibold tracking-widest uppercase text-[#087333] mb-2">
-            Shettibalija Matrimony
-          </p>
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-[#24103F]">
-            Find Your Match
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-[#6B6570] max-w-2xl font-light">
-            Browse verified matrimonial profiles within the Shettibalija community with refined
-            search criteria.
-          </p>
+    <div className="min-h-screen bg-[#FAF8F3] pt-14 pb-16">
+      {/* Top Matrimonial Search Header */}
+      <div className="bg-white border-b border-[#E4DDD3] py-6 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <span className="text-[11px] font-semibold tracking-wider uppercase text-[#087333]">
+                Shettibalija Matrimony Registry
+              </span>
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
+                {lang === "te" ? "మ్యాచ్‌ల శోధన" : "Search Profiles"}
+              </h1>
+              <p className="text-xs text-[#6B6570] mt-1">
+                {lang === "te"
+                  ? "శెట్టిబలిజ కమ్యూనిటీలో ధృవీకరించబడిన వధువు/వరుల ప్రొఫైల్స్"
+                  : "Explore verified matrimonial profiles with detailed cultural, education & horoscope criteria"}
+              </p>
+            </div>
+
+            {/* Quick Keyword / ID Search Bar */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                executeSearch();
+              }}
+              className="flex items-center gap-2 max-w-md w-full"
+            >
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#B0A8B8]" />
+                <Input
+                  type="text"
+                  placeholder={
+                    lang === "te"
+                      ? "కీవర్డ్ లేదా ID (ఉదా: SBM-D101, Doctor)"
+                      : "Search by Keyword or Profile ID..."
+                  }
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  className="pl-9 h-10 text-xs bg-[#FAF8F3] border-[#E4DDD3] focus-visible:ring-1 focus-visible:ring-[#24103F]"
+                />
+              </div>
+              <Button type="submit" className="h-10 px-4 bg-[#24103F] text-xs font-semibold text-white hover:bg-[#311552]">
+                Search
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-        {/* Mobile Filter Action Card (Block on mobile, hidden on desktop) */}
-        <div className="mb-6 block md:hidden">
-          <div className="rounded-xl border border-[#E4DDD3] bg-white p-3.5 shadow-xs">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-[#24103F]">Search Criteria</p>
-                <p className="text-[11px] text-muted-foreground truncate">
-                  {activeFilterCount > 0
-                    ? `${activeFilterCount} filter criteria applied`
-                    : "Age, Gothram, Star, Location..."}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-1.5 shrink-0">
-                {activeFilterCount > 0 ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleResetFilters}
-                    className="h-9 px-2 text-xs text-muted-foreground"
-                  >
-                    Reset
-                  </Button>
-                ) : null}
-
-                <Button
-                  type="button"
-                  onClick={() => setMobileFilterOpen(true)}
-                  className="h-9 rounded-lg bg-[#24103F] text-white px-3 text-xs font-medium hover:bg-[#311552] flex items-center gap-1.5"
-                >
-                  <SlidersHorizontal className="h-3.5 w-3.5 text-[#D1A329]" />
-                  <span>Filters</span>
-                  {activeFilterCount > 0 ? (
-                    <Badge className="bg-[#D1A329] text-[#24103F] px-1.5 py-0 text-[10px] font-bold h-4">
-                      {activeFilterCount}
-                    </Badge>
-                  ) : null}
-                </Button>
-              </div>
-            </div>
+      {/* Main Two-Column Search Layout */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8">
+        {/* Mobile Filter Toggle Button */}
+        <div className="lg:hidden mb-4 flex items-center justify-between bg-white p-3 rounded-lg border border-[#E4DDD3]">
+          <div className="text-xs font-medium text-[#24103F]">
+            {profilesQuery.data ? `${profilesQuery.data.length} Profiles Available` : "Searching..."}
           </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setMobileFilterOpen(true)}
+            className="h-8 text-xs font-semibold border-[#D1A329] text-[#24103F] flex items-center gap-1.5"
+          >
+            <Filter className="h-3.5 w-3.5 text-[#D1A329]" />
+            Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+          </Button>
+        </div>
 
-          {/* Mobile Bottom Sheet Filter Panel */}
-          <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
-            <SheetContent
-              side="bottom"
-              className="h-[88vh] rounded-t-3xl p-0 flex flex-col bg-white border-t border-[#D9A514]/40"
-            >
-              <SheetHeader className="p-4 border-b border-border/80 flex flex-row items-center justify-between text-left">
-                <div>
-                  <SheetTitle className="font-serif text-lg font-bold text-[#21083F]">
-                    Refine Search Filters
-                  </SheetTitle>
-                  <p className="text-xs text-muted-foreground">
-                    Discover Shettibalija matches based on your preferences
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setMobileFilterOpen(false)}
-                  className="h-8 w-8 rounded-full"
+        <div className="grid grid-cols-1 lg:grid-cols-[290px_1fr] gap-8 items-start">
+          {/* ========================================================
+              LEFT SIDEBAR: Matrimonial Filters (Desktop)
+             ======================================================== */}
+          <aside className="hidden lg:block sticky top-20 bg-white rounded-xl border border-[#E4DDD3] p-5 shadow-xs">
+            <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-[#E4DDD3]">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 text-[#087333]" />
+                <h2 className="text-sm font-bold text-[#24103F]">Refine Matches</h2>
+              </div>
+              {activeFilterCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-[11px] text-[#087333] hover:underline flex items-center gap-1 font-medium"
                 >
-                  <X className="h-4 w-4" />
-                </Button>
-              </SheetHeader>
+                  <RotateCcw className="h-3 w-3" />
+                  Reset
+                </button>
+              )}
+            </div>
 
-              {/* Scrollable Filters Body on Mobile */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Looking for</Label>
-                  <select
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                  >
-                    <option value="">Bride / Groom (All)</option>
-                    <option value="bride">Bride (వధువు)</option>
-                    <option value="groom">Groom (వరుడు)</option>
-                  </select>
-                </div>
+            <form onSubmit={handleFilterSubmit} className="space-y-4">
+              {/* 1. Looking For */}
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold text-[#24103F]">Looking For</Label>
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024] focus:border-[#24103F] focus:outline-none"
+                >
+                  <option value="">Bride / Groom (All)</option>
+                  <option value="bride">Bride (వధువు)</option>
+                  <option value="groom">Groom (వరుడు)</option>
+                </select>
+              </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#21083F]">Min Age</Label>
-                    <Input
-                      type="number"
-                      inputMode="numeric"
-                      min={18}
-                      max={70}
-                      placeholder="18"
-                      className="h-11 rounded-xl"
-                      value={minAge}
-                      onChange={(e) => setMinAge(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#21083F]">Max Age</Label>
-                    <Input
-                      type="number"
-                      inputMode="numeric"
-                      min={18}
-                      max={70}
-                      placeholder="60"
-                      className="h-11 rounded-xl"
-                      value={maxAge}
-                      onChange={(e) => setMaxAge(e.target.value)}
-                    />
-                  </div>
-                </div>
+              {/* 2. Matrimony / Profile ID */}
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold text-[#24103F]">Search by Profile ID</Label>
+                <Input
+                  type="text"
+                  placeholder="e.g. SBM-D101"
+                  value={profileId}
+                  onChange={(e) => setProfileId(e.target.value)}
+                  className="h-9 text-xs bg-white border-[#E4DDD3]"
+                />
+              </div>
 
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Location / State</Label>
-                  <select
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                  >
-                    <option value="">All Locations</option>
-                    {STATES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Marital Status</Label>
-                  <select
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                    value={maritalStatus}
-                    onChange={(e) => setMaritalStatus(e.target.value)}
-                  >
-                    <option value="">Any Status</option>
-                    {MARITAL_STATUS_OPTIONS.map((m) => (
-                      <option key={m.value} value={m.value}>
-                        {m.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#21083F]">Min Height</Label>
-                    <select
-                      className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                      value={minHeight}
-                      onChange={(e) => setMinHeight(e.target.value)}
-                    >
-                      <option value="">Any Height</option>
-                      {HEIGHT_CHOICES.map((h) => (
-                        <option key={h.cm} value={h.cm}>
-                          {h.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-[#21083F]">Max Height</Label>
-                    <select
-                      className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                      value={maxHeight}
-                      onChange={(e) => setMaxHeight(e.target.value)}
-                    >
-                      <option value="">Any Height</option>
-                      {HEIGHT_CHOICES.map((h) => (
-                        <option key={h.cm} value={h.cm}>
-                          {h.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Education Level</Label>
-                  <select
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                    value={education}
-                    onChange={(e) => setEducation(e.target.value)}
-                  >
-                    <option value="">Any Education</option>
-                    {EDUCATION_OPTIONS.map((e) => (
-                      <option key={e} value={e}>
-                        {e}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Occupation</Label>
-                  <select
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                    value={occupation}
-                    onChange={(e) => setOccupation(e.target.value)}
-                  >
-                    <option value="">Any Occupation</option>
-                    {OCCUPATION_OPTIONS.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Food Habit</Label>
-                  <select
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                    value={foodHabit}
-                    onChange={(e) => setFoodHabit(e.target.value)}
-                  >
-                    <option value="">Any Diet</option>
-                    {FOOD_HABIT_OPTIONS.map((f) => (
-                      <option key={f.value} value={f.value}>
-                        {f.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Star / Nakshatra</Label>
-                  <select
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                    value={star}
-                    onChange={(e) => setStar(e.target.value)}
-                  >
-                    <option value="">Any Star</option>
-                    {NAKSHATRA_OPTIONS.map((n) => (
-                      <option key={n.value} value={n.value}>
-                        {n.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Rashi</Label>
-                  <select
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-xs"
-                    value={rashi}
-                    onChange={(e) => setRashi(e.target.value)}
-                  >
-                    <option value="">Any Rashi</option>
-                    {RASHI_OPTIONS.map((r) => (
-                      <option key={r.value} value={r.value}>
-                        {r.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#21083F]">Gothram</Label>
+              {/* 3. Age Range */}
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold text-[#24103F]">Age Range (Years)</Label>
+                <div className="flex items-center gap-1.5">
                   <Input
-                    placeholder="e.g. Janakula"
-                    value={gothram}
-                    onChange={(e) => setGothram(e.target.value)}
-                    className="h-11 rounded-xl"
+                    type="number"
+                    min={18}
+                    max={70}
+                    placeholder="21"
+                    value={minAge}
+                    onChange={(e) => setMinAge(e.target.value)}
+                    className="h-9 text-xs px-2 text-center"
+                  />
+                  <span className="text-xs text-[#6B6570]">to</span>
+                  <Input
+                    type="number"
+                    min={18}
+                    max={70}
+                    placeholder="35"
+                    value={maxAge}
+                    onChange={(e) => setMaxAge(e.target.value)}
+                    className="h-9 text-xs px-2 text-center"
                   />
                 </div>
               </div>
 
-              {/* Sticky Action Footer */}
-              <div className="border-t border-[#D9A514]/25 bg-white p-3 pb-[env(safe-area-inset-bottom,12px)] flex items-center gap-2.5">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    handleResetFilters();
-                    setMobileFilterOpen(false);
-                  }}
-                  className="flex-1 h-11 rounded-xl text-xs font-semibold border-border"
-                >
-                  <RotateCcw className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
-                  RESET
-                </Button>
-
-                <Button
-                  type="button"
-                  onClick={(e) => {
-                    handleSearchSubmit(e);
-                    setMobileFilterOpen(false);
-                  }}
-                  className="flex-1 h-11 rounded-lg bg-[#24103F] text-white font-medium text-xs hover:bg-[#311552]"
-                >
-                  <Search className="mr-1.5 h-4 w-4 text-[#D1A329]" />
-                  Apply Filters
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-
-        {/* Desktop Filter form (Hidden on mobile) — Premium 3D surface with subtle depth */}
-        <form
-          onSubmit={handleSearchSubmit}
-          className="hidden md:block mb-10 rounded-2xl p-6 sm:p-7 space-y-5 relative"
-          style={{
-            background: "linear-gradient(145deg, #ffffff 0%, #FAF8F3 100%)",
-            border: "1px solid rgba(209,163,41,0.30)",
-            boxShadow:
-              "0 1px 0 rgba(255,255,255,0.95), 0 6px 24px rgba(36,16,63,0.06), 0 1px 3px rgba(36,16,63,0.04), inset 0 1px 0 rgba(255,255,255,0.85)",
-          }}
-        >
-          {/* Subtle architectural gold corner brackets */}
-          <span className="arch-corner arch-corner-tl" style={{ width: 18, height: 18, top: 10, left: 10 }} />
-          <span className="arch-corner arch-corner-tr" style={{ width: 18, height: 18, top: 10, right: 10 }} />
-
-          <div className="flex items-center justify-between border-b border-[#E4DDD3] pb-4">
-            <div className="flex items-center gap-2.5">
-              <Filter className="h-4 w-4 text-[#D1A329]" />
-              <h2 className="text-base font-serif font-medium text-[#24103F]">
-                Refine Your Search
-              </h2>
-              <span className="text-xs text-[#6B6570]">· Shettibalija Community Matrimonial Registry</span>
-            </div>
-
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowMoreFilters((prev) => !prev)}
-              className="text-xs font-medium text-[#087333] hover:text-[#087333] hover:bg-[#087333]/10"
-            >
-              {showMoreFilters ? "− Fewer Filters" : "+ More Filters (Horoscope, Diet, Height)"}
-            </Button>
-          </div>
-
-          {/* Primary Filters Row: Looking For, Age, Location, Education, Occupation, Marital Status */}
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Looking For</Label>
-              <select
-                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-              >
-                <option value="">Bride / Groom</option>
-                <option value="bride">Bride</option>
-                <option value="groom">Groom</option>
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Age Range</Label>
-              <div className="flex items-center gap-1">
-                <Input
-                  type="number"
-                  min={18}
-                  max={70}
-                  placeholder="Min"
-                  value={minAge}
-                  onChange={(e) => setMinAge(e.target.value)}
-                  className="h-9 px-2 text-xs"
-                />
-                <span className="text-[10px] text-muted-foreground">–</span>
-                <Input
-                  type="number"
-                  min={18}
-                  max={70}
-                  placeholder="Max"
-                  value={maxAge}
-                  onChange={(e) => setMaxAge(e.target.value)}
-                  className="h-9 px-2 text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Location</Label>
-              <select
-                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-              >
-                <option value="">Any Location</option>
-                {STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Education</Label>
-              <select
-                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
-                value={education}
-                onChange={(e) => setEducation(e.target.value)}
-              >
-                <option value="">Any Education</option>
-                {EDUCATION_OPTIONS.map((e) => (
-                  <option key={e} value={e}>
-                    {e}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Occupation</Label>
-              <select
-                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
-                value={occupation}
-                onChange={(e) => setOccupation(e.target.value)}
-              >
-                <option value="">Any Occupation</option>
-                {OCCUPATION_OPTIONS.map((occ) => (
-                  <option key={occ} value={occ}>
-                    {occ}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Marital Status</Label>
-              <select
-                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
-                value={maritalStatus}
-                onChange={(e) => setMaritalStatus(e.target.value)}
-              >
-                <option value="">Any Status</option>
-                {MARITAL_STATUS_OPTIONS.map((m) => (
-                  <option key={m.value} value={m.value}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Secondary / Advanced Filters Row */}
-          {showMoreFilters && (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 pt-3 border-t">
+              {/* 4. Height Range */}
               <div className="space-y-1">
-                <Label className="text-xs">Min Height</Label>
+                <Label className="text-xs font-semibold text-[#24103F]">Height Range</Label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <select
+                    value={minHeight}
+                    onChange={(e) => setMinHeight(e.target.value)}
+                    className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs text-[#242024]"
+                  >
+                    <option value="">Min Height</option>
+                    {HEIGHT_CHOICES.map((h) => (
+                      <option key={h.cm} value={h.cm}>
+                        {h.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={maxHeight}
+                    onChange={(e) => setMaxHeight(e.target.value)}
+                    className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs text-[#242024]"
+                  >
+                    <option value="">Max Height</option>
+                    {HEIGHT_CHOICES.map((h) => (
+                      <option key={h.cm} value={h.cm}>
+                        {h.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* 5. Location / State */}
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold text-[#24103F]">Location / State</Label>
                 <select
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
-                  value={minHeight}
-                  onChange={(e) => setMinHeight(e.target.value)}
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
                 >
-                  <option value="">Any Height</option>
-                  {HEIGHT_CHOICES.map((h) => (
-                    <option key={h.cm} value={h.cm}>
-                      {h.label}
+                  <option value="">All Locations</option>
+                  {STATES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
                     </option>
                   ))}
                 </select>
               </div>
 
+              {/* 6. Education */}
               <div className="space-y-1">
-                <Label className="text-xs">Max Height</Label>
+                <Label className="text-xs font-semibold text-[#24103F]">Education</Label>
                 <select
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
-                  value={maxHeight}
-                  onChange={(e) => setMaxHeight(e.target.value)}
+                  value={education}
+                  onChange={(e) => setEducation(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
                 >
-                  <option value="">Any Height</option>
-                  {HEIGHT_CHOICES.map((h) => (
-                    <option key={h.cm} value={h.cm}>
-                      {h.label}
+                  <option value="">Any Education</option>
+                  {EDUCATION_OPTIONS.map((ed) => (
+                    <option key={ed} value={ed}>
+                      {ed}
                     </option>
                   ))}
                 </select>
               </div>
 
+              {/* 7. Occupation */}
               <div className="space-y-1">
-                <Label className="text-xs">Food Habit</Label>
+                <Label className="text-xs font-semibold text-[#24103F]">Occupation</Label>
                 <select
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
-                  value={foodHabit}
-                  onChange={(e) => setFoodHabit(e.target.value)}
+                  value={occupation}
+                  onChange={(e) => setOccupation(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
                 >
-                  <option value="">Any Food Habit</option>
-                  {FOOD_HABIT_OPTIONS.map((fh) => (
-                    <option key={fh.value} value={fh.value}>
-                      {fh.label}
+                  <option value="">Any Occupation</option>
+                  {OCCUPATION_OPTIONS.map((occ) => (
+                    <option key={occ} value={occ}>
+                      {occ}
                     </option>
                   ))}
                 </select>
               </div>
 
+              {/* 8. Marital Status */}
               <div className="space-y-1">
-                <Label className="text-xs">Star / Nakshatra</Label>
+                <Label className="text-xs font-semibold text-[#24103F]">Marital Status</Label>
                 <select
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
+                  value={maritalStatus}
+                  onChange={(e) => setMaritalStatus(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
+                >
+                  <option value="">Any Status</option>
+                  {MARITAL_STATUS_OPTIONS.map((m) => (
+                    <option key={m.value} value={m.value}>
+                      {m.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 9. Star / Nakshatra */}
+              <div className="space-y-1">
+                <Label className="text-xs font-semibold text-[#24103F]">Star / Nakshatra</Label>
+                <select
                   value={star}
                   onChange={(e) => setStar(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
                 >
                   <option value="">Any Star</option>
                   {NAKSHATRA_OPTIONS.map((n) => (
@@ -740,95 +539,506 @@ function SearchPage() {
                 </select>
               </div>
 
+              {/* 10. Gothram */}
               <div className="space-y-1">
-                <Label className="text-xs">Rashi</Label>
-                <select
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
-                  value={rashi}
-                  onChange={(e) => setRashi(e.target.value)}
-                >
-                  <option value="">Any Rashi</option>
-                  {RASHI_OPTIONS.map((r) => (
-                    <option key={r.value} value={r.value}>
-                      {r.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <Label className="text-xs">Gothram</Label>
+                <Label className="text-xs font-semibold text-[#24103F]">Gothram</Label>
                 <Input
+                  type="text"
                   placeholder="e.g. Janakula"
                   value={gothram}
                   onChange={(e) => setGothram(e.target.value)}
+                  className="h-9 text-xs bg-white border-[#E4DDD3]"
+                />
+              </div>
+
+              {/* 11. Verification & Trust Checkboxes */}
+              <div className="space-y-2 pt-2 border-t border-[#E4DDD3]">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={photoOnly}
+                    onChange={(e) => setPhotoOnly(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded border-[#E4DDD3] text-[#24103F] focus:ring-[#24103F]"
+                  />
+                  <span className="text-xs text-[#4A4550]">Profiles with Photo only</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={horoscopeOnly}
+                    onChange={(e) => setHoroscopeOnly(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded border-[#E4DDD3] text-[#24103F] focus:ring-[#24103F]"
+                  />
+                  <span className="text-xs text-[#4A4550]">Horoscope Added only</span>
+                </label>
+              </div>
+
+              {/* Apply Filters Button */}
+              <Button
+                type="submit"
+                className="w-full h-10 rounded-md bg-[#24103F] text-xs font-semibold text-white hover:bg-[#311552] transition-colors shadow-xs"
+              >
+                Apply Filters
+              </Button>
+            </form>
+          </aside>
+
+          {/* ========================================================
+              RIGHT MAIN CONTENT: Search Results & Matrimonial Cards
+             ======================================================== */}
+          <main className="min-w-0">
+            {/* Results Header: Count & Sort */}
+            <div className="bg-white rounded-xl border border-[#E4DDD3] p-4 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+              <div>
+                <h2 className="text-base font-serif font-bold text-[#24103F]">
+                  {lang === "te" ? "సిఫార్సు చేసిన మ్యాచ్‌లు" : "Recommended Matches"}
+                </h2>
+                <p className="text-xs text-[#6B6570]">
+                  {profilesQuery.isLoading
+                    ? "Searching matching profiles..."
+                    : `${profilesQuery.data?.length ?? 0} Matrimonial Profiles Found`}
+                </p>
+              </div>
+
+              {/* Sort Dropdown */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#6B6570] shrink-0">Sort By:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => {
+                    const nextSort = e.target.value;
+                    setSortBy(nextSort);
+                    executeSearch({ sort: nextSort });
+                  }}
+                  className="h-8 rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024] focus:border-[#24103F]"
+                >
+                  <option value="recommended">Recommended</option>
+                  <option value="newest">Newest First</option>
+                  <option value="age_asc">Age: Low to High</option>
+                  <option value="age_desc">Age: High to Low</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Active Filter Chips */}
+            {activeFilterCount > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 mb-5">
+                <span className="text-xs text-[#6B6570] mr-1">Active Filters:</span>
+                {gender && (
+                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
+                    {gender === "bride" ? "Bride" : "Groom"}
+                    <X
+                      className="h-3 w-3 ml-1 cursor-pointer"
+                      onClick={() => {
+                        setGender("");
+                        executeSearch({ gender: undefined });
+                      }}
+                    />
+                  </Badge>
+                )}
+                {state && (
+                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
+                    {state}
+                    <X
+                      className="h-3 w-3 ml-1 cursor-pointer"
+                      onClick={() => {
+                        setState("");
+                        executeSearch({ state: undefined });
+                      }}
+                    />
+                  </Badge>
+                )}
+                {(minAge || maxAge) && (
+                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
+                    Age: {minAge || "18"} - {maxAge || "70"}
+                    <X
+                      className="h-3 w-3 ml-1 cursor-pointer"
+                      onClick={() => {
+                        setMinAge("");
+                        setMaxAge("");
+                        executeSearch({ minAge: undefined, maxAge: undefined });
+                      }}
+                    />
+                  </Badge>
+                )}
+                {education && (
+                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
+                    {education}
+                    <X
+                      className="h-3 w-3 ml-1 cursor-pointer"
+                      onClick={() => {
+                        setEducation("");
+                        executeSearch({ education: undefined });
+                      }}
+                    />
+                  </Badge>
+                )}
+                {keyword && (
+                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
+                    "{keyword}"
+                    <X
+                      className="h-3 w-3 ml-1 cursor-pointer"
+                      onClick={() => {
+                        setKeyword("");
+                        executeSearch({ query: undefined });
+                      }}
+                    />
+                  </Badge>
+                )}
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-xs text-[#087333] hover:underline ml-1 font-semibold"
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
+
+            {/* Results Profiles Listing */}
+            {profilesQuery.isLoading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Skeleton key={i} className="h-44 w-full rounded-xl" />
+                ))}
+              </div>
+            ) : profilesQuery.isError ? (
+              <ErrorState
+                title="Failed to load profiles"
+                description="There was an error querying the matrimonial database. Please try again."
+                onRetry={() => void profilesQuery.refetch()}
+              />
+            ) : !profilesQuery.data?.length ? (
+              <EmptyState
+                title="No matching profiles found"
+                description="Try adjusting or clearing your search filters to view more profiles."
+                actionLabel="Reset All Filters"
+                onAction={handleResetFilters}
+              />
+            ) : (
+              <div className="space-y-4">
+                {profilesQuery.data.map((profile) => {
+                  const isShortlisted = actions.shortlistedIds.has(profile.id);
+                  const isInterestSent = actions.sentInterests.has(profile.id);
+                  const demoObj = profile as DemoProfile;
+                  const candidateName = profile.display_name ?? "Community Member";
+                  const candidateCode = profile.profile_code ?? profile.id;
+                  const location = locationLine(profile.city, profile.state);
+                  const formattedHeight = profile.height_cm ? formatHeight(profile.height_cm) : null;
+
+                  return (
+                    <article
+                      key={profile.id}
+                      className="rounded-xl border border-[#E4DDD3] bg-white p-4 sm:p-5 shadow-xs hover:shadow-sm transition-all flex flex-col sm:flex-row gap-5"
+                    >
+                      {/* Left: Candidate Photo thumbnail with Code */}
+                      <div className="sm:w-44 flex-shrink-0 flex flex-col items-center">
+                        <div className="relative aspect-[3/4] w-full max-w-[176px] rounded-lg overflow-hidden bg-[#F0EDE6] border border-[#E4DDD3]">
+                          <ProtectedPhoto
+                            profileId={profile.id}
+                            displayName={candidateName}
+                            photoUrl={profile.photo_url}
+                            className="h-full w-full object-cover"
+                            compact
+                          />
+                          {/* Top-right heart button */}
+                          <button
+                            type="button"
+                            onClick={() => actions.toggleShortlist.mutate(profile.id)}
+                            className="absolute top-2 right-2 h-7 w-7 rounded-full bg-white/90 flex items-center justify-center text-[#6B6570] hover:text-rose-500 shadow-xs"
+                          >
+                            <Heart
+                              className={`h-3.5 w-3.5 ${
+                                isShortlisted ? "fill-rose-500 text-rose-500" : ""
+                              }`}
+                            />
+                          </button>
+                        </div>
+                        <span className="mt-2 text-[10px] font-semibold tracking-wider text-[#6B6570] bg-[#FAF8F3] px-2 py-0.5 rounded border border-[#E4DDD3]">
+                          ID: {candidateCode}
+                        </span>
+                      </div>
+
+                      {/* Center: Details & Demographics */}
+                      <div className="flex-1 min-w-0 flex flex-col justify-between">
+                        <div>
+                          {/* Name & Age Row */}
+                          <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                            <h3 className="font-serif text-lg font-bold text-[#24103F]">
+                              {candidateName}
+                            </h3>
+                            <span className="text-xs text-[#6B6570]">
+                              {profile.age ? `${profile.age} yrs` : "—"}
+                              {formattedHeight ? ` • ${formattedHeight}` : ""}
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded bg-[#087333]/10 px-2 py-0.5 text-[10px] font-semibold text-[#087333] border border-[#087333]/20">
+                              <ShieldCheck className="h-3 w-3" />
+                              Verified Member
+                            </span>
+                          </div>
+
+                          {/* 2-Column Matrimonial Key-Value Details */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-4 my-3 text-xs">
+                            <div className="flex items-center gap-1.5 text-[#4A4550]">
+                              <GraduationCap className="h-3.5 w-3.5 text-[#087333] shrink-0" />
+                              <span className="font-medium text-[#242024]">Education:</span>
+                              <span className="truncate">{profile.education ?? "—"}</span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 text-[#4A4550]">
+                              <Briefcase className="h-3.5 w-3.5 text-[#087333] shrink-0" />
+                              <span className="font-medium text-[#242024]">Profession:</span>
+                              <span className="truncate">{profile.occupation ?? "—"}</span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 text-[#4A4550]">
+                              <MapPin className="h-3.5 w-3.5 text-[#087333] shrink-0" />
+                              <span className="font-medium text-[#242024]">Location:</span>
+                              <span className="truncate">{location || "—"}</span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 text-[#4A4550]">
+                              <Sparkles className="h-3.5 w-3.5 text-[#D1A329] shrink-0" />
+                              <span className="font-medium text-[#242024]">Cultural:</span>
+                              <span className="truncate">
+                                {demoObj.gothram ? `Got: ${demoObj.gothram}` : ""}
+                                {demoObj.star ? ` • ${demoObj.star}` : ""}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Brief About / Family summary */}
+                          {(demoObj.about_me || profile.family_summary) && (
+                            <p className="text-xs text-[#6B6570] line-clamp-2 leading-relaxed bg-[#FAF8F3] p-2.5 rounded-md border border-[#E4DDD3]/60 mb-3">
+                              {demoObj.about_me || profile.family_summary}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Action Bar */}
+                        <div className="pt-2 border-t border-[#E4DDD3]/60 flex flex-wrap items-center justify-between gap-2.5">
+                          <span className="text-[11px] text-[#B0A8B8]">
+                            Community: Shettibalija
+                          </span>
+
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              variant={isInterestSent ? "outline" : "default"}
+                              size="sm"
+                              onClick={() => actions.sendInterest.mutate(profile.id)}
+                              className={`h-8 text-xs font-semibold ${
+                                isInterestSent
+                                  ? "border-[#087333] text-[#087333] bg-[#087333]/5"
+                                  : "bg-[#24103F] text-white hover:bg-[#311552]"
+                              }`}
+                            >
+                              {isInterestSent ? (
+                                <>
+                                  <CheckCircle2 className="h-3.5 w-3.5 mr-1 text-[#087333]" />
+                                  Interest Sent
+                                </>
+                              ) : (
+                                <>
+                                  <Send className="h-3.5 w-3.5 mr-1" />
+                                  Send Interest
+                                </>
+                              )}
+                            </Button>
+
+                            <Button
+                              asChild
+                              variant="outline"
+                              size="sm"
+                              className="h-8 text-xs font-medium border-[#E4DDD3] text-[#242024] hover:border-[#24103F]"
+                            >
+                              <Link
+                                to="/profile/$id"
+                                params={{ id: profile.id }}
+                                className="flex items-center gap-1"
+                              >
+                                View Profile
+                                <ArrowRight className="h-3 w-3" />
+                              </Link>
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
+
+      {/* Mobile Filters Drawer / Sheet */}
+      <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
+        <SheetContent side="right" className="w-[min(100%,22rem)] bg-[#FAF8F3] p-0 flex flex-col">
+          <SheetHeader className="p-4 border-b border-[#E4DDD3] flex flex-row items-center justify-between">
+            <SheetTitle className="text-base font-serif font-bold text-[#24103F]">
+              Search Filters
+            </SheetTitle>
+            <button
+              onClick={() => setMobileFilterOpen(false)}
+              className="h-8 w-8 flex items-center justify-center rounded-md text-[#6B6570]"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </SheetHeader>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {/* Looking For */}
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold text-[#24103F]">Looking For</Label>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-[#E4DDD3] bg-white px-3 text-xs"
+              >
+                <option value="">Bride / Groom (All)</option>
+                <option value="bride">Bride (వధువు)</option>
+                <option value="groom">Groom (వరుడు)</option>
+              </select>
+            </div>
+
+            {/* Profile ID */}
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold text-[#24103F]">Profile ID</Label>
+              <Input
+                type="text"
+                placeholder="e.g. SBM-D101"
+                value={profileId}
+                onChange={(e) => setProfileId(e.target.value)}
+                className="h-10 text-xs bg-white border-[#E4DDD3]"
+              />
+            </div>
+
+            {/* Age Range */}
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold text-[#24103F]">Age Range</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min={18}
+                  max={70}
+                  placeholder="21"
+                  value={minAge}
+                  onChange={(e) => setMinAge(e.target.value)}
+                  className="h-10 text-xs text-center bg-white border-[#E4DDD3]"
+                />
+                <span className="text-xs text-[#6B6570]">to</span>
+                <Input
+                  type="number"
+                  min={18}
+                  max={70}
+                  placeholder="35"
+                  value={maxAge}
+                  onChange={(e) => setMaxAge(e.target.value)}
+                  className="h-10 text-xs text-center bg-white border-[#E4DDD3]"
                 />
               </div>
             </div>
-          )}
 
-          <div className="flex flex-wrap items-center justify-end gap-3 pt-3 border-t border-[#E4DDD3]">
-            <Button type="button" variant="ghost" size="sm" onClick={handleResetFilters} className="text-xs text-[#6B6570] hover:text-[#24103F]">
-              <RotateCcw className="mr-1 h-3.5 w-3.5" />
+            {/* State */}
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold text-[#24103F]">Location / State</Label>
+              <select
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-[#E4DDD3] bg-white px-3 text-xs"
+              >
+                <option value="">All Locations</option>
+                {STATES.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Education */}
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold text-[#24103F]">Education</Label>
+              <select
+                value={education}
+                onChange={(e) => setEducation(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-[#E4DDD3] bg-white px-3 text-xs"
+              >
+                <option value="">Any Education</option>
+                {EDUCATION_OPTIONS.map((ed) => (
+                  <option key={ed} value={ed}>
+                    {ed}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Marital Status */}
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold text-[#24103F]">Marital Status</Label>
+              <select
+                value={maritalStatus}
+                onChange={(e) => setMaritalStatus(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-[#E4DDD3] bg-white px-3 text-xs"
+              >
+                <option value="">Any Status</option>
+                {MARITAL_STATUS_OPTIONS.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Photo & Horoscope */}
+            <div className="space-y-2 pt-2 border-t border-[#E4DDD3]">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={photoOnly}
+                  onChange={(e) => setPhotoOnly(e.target.checked)}
+                  className="h-4 w-4 rounded text-[#24103F]"
+                />
+                <span className="text-xs text-[#242024]">Profiles with Photo only</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={horoscopeOnly}
+                  onChange={(e) => setHoroscopeOnly(e.target.checked)}
+                  className="h-4 w-4 rounded text-[#242024]"
+                />
+                <span className="text-xs text-[#242024]">Horoscope Added only</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="p-4 border-t border-[#E4DDD3] bg-white flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                handleResetFilters();
+                setMobileFilterOpen(false);
+              }}
+              className="flex-1 h-10 text-xs"
+            >
               Reset All
             </Button>
             <Button
-              type="submit"
-              className="h-10 px-6 rounded-md bg-[#24103F] text-xs font-semibold text-white hover:bg-[#311552] transition-all shadow-[0_2px_8px_rgba(36,16,63,0.18)] active:translate-y-px"
+              type="button"
+              onClick={handleFilterSubmit}
+              className="flex-1 h-10 bg-[#24103F] text-white text-xs font-semibold"
             >
-              <Search className="mr-1.5 h-3.5 w-3.5 text-[#D1A329]" />
-              Find Matches
+              Apply Filters
             </Button>
           </div>
-        </form>
-
-        {/* Results */}
-        <div>
-          {profilesQuery.isLoading ? (
-            <div className="grid gap-3 sm:gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <Skeleton key={index} className="h-64 sm:h-96 rounded-2xl" />
-              ))}
-            </div>
-          ) : profilesQuery.isError ? (
-            <ErrorState
-              title="Failed to load profiles"
-              description="There was an error querying the matrimonial database. Please try again."
-              onRetry={() => void profilesQuery.refetch()}
-            />
-          ) : !profilesQuery.data?.length ? (
-            <EmptyState
-              title="No matching profiles found"
-              description="Try adjusting or clearing your search filters to view more profiles."
-              actionLabel="Reset All Filters"
-              onAction={handleResetFilters}
-            />
-          ) : (
-            <div>
-              <div className="mb-4 flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                <span>
-                  Found {profilesQuery.data.length} profile
-                  {profilesQuery.data.length === 1 ? "" : "s"}
-                </span>
-              </div>
-              <div className="grid gap-3 sm:gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
-                {profilesQuery.data
-                  .filter((p): p is typeof p & { id: string } => Boolean(p.id))
-                  .map((profile) => (
-                    <ProfileCard
-                      key={profile.id}
-                      profile={profile}
-                      shortlisted={actions.shortlistedIds.has(profile.id)}
-                      interestSent={actions.sentInterests.has(profile.id)}
-                      onShortlist={() => actions.toggleShortlist.mutate(profile.id)}
-                      onInterest={() => actions.sendInterest.mutate(profile.id)}
-                    />
-                  ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
