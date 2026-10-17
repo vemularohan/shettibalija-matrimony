@@ -70,6 +70,7 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
+    photo_url: "/profiles/harshita.jpg",
     about_me:
       "Namaste! I am working as a Software Engineer in Hyderabad. I am positive-minded, value work-life balance, and love Telugu culture, classical music, and cooking. Looking for an understanding and respectful partner.",
     family_summary:
@@ -105,6 +106,7 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
+    photo_url: "/profiles/sravani.jpg",
     about_me:
       "Doctor currently pursuing DNB residency in Visakhapatnam. Compassionate, career-focused, and grounded in family values. Seeking a supportive life partner from a cultured family.",
     family_summary:
@@ -175,6 +177,7 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
+    photo_url: "/profiles/pooja.jpg",
     about_me:
       "Finance professional with an MBA, working in Vijayawada. Ambitious yet traditional, fond of travel and badminton. Looking for a partner who believes in mutual respect and shared growth.",
     family_summary:
@@ -317,6 +320,7 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
+    photo_url: "/profiles/vikram.jpg",
     about_me:
       "NIT Warangal graduate working as a Senior Software Developer in Hyderabad. Love tech innovations, marathon runs, and spending festive holidays in our native town. Looking for an educated, caring bride.",
     family_summary:
@@ -352,6 +356,7 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English"],
     marital_status: "never_married",
+    photo_url: "/profiles/sai.jpg",
     about_me:
       "Consultant General Surgeon in Vijayawada. Calm-minded, focused on medical service, and respect family elders deeply. Seeking an understanding partner from a good family background.",
     family_summary:
@@ -387,6 +392,7 @@ export const DEMO_PROFILES: DemoProfile[] = [
     mother_tongue: "Telugu",
     languages: ["Telugu", "English", "Hindi"],
     marital_status: "never_married",
+    photo_url: "/profiles/ranjit.jpg",
     about_me:
       "Product Manager in Hyderabad with an engineering and IIM MBA background. Enjoy strategy games, weekend tennis, and travel. Seeking a compatible and cheerful partner.",
     family_summary:

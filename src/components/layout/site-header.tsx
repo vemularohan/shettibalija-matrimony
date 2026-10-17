@@ -57,9 +57,9 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-200",
-        "bg-[#FAF8F3] border-b border-[#E4DDD3]",
-        scrolled && "shadow-[0_1px_8px_rgba(36,16,63,0.06)]",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "bg-[#FAF8F3]/95 backdrop-blur-sm border-b border-[#E4DDD3]",
+        scrolled && "shadow-[0_2px_12px_rgba(36,16,63,0.06),0_1px_0_rgba(255,255,255,0.8)_inset]",
       )}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -155,7 +155,7 @@ export function SiteHeader() {
               <Button
                 asChild
                 size="sm"
-                className="h-8 rounded-md bg-[#24103F] px-4 text-xs font-semibold text-white hover:bg-[#311552] transition-colors"
+                className="h-8 rounded-md bg-[#24103F] px-4 text-xs font-semibold text-white hover:bg-[#311552] transition-all shadow-[0_1px_4px_rgba(36,16,63,0.18)] active:translate-y-px"
               >
                 <Link to="/register">
                   {lang === "te" ? "ప్రొఫైల్ సృష్టించండి" : "Create Profile"}

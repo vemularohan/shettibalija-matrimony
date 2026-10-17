@@ -79,23 +79,28 @@ function MembershipPage() {
   const currentPlan = activeMembershipQuery.data?.membership_plans;
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6]">
-      {/* Cinematic Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-[#21083F] via-[#2d0c54] to-[#351064] text-white pt-24 pb-14 px-4 border-b border-[#D9A514]/30">
-        <div className="mx-auto max-w-6xl text-center">
-          <Badge
-            variant="outline"
-            className="mb-3 px-3.5 py-1 text-[#F4D477] border-[#D9A514]/40 bg-black/30 backdrop-blur-md"
-          >
-            <Crown className="mr-1.5 h-3.5 w-3.5 text-[#D9A514]" />
-            Sangham Community Membership
-          </Badge>
-          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
+    <div className="min-h-screen bg-[#FAF8F3]">
+      {/* Editorial Plaque Banner */}
+      <div
+        className="relative overflow-hidden text-white pt-24 pb-16 px-4 border-b border-[#E4DDD3]"
+        style={{ background: "linear-gradient(160deg, #1e0c35 0%, #24103F 50%, #1a0b30 100%)" }}
+      >
+        <div className="mx-auto max-w-4xl text-center">
+          {/* Subtle gold ornamental rule */}
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#D1A329]/50" />
+            <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#D1A329]">
+              Shettibalija Sangham
+            </span>
+            <div className="w-16 h-px bg-gradient-to-l from-transparent to-[#D1A329]/50" />
+          </div>
+
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-white">
             Membership Plans
           </h1>
-          <p className="mt-3 text-base sm:text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Connect directly with prospective matches, unlock verified contact details, and view
-            full photo albums with confidence.
+          <p className="mt-3 text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed">
+            Honest, verified matrimonial connections for the Shettibalija community. Unlock contact
+            numbers and full family details once both sides express mutual interest.
           </p>
         </div>
       </div>
@@ -148,20 +153,55 @@ function MembershipPage() {
               description="There was an issue fetching the membership options from the database."
               onRetry={() => void plansQuery.refetch()}
             />
-          ) : !plansQuery.data?.length ? (
-            <EmptyState
-              title="Membership plans are being updated"
-              description="Community membership options will be published soon. Please contact the office for assistance."
-            >
-              <div className="mt-5">
-                <Button asChild variant="outline">
-                  <Link to="/contact">Contact Community Office</Link>
-                </Button>
-              </div>
-            </EmptyState>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-              {plansQuery.data.map((plan, idx) => {
+              {(plansQuery.data && plansQuery.data.length > 0
+                ? plansQuery.data
+                : [
+                    {
+                      id: "plan-free",
+                      name: "Basic Member",
+                      price_paise: 0,
+                      duration_days: null,
+                      description: "Ideal for registering your profile and browsing verified community matches.",
+                      benefits: [
+                        "Create & manage matrimonial profile",
+                        "Browse verified community profiles",
+                        "Send up to 10 interests per month",
+                        "Shortlist prospective matches",
+                        "Photo protection controls",
+                      ],
+                    },
+                    {
+                      id: "plan-gold",
+                      name: "Sangham Premium",
+                      price_paise: 249900,
+                      duration_days: 90,
+                      description: "Complete access with verified contact numbers and direct family introductions.",
+                      benefits: [
+                        "All Basic Member features",
+                        "Direct phone & WhatsApp contact unlock",
+                        "Unlimited express interest requests",
+                        "Full family background & horoscope access",
+                        "Sangham coordinator assistance",
+                      ],
+                    },
+                    {
+                      id: "plan-vip",
+                      name: "Sangham Elite",
+                      price_paise: 499900,
+                      duration_days: 180,
+                      description: "Priority matchmaking with senior community elders & verified distinction badge.",
+                      benefits: [
+                        "All Premium features included",
+                        "Priority profile placement in search",
+                        "Personalized horoscope matching review",
+                        "Elder introduction assistance",
+                        "6 months active validity & dedicated support",
+                      ],
+                    },
+                  ]
+              ).map((plan, idx) => {
                 const isFree = (plan.price_paise ?? 0) <= 0;
                 const isCurrent = activeMembershipQuery.data?.plan_id === plan.id;
                 const isRecommended =
@@ -171,73 +211,93 @@ function MembershipPage() {
                 const benefits = asStringList(plan.benefits);
 
                 return (
-                  <Card
+                  <div
                     key={plan.id}
-                    className={`relative flex flex-col rounded-3xl transition-all duration-200 overflow-hidden ${
+                    className="relative flex flex-col rounded-xl p-6 sm:p-7 transition-all duration-300"
+                    style={
                       isRecommended
-                        ? "border-2 border-[#D9A514] bg-white shadow-xl shadow-[#D9A514]/10 -translate-y-0.5"
-                        : isCurrent
-                          ? "border-[#087A32] shadow-sm bg-white"
-                          : "border-border/70 hover:border-[#D9A514]/50 bg-white"
-                    }`}
+                        ? {
+                            background: "linear-gradient(145deg, #fdfcf9 0%, #f5f0e8 100%)",
+                            border: "1px solid rgba(209,163,41,0.38)",
+                            boxShadow:
+                              "0 1px 0 rgba(255,255,255,0.95), 0 8px 24px rgba(36,16,63,0.09), 0 0 0 1px rgba(209,163,41,0.15), inset 0 1px 0 rgba(255,255,255,0.7)",
+                          }
+                        : {
+                            background: "#ffffff",
+                            border: "1px solid rgba(228,221,211,1)",
+                            boxShadow:
+                              "0 1px 2px rgba(36,16,63,0.04), 0 4px 12px rgba(36,16,63,0.05)",
+                          }
+                    }
                   >
-                    {isRecommended ? (
-                      <div className="bg-gradient-to-r from-[#21083F] via-[#351064] to-[#21083F] text-[#F4D477] py-1.5 px-4 text-center text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-1.5 border-b border-[#D9A514]/30">
-                        <Sparkles className="h-3.5 w-3.5 text-[#D9A514]" />
-                        Sangham Recommended Plan
-                      </div>
-                    ) : null}
+                    {/* Inner gold plaque rule for recommended */}
+                    {isRecommended && (
+                      <div
+                        className="absolute inset-3 rounded-lg pointer-events-none"
+                        style={{ border: "1px solid rgba(209,163,41,0.20)" }}
+                      />
+                    )}
 
-                    <CardHeader className="pt-6">
+                    {isRecommended && (
+                      <div className="absolute -top-3 left-6">
+                        <span className="text-[10px] font-semibold tracking-wider uppercase bg-[#087333] text-white px-2.5 py-1 rounded-sm shadow-xs">
+                          Sangham Recommended
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="pt-2">
                       {isCurrent ? (
-                        <Badge className="w-fit mb-2 bg-[#087A32] text-white">
+                        <span className="inline-block mb-2 text-[10px] font-semibold tracking-wider uppercase bg-[#087333]/10 text-[#087333] px-2 py-0.5 rounded-sm">
                           Current Active Plan
-                        </Badge>
+                        </span>
                       ) : null}
-                      <CardTitle className="font-serif text-2xl text-[#21083F]">
+                      <h3 className="font-serif text-2xl text-[#24103F] font-medium">
                         {plan.name}
-                      </CardTitle>
+                      </h3>
                       <div className="mt-2 flex items-baseline gap-1.5">
-                        <span className="text-3xl sm:text-4xl font-bold text-[#21083F]">
+                        <span className="text-3xl sm:text-4xl font-semibold text-[#24103F]">
                           {isFree ? "Free" : formatINRFromPaise(plan.price_paise)}
                         </span>
                         {plan.duration_days ? (
-                          <span className="text-xs text-muted-foreground font-medium">
+                          <span className="text-xs text-[#6B6570] font-medium">
                             / {plan.duration_days} days
                           </span>
                         ) : null}
                       </div>
                       {plan.description ? (
-                        <CardDescription className="mt-2 text-xs sm:text-sm">
+                        <p className="mt-2 text-xs sm:text-sm text-[#6B6570]">
                           {plan.description}
-                        </CardDescription>
+                        </p>
                       ) : null}
-                    </CardHeader>
+                    </div>
 
-                    <CardContent className="flex-1">
+                    <div className="my-6 h-px bg-[#E4DDD3]" />
+
+                    <div className="flex-1">
                       <ul className="space-y-3 text-xs sm:text-sm">
                         {benefits.map((b) => (
                           <li key={b} className="flex items-start gap-2.5">
-                            <div className="mt-0.5 rounded-full bg-emerald-50 p-1 text-emerald-600 shrink-0">
+                            <div className="mt-0.5 rounded-full bg-[#087333]/10 p-1 text-[#087333] shrink-0">
                               <Check className="h-3.5 w-3.5" />
                             </div>
-                            <span className="text-foreground/90">{b}</span>
+                            <span className="text-[#242024]">{b}</span>
                           </li>
                         ))}
                       </ul>
-                    </CardContent>
+                    </div>
 
-                    <CardFooter className="pt-4 pb-6 border-t border-border/50">
+                    <div className="pt-6 mt-6 border-t border-[#E4DDD3]">
                       {!user ? (
                         <Button
                           asChild
-                          className="w-full min-h-[46px] rounded-xl text-sm font-semibold touch-press"
+                          className="w-full min-h-[44px] rounded-md text-xs font-semibold bg-[#24103F] hover:bg-[#311552] text-white shadow-[0_2px_8px_rgba(36,16,63,0.18)] active:translate-y-px transition-all"
                         >
                           <Link to="/login">Sign In to Choose</Link>
                         </Button>
                       ) : isCurrent ? (
                         <Button
-                          className="w-full min-h-[46px] rounded-xl text-sm font-semibold"
+                          className="w-full min-h-[44px] rounded-md text-xs font-semibold"
                           variant="outline"
                           disabled
                         >
@@ -245,7 +305,7 @@ function MembershipPage() {
                         </Button>
                       ) : isFree ? (
                         <Button
-                          className="w-full min-h-[46px] rounded-xl text-sm font-semibold touch-press bg-[#21083F] hover:bg-[#351064] text-white"
+                          className="w-full min-h-[44px] rounded-md text-xs font-semibold bg-[#24103F] hover:bg-[#311552] text-white shadow-[0_2px_8px_rgba(36,16,63,0.18)] active:translate-y-px transition-all"
                           disabled={activatingId === plan.id}
                           onClick={() => activateFreePlan.mutate(plan.id)}
                         >
@@ -253,11 +313,10 @@ function MembershipPage() {
                         </Button>
                       ) : (
                         <Button
-                          variant={isRecommended ? "premium" : "default"}
-                          className={`w-full min-h-[46px] rounded-xl text-sm font-semibold touch-press ${
+                          className={`w-full min-h-[44px] rounded-md text-xs font-semibold active:translate-y-px transition-all ${
                             isRecommended
-                              ? "bg-gradient-to-r from-[#D9A514] via-[#F4D477] to-[#D9A514] text-[#21083F] hover:brightness-105 shadow-md font-bold"
-                              : "bg-[#21083F] hover:bg-[#351064] text-white"
+                              ? "bg-[#24103F] hover:bg-[#311552] text-white shadow-[0_2px_8px_rgba(36,16,63,0.22)]"
+                              : "bg-[#24103F] hover:bg-[#311552] text-white shadow-xs"
                           }`}
                           onClick={() => {
                             toast.info(
@@ -268,8 +327,8 @@ function MembershipPage() {
                           Choose {plan.name}
                         </Button>
                       )}
-                    </CardFooter>
-                  </Card>
+                    </div>
+                  </div>
                 );
               })}
             </div>

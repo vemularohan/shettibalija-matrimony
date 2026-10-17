@@ -20,12 +20,14 @@ export function MobileBottomNav() {
         label: lang === "te" ? "హోమ్" : "Home",
         icon: Home,
         isActive: currentPath === "/dashboard",
+        badge: null,
       },
       {
         to: "/search",
         label: lang === "te" ? "శోధన" : "Search",
         icon: Search,
         isActive: currentPath === "/search",
+        badge: null,
       },
       {
         to: "/dashboard/shortlist",
@@ -46,6 +48,7 @@ export function MobileBottomNav() {
         label: lang === "te" ? "ప్రొఫైల్" : "Profile",
         icon: UserRound,
         isActive: currentPath === "/dashboard/profile",
+        badge: null,
       },
     ] as const;
 

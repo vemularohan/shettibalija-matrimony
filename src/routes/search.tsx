@@ -388,7 +388,7 @@ function SearchPage() {
                     >
                       <option value="">Any Height</option>
                       {HEIGHT_CHOICES.map((h) => (
-                        <option key={h.value} value={h.value}>
+                        <option key={h.cm} value={h.cm}>
                           {h.label}
                         </option>
                       ))}
@@ -403,7 +403,7 @@ function SearchPage() {
                     >
                       <option value="">Any Height</option>
                       {HEIGHT_CHOICES.map((h) => (
-                        <option key={h.value} value={h.value}>
+                        <option key={h.cm} value={h.cm}>
                           {h.label}
                         </option>
                       ))}
@@ -533,17 +533,28 @@ function SearchPage() {
           </Sheet>
         </div>
 
-        {/* Desktop Filter form (Hidden on mobile) */}
+        {/* Desktop Filter form (Hidden on mobile) — Premium 3D surface with subtle depth */}
         <form
           onSubmit={handleSearchSubmit}
-          className="hidden md:block mb-10 rounded-xl border border-[#E4DDD3] bg-white p-6 shadow-xs space-y-5"
+          className="hidden md:block mb-10 rounded-2xl p-6 sm:p-7 space-y-5 relative"
+          style={{
+            background: "linear-gradient(145deg, #ffffff 0%, #FAF8F3 100%)",
+            border: "1px solid rgba(209,163,41,0.30)",
+            boxShadow:
+              "0 1px 0 rgba(255,255,255,0.95), 0 6px 24px rgba(36,16,63,0.06), 0 1px 3px rgba(36,16,63,0.04), inset 0 1px 0 rgba(255,255,255,0.85)",
+          }}
         >
+          {/* Subtle architectural gold corner brackets */}
+          <span className="arch-corner arch-corner-tl" style={{ width: 18, height: 18, top: 10, left: 10 }} />
+          <span className="arch-corner arch-corner-tr" style={{ width: 18, height: 18, top: 10, right: 10 }} />
+
           <div className="flex items-center justify-between border-b border-[#E4DDD3] pb-4">
             <div className="flex items-center gap-2.5">
               <Filter className="h-4 w-4 text-[#D1A329]" />
               <h2 className="text-base font-serif font-medium text-[#24103F]">
                 Refine Your Search
               </h2>
+              <span className="text-xs text-[#6B6570]">· Shettibalija Community Matrimonial Registry</span>
             </div>
 
             <Button
@@ -557,12 +568,12 @@ function SearchPage() {
             </Button>
           </div>
 
-          {/* Primary Filters Row */}
+          {/* Primary Filters Row: Looking For, Age, Location, Education, Occupation, Marital Status */}
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
             <div className="space-y-1">
-              <Label className="text-xs">Looking for</Label>
+              <Label className="text-xs font-semibold text-[#24103F]">Looking For</Label>
               <select
-                className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
+                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
               >
@@ -573,53 +584,38 @@ function SearchPage() {
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Min Age</Label>
-              <Input
-                type="number"
-                min={18}
-                max={70}
-                placeholder="18"
-                value={minAge}
-                onChange={(e) => setMinAge(e.target.value)}
-              />
+              <Label className="text-xs font-semibold text-[#24103F]">Age Range</Label>
+              <div className="flex items-center gap-1">
+                <Input
+                  type="number"
+                  min={18}
+                  max={70}
+                  placeholder="Min"
+                  value={minAge}
+                  onChange={(e) => setMinAge(e.target.value)}
+                  className="h-9 px-2 text-xs"
+                />
+                <span className="text-[10px] text-muted-foreground">–</span>
+                <Input
+                  type="number"
+                  min={18}
+                  max={70}
+                  placeholder="Max"
+                  value={maxAge}
+                  onChange={(e) => setMaxAge(e.target.value)}
+                  className="h-9 px-2 text-xs"
+                />
+              </div>
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Max Age</Label>
-              <Input
-                type="number"
-                min={18}
-                max={70}
-                placeholder="60"
-                value={maxAge}
-                onChange={(e) => setMaxAge(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1">
-              <Label className="text-xs">Marital Status</Label>
+              <Label className="text-xs font-semibold text-[#24103F]">Location</Label>
               <select
-                className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
-                value={maritalStatus}
-                onChange={(e) => setMaritalStatus(e.target.value)}
-              >
-                <option value="">Any Status</option>
-                {MARITAL_STATUS_OPTIONS.map((m) => (
-                  <option key={m.value} value={m.value}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <Label className="text-xs">State</Label>
-              <select
-                className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
+                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
               >
-                <option value="">Any State</option>
+                <option value="">Any Location</option>
                 {STATES.map((s) => (
                   <option key={s} value={s}>
                     {s}
@@ -629,9 +625,25 @@ function SearchPage() {
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Occupation</Label>
+              <Label className="text-xs font-semibold text-[#24103F]">Education</Label>
               <select
-                className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm"
+                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
+                value={education}
+                onChange={(e) => setEducation(e.target.value)}
+              >
+                <option value="">Any Education</option>
+                {EDUCATION_OPTIONS.map((e) => (
+                  <option key={e} value={e}>
+                    {e}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold text-[#24103F]">Occupation</Label>
+              <select
+                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
                 value={occupation}
                 onChange={(e) => setOccupation(e.target.value)}
               >
@@ -639,6 +651,22 @@ function SearchPage() {
                 {OCCUPATION_OPTIONS.map((occ) => (
                   <option key={occ} value={occ}>
                     {occ}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs font-semibold text-[#24103F]">Marital Status</Label>
+              <select
+                className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs shadow-xs text-[#242024] focus:border-[#24103F]"
+                value={maritalStatus}
+                onChange={(e) => setMaritalStatus(e.target.value)}
+              >
+                <option value="">Any Status</option>
+                {MARITAL_STATUS_OPTIONS.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
                   </option>
                 ))}
               </select>
@@ -739,14 +767,17 @@ function SearchPage() {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
-            <Button type="button" variant="ghost" size="sm" onClick={handleResetFilters}>
+          <div className="flex flex-wrap items-center justify-end gap-3 pt-3 border-t border-[#E4DDD3]">
+            <Button type="button" variant="ghost" size="sm" onClick={handleResetFilters} className="text-xs text-[#6B6570] hover:text-[#24103F]">
               <RotateCcw className="mr-1 h-3.5 w-3.5" />
               Reset All
             </Button>
-            <Button type="submit" size="sm">
-              <Search className="mr-1.5 h-4 w-4" />
-              Apply Filters
+            <Button
+              type="submit"
+              className="h-10 px-6 rounded-md bg-[#24103F] text-xs font-semibold text-white hover:bg-[#311552] transition-all shadow-[0_2px_8px_rgba(36,16,63,0.18)] active:translate-y-px"
+            >
+              <Search className="mr-1.5 h-3.5 w-3.5 text-[#D1A329]" />
+              Find Matches
             </Button>
           </div>
         </form>

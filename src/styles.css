@@ -4,6 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Google Fonts — loaded via link tag in HTML head */
+
 /*
  * Shettibalija Matrimony — Editorial Design System
  *
@@ -293,6 +295,184 @@ textarea:focus {
 }
 
 /* =============================================
+   3D DEPTH — Subtle physical materiality
+   NO neon, no cyberpunk, no glow
+   Think: luxury print, engraved metal, silk
+   ============================================= */
+
+/*
+ * Surface: warm silk — gentle depth for section backgrounds
+ * Usage: apply to section wrappers for layered surfaces
+ */
+.surface-silk {
+  background-color: #FAF8F3;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(36,16,63,0.04);
+}
+
+.surface-deep {
+  background-color: #24103F;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+
+/*
+ * Embossed panel — slight raised appearance with warm light
+ * Usage: logo plaque, membership cards, form panels
+ */
+.embossed {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.95),
+    0 2px 4px rgba(36,16,63,0.06),
+    0 6px 16px rgba(36,16,63,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+/*
+ * Engraved panel — slight recessed / inset appearance
+ * Usage: search form panels, input wrappers
+ */
+.engraved {
+  box-shadow:
+    inset 0 1px 3px rgba(36,16,63,0.08),
+    inset 0 0 0 1px rgba(36,16,63,0.06),
+    0 1px 0 rgba(255,255,255,0.9);
+}
+
+/*
+ * Architectural plaque — for logo / brand crest area
+ * Gold edge, soft bevel, premium material
+ */
+.plaque {
+  position: relative;
+  background: linear-gradient(145deg, #fdfcf9 0%, #f5f0e8 100%);
+  border: 1px solid rgba(209, 163, 41, 0.35);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9),
+    0 2px 8px rgba(36,16,63,0.08),
+    0 0 0 1px rgba(209,163,41,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.plaque::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(209,163,41,0.2);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/*
+ * Depth card — profile photograph placed on a surface
+ * Looks like a printed photo on a warm surface
+ */
+.depth-card {
+  box-shadow:
+    0 1px 2px rgba(36,16,63,0.04),
+    0 4px 8px rgba(36,16,63,0.06),
+    0 12px 24px rgba(36,16,63,0.07),
+    0 1px 0 rgba(255,255,255,0.8) inset;
+  transform-style: preserve-3d;
+}
+
+.depth-card:hover {
+  box-shadow:
+    0 2px 4px rgba(36,16,63,0.06),
+    0 8px 20px rgba(36,16,63,0.10),
+    0 20px 40px rgba(36,16,63,0.09);
+  transform: translateY(-3px) rotateX(0.5deg);
+}
+
+/*
+ * Architectural ornament line — subtle gold rule
+ * with small diamond/dot in center
+ */
+.ornament-line {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(209,163,41,0.5) 30%, rgba(209,163,41,0.5) 70%, transparent 100%);
+}
+
+.ornament-line::before {
+  content: '◆';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 6px;
+  color: rgba(209,163,41,0.8);
+  background: var(--background, #FAF8F3);
+  padding: 0 4px;
+  line-height: 1;
+}
+
+/*
+ * 3D perspective wrapper — gentle scene depth
+ */
+.perspective-scene {
+  perspective: 1200px;
+  perspective-origin: 50% 40%;
+}
+
+/*
+ * Architectural frame corners — hand-drawn corner motifs
+ */
+.arch-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: rgba(209,163,41,0.45);
+  border-style: solid;
+}
+
+.arch-corner-tl {
+  top: 12px; left: 12px;
+  border-width: 1.5px 0 0 1.5px;
+}
+
+.arch-corner-tr {
+  top: 12px; right: 12px;
+  border-width: 1.5px 1.5px 0 0;
+}
+
+.arch-corner-bl {
+  bottom: 12px; left: 12px;
+  border-width: 0 0 1.5px 1.5px;
+}
+
+.arch-corner-br {
+  bottom: 12px; right: 12px;
+  border-width: 0 1.5px 1.5px 0;
+}
+
+/*
+ * Cultural motif stamp — decorative kolam/lotus circle
+ * Pure CSS SVG-like decoration for backgrounds
+ */
+.motif-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px solid rgba(209,163,41,0.2);
+  position: relative;
+}
+
+.motif-circle::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(209,163,41,0.15);
+}
+
+.motif-circle::after {
+  content: '';
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  border: 1px dashed rgba(209,163,41,0.1);
+}
+
+/* =============================================
    MOTION — Almost invisible, never distracting
    ============================================= */
 
@@ -310,6 +490,16 @@ textarea:focus {
 
 .animate-fade-up {
   animation: fadeUp 0.5s ease both;
+}
+
+/* Gentle float — for decorative 3D layers only */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 6s ease-in-out infinite;
 }
 
 /* Reduce all motion for users who prefer it */

@@ -93,10 +93,12 @@ function DashboardOverviewPage() {
       }
 
       const existingIds = new Set(dbMatches.map((p) => p.id));
+      const targetDemoGender =
+        targetGender === "male" ? "groom" : targetGender === "female" ? "bride" : undefined;
       const demoMatches = DEMO_PROFILES.filter((d) => {
         if (existingIds.has(d.id)) return false;
         if (profile?.id && d.id === profile.id) return false;
-        if (targetGender && d.gender !== targetGender) return false;
+        if (targetDemoGender && d.gender !== targetDemoGender) return false;
         return true;
       });
 
@@ -448,7 +450,9 @@ function DashboardOverviewPage() {
                     variant="outline"
                     className="w-full border-[#D9A514]/40"
                   >
-                    <Link to={`/profile/${profile.id}`}>View as Public</Link>
+                    <Link to="/profile/$id" params={{ id: profile.id }}>
+                      View as Public
+                    </Link>
                   </Button>
                 </div>
               </div>

@@ -269,9 +269,23 @@ export function ProfileDetailPage() {
           {/* Left Column: Photo & Action Panel (Sticky on Desktop) */}
           <div className="space-y-4">
             <div className="lg:sticky lg:top-24 space-y-4">
-              {/* Photo Box */}
-              <div className="overflow-hidden rounded-xl border border-[#E4DDD3] bg-white p-2.5 shadow-xs">
-                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-[#FAF8F3]">
+              {/* Photo Box — Handcrafted luxury album mount */}
+              <div
+                className="relative rounded-2xl p-2.5 sm:p-3 transition-all duration-300"
+                style={{
+                  background: "linear-gradient(150deg, #ffffff 0%, #FAF8F3 100%)",
+                  border: "1px solid rgba(209,163,41,0.30)",
+                  boxShadow:
+                    "0 1px 0 rgba(255,255,255,0.95), 0 8px 30px rgba(36,16,63,0.08), 0 2px 6px rgba(36,16,63,0.04), inset 0 1px 0 rgba(255,255,255,0.9)",
+                }}
+              >
+                {/* Architectural corner brackets */}
+                <span className="arch-corner arch-corner-tl" style={{ width: 16, height: 16, top: 8, left: 8 }} />
+                <span className="arch-corner arch-corner-tr" style={{ width: 16, height: 16, top: 8, right: 8 }} />
+                <span className="arch-corner arch-corner-bl" style={{ width: 16, height: 16, bottom: 8, left: 8 }} />
+                <span className="arch-corner arch-corner-br" style={{ width: 16, height: 16, bottom: 8, right: 8 }} />
+
+                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-[#FAF8F3] shadow-xs">
                   <ProtectedPhoto
                     profileId={profileId}
                     displayName={displayName}
@@ -280,28 +294,28 @@ export function ProfileDetailPage() {
                   />
 
                   {/* Insignia overlay badge */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-[#24103F]/90 px-3 py-1 text-[11px] font-medium text-[#FAF8F3] backdrop-blur-xs border border-[#D1A329]/40">
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-[#24103F]/90 px-3 py-1 text-[11px] font-medium text-[#FAF8F3] backdrop-blur-xs border border-[#D1A329]/40 shadow-xs">
                     <ShieldCheck className="h-3.5 w-3.5 text-[#D1A329]" />
                     <span>Verified Profile</span>
                   </div>
                 </div>
 
-                <div className="p-3">
+                <div className="p-3 pt-4 text-center">
                   <p className="font-serif text-xl font-medium text-[#24103F] truncate">
                     {displayName}, {profile.age ?? "—"}
                   </p>
-                  <p className="flex items-center gap-1 text-xs text-[#6B6570] mt-0.5">
+                  <p className="flex items-center justify-center gap-1 text-xs text-[#6B6570] mt-1">
                     <MapPin className="h-3.5 w-3.5 text-[#D1A329]" />
                     {locationLine(profile.city, profile.state) || "Andhra Pradesh"}
                   </p>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-2">
+              {/* Action Buttons — Physical press depth */}
+              <div className="space-y-2.5">
                 {/* Primary CTA: Send Interest */}
                 <Button
-                  className={`w-full py-5 text-sm font-medium transition-colors rounded-lg ${
+                  className={`w-full py-5 text-sm font-semibold transition-all rounded-md shadow-[0_2px_8px_rgba(36,16,63,0.20)] active:translate-y-px ${
                     isInterestSent
                       ? "bg-muted text-muted-foreground cursor-not-allowed"
                       : "bg-[#24103F] hover:bg-[#311552] text-white"
@@ -323,8 +337,8 @@ export function ProfileDetailPage() {
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant="outline"
-                    className={`w-full py-5 text-xs font-medium rounded-lg border-[#E4DDD3] hover:border-[#24103F] ${
-                      isShortlisted ? "bg-rose-50 text-rose-700 border-rose-300" : "text-[#24103F]"
+                    className={`w-full py-5 text-xs font-medium rounded-md border-[#E4DDD3] hover:border-[#24103F] active:translate-y-px transition-all shadow-xs ${
+                      isShortlisted ? "bg-rose-50 text-rose-700 border-rose-300" : "text-[#24103F] bg-white"
                     }`}
                     onClick={() => actions.toggleShortlist.mutate(profileId)}
                   >
@@ -344,7 +358,7 @@ export function ProfileDetailPage() {
 
                   <Button
                     variant="outline"
-                    className="w-full py-5 text-xs font-medium rounded-lg border-[#E4DDD3] hover:border-[#24103F] text-[#24103F]"
+                    className="w-full py-5 text-xs font-medium rounded-md border-[#E4DDD3] hover:border-[#24103F] text-[#24103F] bg-white active:translate-y-px transition-all shadow-xs"
                     onClick={() => actions.sendContactRequest.mutate(profileId)}
                   >
                     <PhoneCall className="mr-1.5 h-4 w-4 text-[#087333]" />
@@ -412,8 +426,20 @@ export function ProfileDetailPage() {
 
           {/* Right Column: Profile Information Cards */}
           <div className="space-y-6">
-            {/* Main Profile Summary Banner */}
-            <div className="rounded-xl border border-[#E4DDD3] bg-white p-6 sm:p-7 shadow-xs">
+            {/* Main Profile Summary Banner — Luxury Wedding Album Page */}
+            <div
+              className="rounded-2xl p-6 sm:p-8 relative overflow-hidden"
+              style={{
+                background: "linear-gradient(145deg, #ffffff 0%, #FAF8F3 100%)",
+                border: "1px solid rgba(209,163,41,0.30)",
+                boxShadow:
+                  "0 1px 0 rgba(255,255,255,0.95), 0 6px 20px rgba(36,16,63,0.06), 0 1px 3px rgba(36,16,63,0.04), inset 0 1px 0 rgba(255,255,255,0.85)",
+              }}
+            >
+              {/* Subtle gold architectural corner brackets */}
+              <span className="arch-corner arch-corner-tl" style={{ width: 18, height: 18, top: 10, left: 10 }} />
+              <span className="arch-corner arch-corner-tr" style={{ width: 18, height: 18, top: 10, right: 10 }} />
+
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-xs font-semibold tracking-wider text-[#087333]">
                   {profile.profile_code || "PROFILE"}
@@ -428,7 +454,7 @@ export function ProfileDetailPage() {
                 ) : null}
                 <Badge
                   variant="outline"
-                  className="border-[#E4DDD3] text-[#087333] text-xs font-normal"
+                  className="border-[#D1A329]/40 bg-white/80 text-[#087333] text-xs font-normal shadow-2xs"
                 >
                   <ShieldCheck className="mr-1 h-3.5 w-3.5 text-[#087333]" />
                   Verified Shettibalija Member
