@@ -148,24 +148,29 @@ function RegisterPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-16rem)] px-4 py-8 bg-muted/30">
-      <div className="mx-auto max-w-4xl space-y-6">
-        <div className="text-center space-y-2 flex flex-col items-center">
-          <ShettibalijaLogo size="lg" linkToHome priority />
-          <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#D9A514]">
+    <div className="min-h-screen bg-[#FAF9F6] pb-16">
+      {/* Top Luxury Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-b from-[#21083F] via-[#2d0c54] to-[#351064] text-white pt-24 pb-14 px-4 border-b border-[#D9A514]/30">
+        <div className="mx-auto max-w-4xl text-center space-y-3 flex flex-col items-center">
+          <div className="rounded-2xl p-2 bg-black/30 border border-[#D9A514]/30 shadow-md">
+            <ShettibalijaLogo size="lg" linkToHome priority theme="dark" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#F4D477]">
               {SITE_NAME_TE}
             </p>
-            <h1 className="font-serif text-3xl font-bold text-[#32105F] md:text-4xl">
+            <h1 className="mt-1 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white">
               Create Your Matrimonial Profile
             </h1>
-            <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+            <p className="mt-2 text-sm sm:text-base text-white/80 max-w-xl mx-auto">
               Join verified Shettibalija families seeking marriage alliances with complete details
               in Telugu and English.
             </p>
           </div>
         </div>
+      </div>
 
+      <div className="mx-auto max-w-4xl px-4 py-8 space-y-6">
         {errorMessage ? (
           <div
             className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
@@ -176,22 +181,31 @@ function RegisterPage() {
         ) : null}
 
         {successMessage ? (
-          <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-6 text-center text-sm text-emerald-800 space-y-3">
-            <p className="font-medium text-base">{successMessage}</p>
-            <Button asChild variant="outline">
-              <Link to="/login">Proceed to Login</Link>
-            </Button>
+          <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-8 text-center text-sm text-emerald-800 space-y-3 shadow-md">
+            <p className="font-serif text-2xl font-bold text-emerald-900">{successMessage}</p>
+            <p className="text-xs text-emerald-700">
+              Please verify your email address to log in and manage your matrimony profile.
+            </p>
+            <div className="pt-2">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-xl bg-[#087A32] text-white hover:bg-[#045522]"
+              >
+                <Link to="/login">Proceed to Login</Link>
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">
             {/* Account Login Credentials Card */}
-            <Card className="bg-white border-[#E8E2D8] shadow-sm rounded-2xl">
-              <CardHeader className="pb-3 border-b border-[#D9A514]/20 mb-4">
-                <CardTitle className="text-lg font-serif font-bold text-[#32105F]">
-                  Account Credentials (Login Info)
+            <Card className="bg-white border-[#D9A514]/30 shadow-lg rounded-3xl p-2 sm:p-4">
+              <CardHeader className="pb-3 border-b border-border/80 mb-4">
+                <CardTitle className="text-lg font-serif font-bold text-[#21083F]">
+                  Step 0: Account Credentials (Login Info)
                 </CardTitle>
-                <CardDescription>
-                  Your email and password to access and update your matrimony account
+                <CardDescription className="text-xs">
+                  Your email and password to access and update your matrimony account securely
                 </CardDescription>
               </CardHeader>
               <CardContent>

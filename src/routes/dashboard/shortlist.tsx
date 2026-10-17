@@ -57,17 +57,18 @@ function DashboardShortlistPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl font-bold text-primary">Shortlisted Profiles</h1>
+      <div className="border-b border-[#D9A514]/25 pb-4">
+        <h1 className="font-serif text-3xl font-bold text-[#21083F]">Shortlisted Profiles</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Candidate profiles you have bookmarked for family review and discussion.
+          Candidate profiles you have bookmarked for family review, horoscope matching, and
+          discussion.
         </p>
       </div>
 
       {shortlistQuery.isLoading ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-80 rounded-2xl" />
+            <Skeleton key={i} className="h-64 sm:h-80 rounded-2xl" />
           ))}
         </div>
       ) : shortlistQuery.isError ? (
@@ -78,11 +79,12 @@ function DashboardShortlistPage() {
         />
       ) : !shortlistQuery.data?.length ? (
         <EmptyState
+          icon={<Heart className="h-6 w-6 text-rose-500" />}
           title="Your shortlist is empty"
           description="Browse profiles and click 'Shortlist' to save candidates you are interested in."
         >
           <div className="mt-4">
-            <Button asChild>
+            <Button asChild className="min-h-[44px] rounded-xl bg-[#21083F] text-white">
               <Link to="/search">
                 <Search className="mr-1.5 h-4 w-4" />
                 Search Profiles
@@ -91,7 +93,7 @@ function DashboardShortlistPage() {
           </div>
         </EmptyState>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {shortlistQuery.data
             .filter((p): p is typeof p & { id: string } => Boolean(p && p.id))
             .map((profile) => (

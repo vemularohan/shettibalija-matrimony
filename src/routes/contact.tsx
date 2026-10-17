@@ -61,127 +61,155 @@ function ContactPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12">
-      <div className="text-center max-w-2xl mx-auto mb-12">
-        <p className="text-sm font-semibold uppercase tracking-wider text-gold-foreground">
-          {SITE_NAME_TE}
-        </p>
-        <h1 className="mt-2 font-serif text-3xl font-bold text-primary md:text-5xl">Contact Us</h1>
-        <p className="mt-3 text-lg text-muted-foreground">
-          We are here to help community members and families with registration, verification, and
-          support.
-        </p>
-      </div>
-
-      <div className="grid gap-8 md:grid-cols-[1fr_1.4fr]">
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-serif text-xl">Community Coordination Office</CardTitle>
-              <CardDescription>Serving Telugu Shettibalija families</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium">Head Office</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Shettibalija Community Center, Main Road, Rajahmundry & Hyderabad Regional Desks
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium">Helpline</p>
-                  <p className="text-xs text-muted-foreground">+91 (Office Support Desk)</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    Mon – Sat, 9:30 AM to 6:30 PM IST
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium">Email Support</p>
-                  <p className="text-xs text-muted-foreground">support@shettibalijamatrimony.org</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+    <div className="min-h-screen bg-gradient-to-b from-[#21083F]/[0.02] via-[#F8F7F4] to-[#F8F7F4] py-16">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#D9A514]">
+            {SITE_NAME_TE} • COMMUNITY SUPPORT &amp; ALLIANCE HELP
+          </span>
+          <h1 className="mt-2 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#21083F]">
+            Contact Us
+          </h1>
+          <p className="mt-3 text-base sm:text-lg text-muted-foreground">
+            We are here to help community members and families with registration, verification, and
+            matrimonial support.
+          </p>
         </div>
 
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-serif text-xl">Send an Inquiry</CardTitle>
-              <CardDescription>
-                Fill out the form below and our coordinators will reach out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="contact-name">Your Full Name *</Label>
-                  <Input
-                    id="contact-name"
-                    required
-                    placeholder="Enter name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    disabled={submitting}
-                  />
+        <div className="grid gap-8 md:grid-cols-[1fr_1.4fr]">
+          <div className="space-y-6">
+            <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
+              <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+                <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+                  Community Coordination Office
+                </CardTitle>
+                <CardDescription>Serving Telugu Shettibalija families</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="rounded-xl bg-[#21083F]/5 p-2 text-[#21083F]">
+                    <MapPin className="h-5 w-5 text-[#D9A514] shrink-0" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-[#21083F]">Regional Coordination Desks</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
+                      Rajahmundry, Kakinada, Visakhapatnam, Vijayawada &amp; Hyderabad Support Desks
+                    </p>
+                  </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex items-start gap-3.5">
+                  <div className="rounded-xl bg-[#087A32]/10 p-2 text-[#087A32]">
+                    <Phone className="h-5 w-5 shrink-0" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-[#21083F]">Helpline</p>
+                    <p className="text-xs text-muted-foreground">+91 (Office Support Desk)</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Mon – Sat, 9:30 AM to 6:30 PM IST
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="rounded-xl bg-[#D9A514]/15 p-2 text-[#D9A514]">
+                    <Mail className="h-5 w-5 text-[#21083F] shrink-0" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-[#21083F]">Email Support</p>
+                    <p className="text-xs text-muted-foreground">
+                      support@shettibalijamatrimony.org
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div>
+            <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-xl overflow-hidden">
+              <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+                <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+                  Send an Inquiry
+                </CardTitle>
+                <CardDescription>
+                  Fill out the form below and our coordinators will reach out promptly.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="contact-email">Email Address *</Label>
+                    <Label htmlFor="contact-name" className="text-xs font-semibold">
+                      Your Full Name *
+                    </Label>
                     <Input
-                      id="contact-email"
-                      type="email"
+                      id="contact-name"
                       required
-                      placeholder="name@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       disabled={submitting}
                     />
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="contact-email" className="text-xs font-semibold">
+                        Email Address *
+                      </Label>
+                      <Input
+                        id="contact-email"
+                        type="email"
+                        required
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={submitting}
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="contact-phone" className="text-xs font-semibold">
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="contact-phone"
+                        type="tel"
+                        placeholder="e.g. 9876543210"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        disabled={submitting}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="contact-phone">Phone Number</Label>
-                    <Input
-                      id="contact-phone"
-                      type="tel"
-                      placeholder="e.g. 9876543210"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                    <Label htmlFor="contact-msg" className="text-xs font-semibold">
+                      Message or Inquiry *
+                    </Label>
+                    <Textarea
+                      id="contact-msg"
+                      required
+                      rows={4}
+                      placeholder="How can we assist you with profile registration, verification, or membership?"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
                       disabled={submitting}
                     />
                   </div>
-                </div>
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="contact-msg">Message or Inquiry *</Label>
-                  <Textarea
-                    id="contact-msg"
-                    required
-                    rows={4}
-                    placeholder="How can we assist you with profile registration, verification, or membership?"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold py-6 shadow-md border border-[#D9A514]/30"
                     disabled={submitting}
-                  />
-                </div>
-
-                <Button type="submit" className="w-full" disabled={submitting}>
-                  <Send className="mr-2 h-4 w-4" />
-                  {submitting ? "Sending..." : "Submit Inquiry"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                  >
+                    <Send className="mr-2 h-4 w-4 text-[#F4D477]" />
+                    {submitting ? "Sending..." : "Submit Inquiry"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

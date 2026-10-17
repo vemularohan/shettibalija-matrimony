@@ -38,10 +38,11 @@ function DashboardContactsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl font-bold text-primary">Contact Requests</h1>
+      <div className="border-b border-[#D9A514]/25 pb-4">
+        <h1 className="font-serif text-3xl font-bold text-[#21083F]">Contact Phone Requests</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Requests for candidate and guardian contact phone numbers.
+          Requests for candidate and guardian contact phone numbers authorized by Shettibalija
+          membership.
         </p>
       </div>
 

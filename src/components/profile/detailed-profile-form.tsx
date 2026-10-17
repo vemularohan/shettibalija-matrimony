@@ -250,37 +250,37 @@ export function DetailedProfileForm({
   return (
     <div className="space-y-6">
       {/* Top Header with Language Switcher and Draft Save */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-card p-4 shadow-sm">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-primary font-medium">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#E4DDD3] bg-white p-4 shadow-xs">
+        <div className="flex items-center gap-2.5">
+          <Badge className="bg-[#24103F] text-white border-0 font-medium text-xs px-2.5 py-0.5">
             {t("stepOf")} {currentStep} {t("of")} 10
           </Badge>
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-sm font-medium text-[#24103F]">
             {sections[currentStep - 1]?.title}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={handleSaveDraft}
-            className="text-xs text-muted-foreground hover:text-foreground"
+            className="text-xs font-medium text-muted-foreground hover:text-[#24103F]"
           >
-            <Save className="mr-1 h-3.5 w-3.5" />
+            <Save className="mr-1.5 h-3.5 w-3.5 text-[#D1A329]" />
             {t("saveDraft")}
           </Button>
 
           {/* Bilingual Switcher */}
-          <div className="inline-flex items-center rounded-lg border bg-muted/50 p-0.5 text-xs font-semibold">
+          <div className="inline-flex items-center rounded-lg border border-[#E4DDD3] bg-[#FAF8F3] p-0.5 text-xs font-medium">
             <button
               type="button"
               onClick={() => setLanguage("en")}
-              className={`rounded-md px-2.5 py-1 transition-all ${
+              className={`rounded-md px-2.5 py-1 transition-colors ${
                 lang === "en"
-                  ? "bg-primary text-primary-foreground shadow"
-                  : "text-muted-foreground"
+                  ? "bg-[#24103F] text-white shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               EN
@@ -288,10 +288,10 @@ export function DetailedProfileForm({
             <button
               type="button"
               onClick={() => setLanguage("te")}
-              className={`rounded-md px-2.5 py-1 transition-all ${
+              className={`rounded-md px-2.5 py-1 transition-colors ${
                 lang === "te"
-                  ? "bg-primary text-primary-foreground shadow"
-                  : "text-muted-foreground"
+                  ? "bg-[#24103F] text-white shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               తెలుగు
@@ -300,17 +300,22 @@ export function DetailedProfileForm({
         </div>
       </div>
 
-      {/* Progress Bar */}
+      {/* Subtle Progress Bar */}
       <div className="space-y-1.5">
-        <div className="flex justify-between text-xs text-muted-foreground px-1">
-          <span>{progressPercent}% Completed</span>
-          <span>{sections[currentStep - 1]?.title}</span>
+        <div className="flex justify-between text-xs text-[#6B6570] px-1">
+          <span className="text-[#087333] font-medium">{progressPercent}% Completed</span>
+          <span className="text-[#24103F] font-medium">{sections[currentStep - 1]?.title}</span>
         </div>
-        <Progress value={progressPercent} className="h-2" />
+        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-[#E4DDD3]">
+          <div
+            className="h-full rounded-full bg-[#24103F] transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
       </div>
 
-      {/* Step Pills Navigator (Horizontally Scrollable on Mobile) */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
+      {/* Step Pills Navigator */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         {sections.map((sec) => {
           const Icon = sec.icon;
           const isActive = currentStep === sec.num;
@@ -321,12 +326,12 @@ export function DetailedProfileForm({
               key={sec.num}
               type="button"
               onClick={() => setCurrentStep(sec.num)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+              className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition-colors ${
                 isActive
-                  ? "bg-primary text-primary-foreground shadow"
+                  ? "bg-[#24103F] text-white font-medium"
                   : isDone
-                    ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    ? "bg-[#087333]/10 text-[#087333] font-medium border border-[#087333]/30"
+                    : "bg-white text-muted-foreground border border-[#E4DDD3] hover:border-[#24103F]"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -339,13 +344,13 @@ export function DetailedProfileForm({
 
       {/* Main Form Box */}
       <form onSubmit={handleSubmit}>
-        <Card className="bg-white border-[#E8E2D8] shadow-sm rounded-2xl">
+        <Card className="rounded-xl border border-[#E4DDD3] bg-white shadow-xs overflow-hidden">
           <CardContent className="p-6 sm:p-8">
             {/* STEP 1: PERSONAL DETAILS */}
             {currentStep === 1 && (
               <div className="space-y-6">
                 <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#21083F] flex items-center gap-2.5">
                     <User className="h-6 w-6 text-[#D9A514]" />
                     {t("secPersonal")}
                   </h3>
@@ -446,7 +451,7 @@ export function DetailedProfileForm({
                     </Label>
                     <Input
                       id="s1-tob"
-                      placeholder="e.g. 09:30 AM / 21:15"
+                      type="time"
                       value={formData.timeOfBirth}
                       onChange={(e) => updateField("timeOfBirth", e.target.value)}
                     />
@@ -702,7 +707,8 @@ export function DetailedProfileForm({
                       <div className="space-y-1">
                         <Label className="text-xs">{t("salaryAmount")}</Label>
                         <Input
-                          placeholder="e.g. 1200000 / 12 Lakhs"
+                          placeholder="e.g. 1200000"
+                          inputMode="numeric"
                           value={formData.salaryAmount}
                           onChange={(e) => updateField("salaryAmount", e.target.value)}
                         />
@@ -1142,6 +1148,7 @@ export function DetailedProfileForm({
                     <Input
                       id="s8-phone"
                       type="tel"
+                      inputMode="tel"
                       required
                       placeholder="e.g. 9876543210"
                       value={formData.contactNumber}
@@ -1469,8 +1476,8 @@ export function DetailedProfileForm({
               </div>
             )}
 
-            {/* Bottom Navigation Buttons */}
-            <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[#D9A514]/20 pt-5">
+            {/* Bottom Navigation Buttons (Sticky at bottom on mobile) */}
+            <div className="mt-8 flex items-center justify-between gap-3 border-t border-[#D9A514]/25 pt-5 sticky bottom-0 bg-white/95 backdrop-blur-md -mx-6 -mb-6 p-4 rounded-b-3xl z-30 shadow-xs">
               <div>
                 {currentStep > 1 && (
                   <Button
@@ -1478,9 +1485,9 @@ export function DetailedProfileForm({
                     variant="outline"
                     onClick={handlePrevious}
                     disabled={isSubmitting}
-                    className="border-[#32105F]/30 text-[#32105F] hover:bg-[#32105F]/5 hover:text-[#32105F]"
+                    className="h-11 px-4 sm:px-5 rounded-xl border-[#21083F]/30 text-[#21083F] hover:bg-[#21083F]/5 font-semibold text-xs touch-press"
                   >
-                    <ChevronLeft className="mr-1 h-4 w-4" />
+                    <ChevronLeft className="mr-1 h-4 w-4 text-[#D9A514]" />
                     {t("previous")}
                   </Button>
                 )}
@@ -1491,19 +1498,19 @@ export function DetailedProfileForm({
                   <Button
                     type="button"
                     onClick={handleNext}
-                    className="bg-[#087A32] text-white hover:bg-[#045522] font-semibold px-6 shadow-sm"
+                    className="h-11 px-6 sm:px-8 rounded-xl bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold text-xs shadow-md border border-[#D9A514]/30 touch-press"
                   >
                     {t("next")}
-                    <ChevronRight className="ml-1 h-4 w-4" />
+                    <ChevronRight className="ml-1.5 h-4 w-4 text-[#F4D477]" />
                   </Button>
                 ) : (
                   <Button
                     type="submit"
                     size="lg"
                     disabled={isSubmitting || !formData.declarationAccepted}
-                    className="bg-[#087A32] text-white hover:bg-[#045522] font-semibold px-8 shadow-md"
+                    className="h-12 px-6 sm:px-8 rounded-xl bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold text-xs shadow-xl border border-[#D9A514]/40 touch-press"
                   >
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    <CheckCircle2 className="mr-2 h-4 w-4 text-[#F4D477]" />
                     {isSubmitting ? t("submitting") : submitButtonText || t("completeProfile")}
                   </Button>
                 )}

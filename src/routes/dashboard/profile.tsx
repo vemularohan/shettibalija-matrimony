@@ -78,18 +78,20 @@ function DashboardProfilePage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 pb-12">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-[#E8E2D8] bg-white p-5 shadow-xs">
-        <ShettibalijaLogo size="lg" priority />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-3xl border border-[#D9A514]/25 bg-white p-6 shadow-sm">
+        <div className="relative shrink-0 rounded-2xl bg-[#21083F]/5 p-2 border border-[#D9A514]/20">
+          <ShettibalijaLogo size="lg" priority />
+        </div>
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#D9A514]">
-            {SITE_NAME_TE}
+          <span className="text-xs font-bold uppercase tracking-widest text-[#D9A514]">
+            {SITE_NAME_TE} • VERIFIED MATRIMONIAL BIODATA
           </span>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#32105F]">
-            Matrimonial Profile
+          <h1 className="mt-0.5 font-serif text-2xl sm:text-3xl font-bold text-[#21083F]">
+            Matrimonial Profile Editor
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Maintain your complete 10-section matrimonial biodata for verified matchmaking in Telugu
-            and English.
+          <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+            Complete your official 10-section biodata for authentic Shettibalija community alliances
+            with bilingual English &amp; Telugu support.
           </p>
         </div>
       </div>

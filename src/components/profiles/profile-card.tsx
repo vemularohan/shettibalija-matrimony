@@ -1,8 +1,8 @@
-import { Heart } from "lucide-react";
-import { Link } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Heart, ArrowRight, MapPin } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { ProtectedPhoto } from "@/components/profiles/protected-photo";
-import { formatHeight, locationLine } from "@/lib/format";
+import { locationLine } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export type PublicProfileCardData = {
@@ -18,14 +18,15 @@ export type PublicProfileCardData = {
   family_summary: string | null;
   is_demo?: boolean | undefined;
   interest_tag?: string | null | undefined;
+  photo_url?: string | null | undefined;
 };
 
 export function ProfileCard({
   profile,
   shortlisted,
-  interestSent,
+  interestSent: _interestSent,
   onShortlist,
-  onInterest,
+  onInterest: _onInterest,
   className,
 }: {
   profile: PublicProfileCardData;
@@ -35,68 +36,95 @@ export function ProfileCard({
   onInterest?: () => void;
   className?: string;
 }) {
-  const name = profile.display_name ?? "Member";
+  const navigate = useNavigate();
+  const [isLikedLocally, setIsLikedLocally] = useState(false);
+  const name = profile.display_name ?? "Community Member";
+  const isShortlisted = shortlisted ?? isLikedLocally;
+  const profileTarget = profile.profile_code ?? profile.id;
+  const location = locationLine(profile.city, profile.state);
+
+  function handleHeartClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsLikedLocally(!isShortlisted);
+    onShortlist?.();
+  }
+
+  function handleCardClick() {
+    void navigate({ to: "/profiles/$code", params: { code: profileTarget } });
+  }
+
   return (
     <article
+      onClick={handleCardClick}
       className={cn(
-        "flex h-full flex-col overflow-hidden rounded-2xl border border-[#E8E2D8] bg-white shadow-sm transition-all hover:shadow-md hover:border-[#D9A514]/60",
+        "group relative flex flex-col overflow-hidden rounded-md bg-white cursor-pointer touch-press",
+        "border border-[#E4DDD3] transition-all duration-200",
+        "hover:border-[#24103F]/20 hover:shadow-[0_4px_16px_rgba(36,16,63,0.08)] hover:-translate-y-0.5",
         className,
       )}
     >
-      <ProtectedPhoto
-        profileId={profile.id}
-        displayName={name}
-        className="aspect-[4/5] w-full"
-        compact
-      />
-      <div className="flex flex-1 flex-col p-4">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold tracking-wide text-[#32105F]">
-            {profile.profile_code}
+      {/* Photo */}
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#F0EDE6]">
+        <ProtectedPhoto
+          profileId={profile.id}
+          displayName={name}
+          photoUrl={profile.photo_url}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          compact
+        />
+
+        {/* Gradient overlay — minimal */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+
+        {/* Shortlist heart — minimal, top right */}
+        <button
+          type="button"
+          onClick={handleHeartClick}
+          aria-label={isShortlisted ? "Remove from shortlist" : "Shortlist"}
+          className={cn(
+            "absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full transition-all duration-150",
+            isShortlisted
+              ? "bg-white text-rose-500"
+              : "bg-white/80 text-[#6B6570] hover:text-rose-500",
+          )}
+        >
+          <Heart className={cn("h-3.5 w-3.5", isShortlisted && "fill-rose-500")} />
+        </button>
+
+        {/* Bottom caption — name + location only */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+          <p className="text-sm font-semibold leading-tight">
+            {name}
+            <span className="font-normal opacity-80">, {profile.age ?? "—"}</span>
           </p>
-          {profile.is_demo ? (
-            <span className="inline-flex items-center rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 border border-amber-200/80">
-              Demo
-            </span>
-          ) : null}
+          {location && (
+            <p className="mt-0.5 flex items-center gap-1 text-[11px] text-white/80">
+              <MapPin className="h-2.5 w-2.5 shrink-0" />
+              {location}
+            </p>
+          )}
         </div>
-        <h3 className="mt-1 font-serif text-xl font-bold text-[#32105F]">
-          {name}, {profile.age ?? "—"}
-        </h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {profile.age ?? "—"} yrs • {formatHeight(profile.height_cm)}
-        </p>
-        <p className="mt-2 text-sm">
-          {[profile.education, profile.occupation].filter(Boolean).join(" • ") ||
-            "Details on profile"}
-        </p>
-        <p className="text-sm text-muted-foreground">{locationLine(profile.city, profile.state)}</p>
-        {profile.family_summary ? (
-          <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
-            {profile.family_summary}
-          </p>
-        ) : null}
-        <div className="mt-auto grid grid-cols-1 gap-2 pt-4">
-          <Button asChild>
-            <Link to="/profiles/$code" params={{ code: profile.profile_code ?? profile.id }}>
-              View Profile
-            </Link>
-          </Button>
-          <div className="grid grid-cols-2 gap-2">
-            <Button
-              type="button"
-              variant={shortlisted ? "secondary" : "outline"}
-              onClick={onShortlist}
-              aria-label={shortlisted ? "Remove from shortlist" : "Shortlist this profile"}
-            >
-              <Heart className={cn("h-4 w-4", shortlisted && "fill-primary text-primary")} />
-              Shortlist
-            </Button>
-            <Button type="button" variant="outline" onClick={onInterest} disabled={interestSent}>
-              {interestSent ? "Interest Sent" : "Express Interest"}
-            </Button>
-          </div>
-        </div>
+      </div>
+
+      {/* Minimal card footer */}
+      <div className="flex items-center justify-between px-3 py-2.5 border-t border-[#E4DDD3]">
+        {profile.occupation ? (
+          <span className="text-[11px] text-[#6B6570] truncate">{profile.occupation}</span>
+        ) : profile.education ? (
+          <span className="text-[11px] text-[#6B6570] truncate">{profile.education}</span>
+        ) : (
+          <span className="text-[11px] text-[#B0A8B8]">{profile.profile_code ?? "—"}</span>
+        )}
+        <Link
+          to="/profiles/$code"
+          params={{ code: profileTarget }}
+          onClick={(e) => e.stopPropagation()}
+          className="flex items-center gap-0.5 text-[11px] font-semibold text-[#24103F] hover:text-[#087333] transition-colors shrink-0 ml-2"
+        >
+          View
+          <ArrowRight className="h-3 w-3" />
+        </Link>
       </div>
     </article>
   );

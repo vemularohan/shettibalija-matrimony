@@ -35,15 +35,19 @@ function DashboardPaymentsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#D9A514]/25 pb-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-primary">Payment History</h1>
+          <h1 className="font-serif text-3xl font-bold text-[#21083F]">Payment History</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            View receipts and active membership records for your account.
+            View verified receipts and active membership records for your Shettibalija account.
           </p>
         </div>
 
-        <Button asChild size="sm">
+        <Button
+          asChild
+          size="sm"
+          className="bg-gradient-to-r from-[#D9A514] to-[#F4D477] text-[#21083F] hover:brightness-105 font-bold shadow-md"
+        >
           <Link to="/membership">
             <Crown className="mr-1.5 h-4 w-4" />
             View Membership Plans

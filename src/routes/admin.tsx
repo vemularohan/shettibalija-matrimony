@@ -87,12 +87,14 @@ function AdminDashboardPage() {
   return (
     <RequireAuth admin={true}>
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
-        <div className="flex items-center gap-3">
-          <div className="rounded-2xl bg-primary p-2.5 text-primary-foreground">
+        <div className="flex items-center gap-3.5 border-b border-[#D9A514]/25 pb-5">
+          <div className="rounded-2xl bg-[#21083F] p-3 text-[#F4D477] shadow-sm border border-[#D9A514]/30">
             <Shield className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="font-serif text-3xl font-bold text-foreground">Staff Administration</h1>
+            <h1 className="font-serif text-3xl font-bold text-[#21083F]">
+              Shettibalija Administration
+            </h1>
             <p className="text-sm text-muted-foreground">
               Review and approve member profiles, verify community data, and resolve safety reports.
             </p>
@@ -101,27 +103,29 @@ function AdminDashboardPage() {
 
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-2">
-          <Card>
+          <Card className="rounded-3xl border border-[#D9A514]/20 bg-white shadow-xs">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Pending Approvals
               </CardTitle>
-              <FileCheck className="h-4 w-4 text-primary" />
+              <FileCheck className="h-4 w-4 text-[#087A32]" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{pendingProfilesQuery.data?.length ?? 0}</div>
+              <div className="font-serif text-3xl font-bold text-[#21083F]">
+                {pendingProfilesQuery.data?.length ?? 0}
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="rounded-3xl border border-destructive/20 bg-white shadow-xs">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Open Reports
               </CardTitle>
               <AlertTriangle className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-destructive">
+              <div className="font-serif text-3xl font-bold text-destructive">
                 {reportsQuery.data?.length ?? 0}
               </div>
             </CardContent>
@@ -129,9 +133,11 @@ function AdminDashboardPage() {
         </div>
 
         {/* Pending Profiles Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-serif text-xl">Profiles Pending Review</CardTitle>
+        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+            <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+              Profiles Pending Review
+            </CardTitle>
             <CardDescription>
               New member profiles require approval before becoming searchable to the community.
             </CardDescription>

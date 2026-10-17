@@ -75,23 +75,25 @@ export function DashboardSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl font-bold text-primary">Account Settings</h1>
+      <div className="border-b border-[#D9A514]/25 pb-4">
+        <h1 className="font-serif text-3xl font-bold text-[#21083F]">Account Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Manage your login credentials, personal contact, and security preferences.
         </p>
       </div>
 
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
-              <CardTitle className="font-serif text-xl">Account Information</CardTitle>
+        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+            <div className="flex items-center gap-2.5">
+              <User className="h-5 w-5 text-[#D9A514]" />
+              <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+                Account Information
+              </CardTitle>
             </div>
             <CardDescription>Primary login and contact details</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handleAccountUpdate} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
@@ -126,22 +128,28 @@ export function DashboardSettingsPage() {
                 />
               </div>
 
-              <Button type="submit" disabled={savingAccount}>
+              <Button
+                type="submit"
+                disabled={savingAccount}
+                className="bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold shadow-md border border-[#D9A514]/30"
+              >
                 {savingAccount ? "Saving..." : "Save Account Changes"}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <KeyRound className="h-5 w-5 text-primary" />
-              <CardTitle className="font-serif text-xl">Change Password</CardTitle>
+        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+            <div className="flex items-center gap-2.5">
+              <KeyRound className="h-5 w-5 text-[#D9A514]" />
+              <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+                Change Password
+              </CardTitle>
             </div>
             <CardDescription>Keep your account secure with a strong password</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handlePasswordUpdate} className="space-y-4 max-w-sm">
               <div className="space-y-1.5">
                 <Label htmlFor="set-pass">New Password</Label>
@@ -167,14 +175,18 @@ export function DashboardSettingsPage() {
                 />
               </div>
 
-              <Button type="submit" disabled={savingPassword}>
+              <Button
+                type="submit"
+                disabled={savingPassword}
+                className="bg-[#21083F] hover:bg-[#351064] text-white font-bold shadow-md"
+              >
                 {savingPassword ? "Updating..." : "Update Password"}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        <Card className="border-destructive/20">
+        <Card className="rounded-3xl border-destructive/20 overflow-hidden shadow-xs">
           <CardHeader>
             <CardTitle className="font-serif text-xl text-destructive">Sign Out</CardTitle>
             <CardDescription>Sign out of your session on this device</CardDescription>

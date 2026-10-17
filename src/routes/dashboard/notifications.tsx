@@ -55,18 +55,23 @@ function DashboardNotificationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#D9A514]/25 pb-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-primary">Notifications</h1>
+          <h1 className="font-serif text-3xl font-bold text-[#21083F]">Notifications</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Activity updates, match interests, and status alerts for your profile.
+            Activity updates, match interests, and status alerts for your matrimonial profile.
           </p>
         </div>
 
         {notificationsQuery.data?.some((n) => !n.read_at) ? (
-          <Button variant="outline" size="sm" onClick={() => markAllRead.mutate()}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => markAllRead.mutate()}
+            className="border-[#087A32]/40 text-[#087A32] hover:bg-[#087A32]/10 font-semibold"
+          >
             <CheckCheck className="mr-1.5 h-4 w-4" />
-            Mark all read
+            Mark all as read
           </Button>
         ) : null}
       </div>
@@ -92,17 +97,25 @@ function DashboardNotificationsPage() {
           {notificationsQuery.data.map((item) => (
             <Card
               key={item.id}
-              className={!item.read_at ? "border-primary/40 bg-primary/[0.02]" : ""}
+              className={`rounded-2xl transition-all ${
+                !item.read_at
+                  ? "border-[#D9A514]/40 bg-gradient-to-r from-[#21083F]/[0.03] to-transparent shadow-xs"
+                  : "border-border/60 bg-white"
+              }`}
             >
-              <CardContent className="p-4 flex items-start gap-3">
+              <CardContent className="p-4 flex items-start gap-3.5">
                 <div
-                  className={`mt-0.5 rounded-full p-2 ${!item.read_at ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                  className={`mt-0.5 rounded-xl p-2.5 shrink-0 ${
+                    !item.read_at
+                      ? "bg-[#21083F] text-[#F4D477] shadow-xs"
+                      : "bg-[#F8F7F4] text-muted-foreground"
+                  }`}
                 >
                   <Bell className="h-4 w-4" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-semibold text-foreground text-sm">{item.title}</h3>
+                    <h3 className="font-bold text-[#21083F] text-sm">{item.title}</h3>
                     <span className="text-[11px] text-muted-foreground flex items-center gap-1 shrink-0">
                       <Clock className="h-3 w-3" />
                       {new Date(item.created_at).toLocaleDateString()}

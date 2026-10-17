@@ -100,9 +100,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: SITE_LOGO_URL, type: "image/png" },
       { rel: "apple-touch-icon", href: SITE_LOGO_URL },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap",
       },
     ],
   }),
@@ -134,7 +136,7 @@ function RootComponent() {
       <AuthProvider>
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
-          <main className="flex-1 pb-16 lg:pb-0">
+          <main className="flex-1 pb-24 lg:pb-0">
             <ErrorBoundary>
               <Outlet />
             </ErrorBoundary>

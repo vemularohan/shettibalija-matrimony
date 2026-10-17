@@ -27,29 +27,69 @@ function DashboardPhotosPage() {
 
   const [uploading, setUploading] = useState(false);
 
+  // Client-side image resize helper to keep mobile uploads fast and under ~800KB
+  async function compressImage(file: File, maxWidth = 1600, quality = 0.85): Promise<File> {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith("image/") || file.type.includes("svg")) {
+        return resolve(file);
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return resolve(file);
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) return resolve(file);
+              const optimized = new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), {
+                type: "image/jpeg",
+                lastModified: Date.now(),
+              });
+              resolve(optimized);
+            },
+            "image/jpeg",
+            quality,
+          );
+        };
+        img.onerror = () => resolve(file);
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => resolve(file);
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function handleFileSelect(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file || !user || !profile?.id) return;
+    const rawFile = event.target.files?.[0];
+    if (!rawFile || !user || !profile?.id) return;
 
-    if (!file.type.startsWith("image/")) {
+    if (!rawFile.type.startsWith("image/")) {
       toast.error("Please select a valid image file (JPG or PNG).");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size exceeds 5MB limit.");
       return;
     }
 
     setUploading(true);
 
     try {
-      const ext = file.name.split(".").pop() || "jpg";
+      // Compress and optimize on mobile before upload
+      const file = await compressImage(rawFile);
+      const ext = "jpg";
       const filePath = `${user.id}/${Date.now()}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
         .from(PHOTO_BUCKET)
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, file, { upsert: true, contentType: "image/jpeg" });
 
       if (uploadError) throw uploadError;
 
@@ -130,37 +170,71 @@ function DashboardPhotosPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#D9A514]/25 pb-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-primary">Manage Photos</h1>
+          <h1 className="font-serif text-3xl font-bold text-[#21083F]">Manage Photos</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Upload up to 5 clear photos. Photos are protected according to your privacy settings.
           </p>
         </div>
 
-        <div>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Mobile Camera Capture */}
           <input
             type="file"
-            id="photo-upload-input"
+            id="camera-photo-input"
+            className="hidden"
+            accept="image/*"
+            capture="environment"
+            onChange={handleFileSelect}
+            disabled={uploading}
+          />
+          {/* Gallery Picker */}
+          <input
+            type="file"
+            id="gallery-photo-input"
             className="hidden"
             accept="image/*"
             onChange={handleFileSelect}
             disabled={uploading}
           />
-          <Button asChild disabled={uploading}>
-            <label htmlFor="photo-upload-input" className="cursor-pointer">
-              <Upload className="mr-1.5 h-4 w-4" />
-              {uploading ? "Uploading..." : "Upload New Photo"}
+
+          <Button
+            asChild
+            disabled={uploading}
+            variant="outline"
+            className="h-10 rounded-xl border-[#D9A514]/40 text-[#21083F] font-semibold text-xs touch-press"
+          >
+            <label
+              htmlFor="camera-photo-input"
+              className="cursor-pointer flex items-center gap-1.5"
+            >
+              <Camera className="h-4 w-4 text-[#D9A514]" />
+              <span>Take Photo</span>
+            </label>
+          </Button>
+
+          <Button
+            asChild
+            disabled={uploading}
+            className="h-10 rounded-xl bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-semibold text-xs shadow-md border border-[#D9A514]/30 touch-press"
+          >
+            <label
+              htmlFor="gallery-photo-input"
+              className="cursor-pointer flex items-center gap-1.5"
+            >
+              <Upload className="h-4 w-4 text-[#F4D477]" />
+              <span>{uploading ? "Optimizing & Uploading..." : "Choose Gallery"}</span>
             </label>
           </Button>
         </div>
       </div>
 
-      <div className="rounded-2xl border bg-muted/40 p-4 text-xs text-muted-foreground flex items-center gap-2">
-        <AlertCircle className="h-4 w-4 text-primary shrink-0" />
+      <div className="rounded-2xl border border-[#D9A514]/20 bg-amber-50/50 p-3 sm:p-4 text-xs text-[#21083F] flex items-center gap-2">
+        <AlertCircle className="h-4 w-4 text-[#D9A514] shrink-0" />
         <span>
-          Recommended: Clear front-facing portraits in formal or traditional attire. Group photos or
-          watermarked images are not advised.
+          Images are automatically optimized for mobile speeds. Clear front-facing portraits in
+          formal or traditional attire are recommended.
         </span>
       </div>
 
@@ -169,17 +243,29 @@ function DashboardPhotosPage() {
           title="No photos uploaded yet"
           description="Adding a photo increases match requests significantly."
         >
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <Button asChild variant="outline">
+              <label
+                htmlFor="camera-photo-input"
+                className="cursor-pointer flex items-center gap-1.5"
+              >
+                <Camera className="h-4 w-4 text-[#D9A514]" />
+                Take Photo
+              </label>
+            </Button>
             <Button asChild>
-              <label htmlFor="photo-upload-input" className="cursor-pointer">
-                <Camera className="mr-1.5 h-4 w-4" />
-                Upload Your First Photo
+              <label
+                htmlFor="gallery-photo-input"
+                className="cursor-pointer flex items-center gap-1.5"
+              >
+                <Upload className="h-4 w-4" />
+                Choose From Gallery
               </label>
             </Button>
           </div>
         </EmptyState>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid gap-3 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3">
           {photosQuery.data.map((photo) => (
             <Card key={photo.id} className="overflow-hidden">
               <div className="relative aspect-[3/4] w-full bg-muted">
