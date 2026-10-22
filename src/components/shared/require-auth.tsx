@@ -1,35 +1,111 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { ArrowRight, Lock, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ShettibalijaLogo } from "@/components/brand/logo";
+import { useLanguage } from "@/lib/i18n";
+import { SITE_NAME } from "@/lib/site";
 
 export function RequireAuth({ children, admin }: { children: ReactNode; admin?: boolean }) {
   const { user, loading, isAdmin, isModerator } = useAuth();
+  const { lang } = useLanguage();
+  const location = useRouterState({
+    select: (state) => state.location,
+  });
+  const returnTo = `${location.pathname}${location.searchStr}`;
+  const loginHref = `/login?returnTo=${encodeURIComponent(returnTo)}`;
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-5xl space-y-4 px-4 py-10">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-40 w-full" />
+      <div className="sbm-page min-h-[70vh] bg-[#FAF8F3]">
+        <div className="sbm-container py-16">
+          <div className="sbm-skeleton h-4 w-28" />
+          <div className="sbm-skeleton mt-5 h-12 w-2/3 max-w-xl" />
+          <div className="sbm-skeleton mt-4 h-4 w-1/2 max-w-md" />
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_22rem]">
+            <div className="sbm-skeleton h-56 w-full" />
+            <div className="sbm-skeleton h-64 w-full" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-md px-4 py-16 text-center">
-        <h1 className="font-serif text-3xl">Please login</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          This page is available to registered members only.
-        </p>
-        <div className="mt-6 flex justify-center gap-2">
-          <Button asChild>
-            <Link to="/login">Login</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/register">Register</Link>
-          </Button>
+      <div className="sbm-page min-h-[70vh] bg-[#FAF8F3]">
+        <div className="sbm-container grid gap-12 py-14 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20">
+          <div>
+            <span className="sbm-kicker">
+              {lang === "te" ? "సభ్యులకు మాత్రమే" : "For members only"}
+            </span>
+            <h1 className="sbm-heading mt-4 max-w-xl">
+              {lang === "te"
+                ? "అన్వేషణ ప్రైవేట్‌గా ఉండాలి. అందుకే లాగిన్ అవసరం."
+                : "Discovery should feel private. That is why this page is protected."}
+            </h1>
+            <p className="sbm-body mt-5 max-w-lg">
+              {lang === "te"
+                ? "ప్రొఫైల్స్, ఫోటోలు మరియు సంప్రదింపు వివరాలు నమోదిత సభ్యులకు మాత్రమే. మీ వివరాలు మీ నియంత్రణలో ఉంటాయి."
+                : "Profiles, photos and contact details are available to signed-in members only. Your own information stays within the controls you choose."}
+            </p>
+
+            <dl className="mt-9 grid gap-5 border-t border-[#ded5c8] pt-6 sm:grid-cols-2">
+              <div>
+                <dt className="flex items-center gap-2 text-[12px] font-bold text-[#24103F]">
+                  <Lock className="h-3.5 w-3.5 text-[#D1A329]" aria-hidden />
+                  {lang === "te" ? "గోప్యత రక్షణ" : "Privacy at the data layer"}
+                </dt>
+                <dd className="mt-1.5 text-[12px] leading-6 text-[#6B6570]">
+                  {lang === "te"
+                    ? "సంప్రదింపు వివరాలు మరియు జాతక పత్రాలు బహిరంగంగా కనిపించవు."
+                    : "Contact details and horoscope documents are not placed on the open web."}
+                </dd>
+              </div>
+              <div>
+                <dt className="flex items-center gap-2 text-[12px] font-bold text-[#24103F]">
+                  <ShieldCheck className="h-3.5 w-3.5 text-[#087333]" aria-hidden />
+                  {lang === "te" ? "సమీక్షించిన ప్రొఫైల్స్" : "Reviewed profiles"}
+                </dt>
+                <dd className="mt-1.5 text-[12px] leading-6 text-[#6B6570]">
+                  {lang === "te"
+                    ? "ప్రొఫైల్స్ అన్వేషణలో కనిపించే ముందు నిర్వాహకులు సమీక్షిస్తారు."
+                    : "Profiles are reviewed by administrators before they appear in discovery."}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div className="border border-[#ded5c8] bg-white p-6 sm:p-8">
+            <ShettibalijaLogo size="md" linkToHome />
+            <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#a37d1c]">
+              {SITE_NAME}
+            </p>
+            <h2 className="mt-3 font-serif text-3xl text-[#24103F]">
+              {lang === "te" ? "మీ ప్రయాణాన్ని కొనసాగించండి." : "Continue your journey."}
+            </h2>
+            <p className="mt-3 text-[13px] leading-7 text-[#6B6570]">
+              {lang === "te"
+                ? "మీ ఖాతాలోకి ప్రవేశించి ప్రొఫైల్స్ చూడండి, ఆసక్తులు పంపండి మరియు షార్ట్‌లిస్ట్ చేయండి."
+                : "Sign in to explore profiles, send interest, keep a shortlist and manage your introduction."}
+            </p>
+
+            <div className="mt-7 flex flex-col gap-2.5">
+              <a href={loginHref} className="sbm-button sbm-button--primary w-full">
+                {lang === "te" ? "లాగిన్" : "Login"}
+                <ArrowRight className="h-4 w-4" />
+              </a>
+              <Link to="/register" className="sbm-button sbm-button--outline w-full">
+                {lang === "te" ? "కొత్త ప్రొఫైల్ సృష్టించండి" : "Create a new profile"}
+              </Link>
+            </div>
+
+            <p className="mt-5 border-t border-[#e5ddd1] pt-4 text-[11px] leading-5 text-[#6B6570]">
+              {lang === "te"
+                ? "మీకు ఖాతా లేకపోతే, నమోదు ఉచితం. ప్రొఫైల్ సమీక్ష తర్వాత అన్వేషణలో కనిపిస్తుంది."
+                : "Registration is free. A new profile appears in discovery after review."}
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -37,14 +113,18 @@ export function RequireAuth({ children, admin }: { children: ReactNode; admin?: 
 
   if (admin && !isAdmin && !isModerator) {
     return (
-      <div className="mx-auto max-w-md px-4 py-16 text-center">
-        <h1 className="font-serif text-3xl">Admin access required</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Your account does not have staff permission.
-        </p>
-        <Button asChild className="mt-6">
-          <Link to="/dashboard">Go to dashboard</Link>
-        </Button>
+      <div className="sbm-page min-h-[60vh] bg-[#FAF8F3]">
+        <div className="sbm-container max-w-xl py-20 text-center">
+          <p className="sbm-kicker justify-center">Staff access</p>
+          <h1 className="sbm-heading mt-4">Admin access required</h1>
+          <p className="sbm-body mt-4">
+            Your account does not have staff permission. If you believe this is a mistake, contact
+            the community administrators.
+          </p>
+          <Link to="/dashboard" className="sbm-button sbm-button--primary mt-6">
+            Go to dashboard
+          </Link>
+        </div>
       </div>
     );
   }

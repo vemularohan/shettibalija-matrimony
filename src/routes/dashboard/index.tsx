@@ -1,42 +1,34 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  UserRound,
-  Heart,
-  Bell,
-  Crown,
-  Search,
-  Camera,
-  ShieldCheck,
   ArrowRight,
-  Sparkles,
-  CheckCircle2,
-  Mail,
+  Bell,
+  Camera,
+  Crown,
   Edit3,
+  Heart,
+  Mail,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  UserRound,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ProtectedPhoto } from "@/components/profiles/protected-photo";
 import { ProfileCard, type PublicProfileCardData } from "@/components/profiles/profile-card";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  useOwnMatrimonialProfile,
-  useOwnPrivateDetails,
-  useOwnPreferences,
-  useOwnPhotos,
   useActiveMembership,
+  useOwnMatrimonialProfile,
+  useOwnPhotos,
+  useOwnPreferences,
+  useOwnPrivateDetails,
   useUnreadNotificationCount,
 } from "@/hooks/use-member-data";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { DEMO_PROFILES } from "@/data/demo-profiles";
 import { profileCompletion } from "@/lib/profile-completion";
 import { formatHeight, locationLine } from "@/lib/format";
-import { ShettibalijaLogo } from "@/components/brand/logo";
-import { SITE_NAME_TE } from "@/lib/site";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/")({
   component: DashboardOverviewPage,
@@ -44,6 +36,7 @@ export const Route = createFileRoute("/dashboard/")({
 
 function DashboardOverviewPage() {
   const { user, account } = useAuth();
+  const { lang } = useLanguage();
   const ownProfileQuery = useOwnMatrimonialProfile();
   const profile = ownProfileQuery.data;
   const privateDetailsQuery = useOwnPrivateDetails(profile?.id);
@@ -60,549 +53,405 @@ function DashboardOverviewPage() {
     photosQuery.data?.length ?? 0,
   );
 
-  const primaryPhoto = photosQuery.data?.find((p) => p.is_primary) ?? photosQuery.data?.[0];
+  const primaryPhoto = photosQuery.data?.find((photo) => photo.is_primary) ?? photosQuery.data?.[0];
 
-  // Recommended matches query
   const recommendedQuery = useQuery({
     queryKey: ["dashboard-recommended", profile?.gender, profile?.id],
+    enabled: Boolean(profile?.id),
     queryFn: async () => {
       const targetGender =
         profile?.gender === "male" ? "female" : profile?.gender === "female" ? "male" : undefined;
+      let query = supabase
+        .from("approved_matrimonial_profiles")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(6);
 
-      let dbMatches: PublicProfileCardData[] = [];
-      try {
-        let q = supabase
-          .from("approved_matrimonial_profiles")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(6);
+      if (targetGender) query = query.eq("gender", targetGender);
+      if (profile?.id) query = query.neq("id", profile.id);
 
-        if (targetGender) {
-          q = q.eq("gender", targetGender);
-        }
-        if (profile?.id) {
-          q = q.neq("id", profile.id);
-        }
-
-        const { data, error } = await q;
-        if (!error && data) {
-          dbMatches = data as PublicProfileCardData[];
-        }
-      } catch {
-        // Fallback to demo profiles
-      }
-
-      const existingIds = new Set(dbMatches.map((p) => p.id));
-      const targetDemoGender =
-        targetGender === "male" ? "groom" : targetGender === "female" ? "bride" : undefined;
-      const demoMatches = DEMO_PROFILES.filter((d) => {
-        if (existingIds.has(d.id)) return false;
-        if (profile?.id && d.id === profile.id) return false;
-        if (targetDemoGender && d.gender !== targetDemoGender) return false;
-        return true;
-      });
-
-      return [...dbMatches, ...demoMatches].slice(0, 4);
+      const { data, error } = await query;
+      if (error) throw error;
+      return ((data ?? []) as PublicProfileCardData[]).slice(0, 4);
     },
   });
 
+  const displayName =
+    account?.full_name || profile?.display_name || user?.email?.split("@")[0] || "Member";
+  const planName = membershipQuery.data?.membership_plans?.name;
+  const missing = completion.missing.slice(0, 3);
+
   return (
-    <div className="space-y-8">
-      {/* 1. Cinematic Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-[#D9A514]/30 bg-gradient-to-br from-[#21083F] via-[#2A0A4E] to-[#351064] p-6 sm:p-8 text-white shadow-xl">
-        {/* Ambient background glow & subtle watermark */}
-        <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[#D9A514]/15 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-16 -left-16 h-72 w-72 rounded-full bg-[#087A32]/20 blur-3xl" />
+    <div className="space-y-9">
+      <header className="flex flex-col justify-between gap-5 border-b border-[#ded5c8] pb-7 sm:flex-row sm:items-end">
+        <div>
+          <span className="sbm-kicker">{lang === "te" ? "సభ్యుల పని ప్రదేశం" : "Member workspace"}</span>
+          <h1 className="sbm-heading mt-3">
+            {lang === "te" ? `స్వాగతం, ${displayName}.` : `Welcome back, ${displayName}.`}
+          </h1>
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#6B6570]">
+            {profile?.profile_code ? (
+              <span className="font-semibold tracking-[0.08em] text-[#6B6570]">
+                {profile.profile_code}
+              </span>
+            ) : null}
+            <span className="hidden h-3 w-px bg-[#d4cabd] sm:block" />
+            <span>{planName ? `${planName} member` : "Free account"}</span>
+            <span className="hidden h-3 w-px bg-[#d4cabd] sm:block" />
+            <span>Contact details are private by default</span>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link to="/dashboard/profile" className="sbm-button sbm-button--outline">
+            <Edit3 className="h-4 w-4" aria-hidden />
+            {lang === "te" ? "ప్రొఫైల్ సవరించండి" : "Edit profile"}
+          </Link>
+          <Link to="/search" className="sbm-button sbm-button--primary">
+            <Search className="h-4 w-4" aria-hidden />
+            {lang === "te" ? "ప్రొఫైల్స్ చూడండి" : "Discover profiles"}
+          </Link>
+        </div>
+      </header>
 
-        <div className="relative z-10">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-            <div className="flex items-start sm:items-center gap-4">
-              <div className="relative shrink-0 rounded-2xl bg-white/10 p-2.5 backdrop-blur-md border border-[#D9A514]/30 shadow-inner">
-                <ShettibalijaLogo size="lg" priority />
-                <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#D9A514] text-[9px] text-[#21083F]">
-                  ★
-                </span>
-              </div>
-
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] font-bold tracking-widest uppercase text-[#F4D477]">
-                    {SITE_NAME_TE} • MEMBER PORTAL
-                  </span>
-                  {membershipQuery.data ? (
-                    <Badge className="bg-gradient-to-r from-[#D9A514] to-[#F4D477] text-[#21083F] font-bold text-[10px] border-0">
-                      ★ {membershipQuery.data?.membership_plans?.name || "VIP MEMBER"}
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-white/80 border-white/20 text-[10px]">
-                      Basic Registration
-                    </Badge>
-                  )}
+      <section className="relative overflow-hidden border border-[#ded5c8] bg-white">
+        <div className="grid gap-0 sm:grid-cols-[1fr_auto]">
+          <div className="p-6 sm:p-7">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-[#D1A329]" aria-hidden />
+              <h2 className="text-sm font-bold text-[#24103F]">
+                {lang === "te" ? "ప్రొఫైల్ పూర్తితనం" : "Profile completeness"}
+              </h2>
+            </div>
+            <div className="mt-5 flex items-end gap-4">
+              <p className="font-serif text-5xl leading-none text-[#24103F]">
+                {completion.percent}
+                <span className="font-sans text-lg text-[#6B6570]">%</span>
+              </p>
+              <div className="mb-1 flex-1">
+                <div className="h-1.5 w-full overflow-hidden bg-[#ece5da]">
+                  <div
+                    className="h-full bg-[#087333] transition-all duration-500"
+                    style={{ width: `${completion.percent}%` }}
+                  />
                 </div>
+              </div>
+            </div>
+            <p className="mt-4 max-w-xl text-[12px] leading-6 text-[#6B6570]">
+              {missing.length > 0
+                ? `${lang === "te" ? "ఇంకా జోడించవచ్చు" : "You can still add"} ${missing.join(", ")}. ${lang === "te" ? "ఇవి కుటుంబాలకు మీ గురించి స్పష్టమైన చిత్రాన్ని ఇస్తాయి." : "These details help families understand the fuller picture."}`
+                : lang === "te"
+                  ? "మీ ప్రొఫైల్ కుటుంబాలకు అవసరమైన ప్రధాన వివరాలను కలిగి ఉంది."
+                  : "Your profile has the main details families usually look for."}
+            </p>
+          </div>
+          <div className="flex items-center border-t border-[#e5ddd1] bg-[#FAF8F3] px-6 py-5 sm:border-l sm:border-t-0 sm:px-7">
+            <Link to="/dashboard/profile" className="sbm-link-arrow">
+              {lang === "te" ? "వివరాలు పూర్తి చేయండి" : "Continue your profile"}
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
 
-                <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-bold tracking-wide text-white">
-                  Welcome,{" "}
-                  <span className="text-[#F4D477]">
-                    {account?.full_name ||
-                      profile?.display_name ||
-                      user?.email?.split("@")[0] ||
-                      "Member"}
-                  </span>
-                </h1>
+      <section className="grid grid-cols-2 border-y border-[#ded5c8] sm:grid-cols-4">
+        <Stat
+          label={lang === "te" ? "షార్ట్‌లిస్ట్" : "Shortlisted"}
+          value={actions.shortlistedIds.size}
+          to="/dashboard/shortlist"
+          icon={Heart}
+        />
+        <Stat
+          label={lang === "te" ? "పంపిన ఆసక్తులు" : "Interests sent"}
+          value={actions.sentInterests.size}
+          to="/dashboard/interests"
+          icon={Mail}
+        />
+        <Stat
+          label={lang === "te" ? "నోటిఫికేషన్లు" : "Notifications"}
+          value={unreadCountQuery.data ?? 0}
+          to="/dashboard/notifications"
+          icon={Bell}
+        />
+        <Stat
+          label={lang === "te" ? "సభ్యత్వం" : "Membership"}
+          value={planName ?? "Free"}
+          to="/membership"
+          icon={Crown}
+          compact
+        />
+      </section>
 
-                <p className="mt-1 text-xs sm:text-sm text-white/70">
-                  {profile?.profile_code ? (
-                    <>
-                      Profile Code:{" "}
-                      <span className="font-semibold text-white tracking-wider">
-                        {profile.profile_code}
-                      </span>{" "}
-                      •{" "}
-                    </>
-                  ) : null}
-                  <span>Verified Shettibalija Community Matchmaking</span>
+      <div className="grid items-start gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:gap-10">
+        <section>
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div>
+              <span className="sbm-kicker">{lang === "te" ? "మీ ప్రొఫైల్" : "Your profile"}</span>
+              <h2 className="mt-2 font-serif text-2xl text-[#24103F]">
+                {lang === "te" ? "కుటుంబాలు చూసేది" : "What families see"}
+              </h2>
+            </div>
+            {profile?.id ? (
+              <Link
+                to="/profile/$id"
+                params={{ id: profile.id }}
+                className="sbm-link-arrow shrink-0 text-[11px]"
+              >
+                {lang === "te" ? "పబ్లిక్ వ్యూ" : "Public view"}
+              </Link>
+            ) : null}
+          </div>
+
+          {ownProfileQuery.isLoading ? (
+            <div className="sbm-skeleton aspect-[4/5] w-full" />
+          ) : profile ? (
+            <div className="border border-[#ded5c8] bg-white">
+              <div className="relative aspect-[4/5] overflow-hidden bg-[#efe9df]">
+                <ProtectedPhoto
+                  profileId={profile.id}
+                  displayName={profile.display_name}
+                  ownerMode={true}
+                  storagePath={primaryPhoto?.storage_path}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1b0a30]/85 to-transparent p-4 text-white">
+                  <p className="font-serif text-2xl leading-tight">
+                    {profile.display_name}
+                    {profile.age ? (
+                      <span className="font-sans text-sm font-medium text-white/75">
+                        , {profile.age}
+                      </span>
+                    ) : null}
+                  </p>
+                  <p className="mt-1 text-[11px] text-white/75">
+                    {locationLine(profile.city, profile.state) || "Location not added"}
+                  </p>
+                </div>
+              </div>
+              <dl className="divide-y divide-[#e5ddd1] px-4 text-[12px]">
+                <div className="flex items-center justify-between py-3">
+                  <dt className="text-[#6B6570]">Height</dt>
+                  <dd className="font-semibold text-[#24103F]">
+                    {profile.height_cm ? formatHeight(profile.height_cm) : "Not added"}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4 py-3">
+                  <dt className="shrink-0 text-[#6B6570]">Education</dt>
+                  <dd className="truncate text-right font-semibold text-[#24103F]">
+                    {profile.education || "Not added"}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4 py-3">
+                  <dt className="shrink-0 text-[#6B6570]">Occupation</dt>
+                  <dd className="truncate text-right font-semibold text-[#24103F]">
+                    {profile.occupation || "Not added"}
+                  </dd>
+                </div>
+              </dl>
+              <div className="flex items-start gap-2 border-t border-[#e5ddd1] bg-[#FAF8F3] px-4 py-3">
+                <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#087333]" aria-hidden />
+                <p className="text-[11px] leading-5 text-[#6B6570]">
+                  Contact details and private photos are not shown publicly. You control what is
+                  shared.
                 </p>
               </div>
             </div>
-
-            {/* Quick CTAs inside banner */}
-            <div className="flex flex-wrap items-center gap-2.5">
-              <Button
-                asChild
-                size="sm"
-                className="bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-semibold shadow-md border border-[#D9A514]/30"
-              >
-                <Link to="/search">
-                  <Search className="mr-1.5 h-4 w-4" />
-                  Find Matches
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="sm"
-                variant="outline"
-                className="border-white/25 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md font-medium"
-              >
-                <Link to="/dashboard/profile">
-                  <Edit3 className="mr-1.5 h-3.5 w-3.5" />
-                  Edit Profile
-                </Link>
-              </Button>
-            </div>
-          </div>
-
-          {/* Profile Completion Bar */}
-          <div className="mt-6 border-t border-white/10 pt-5">
-            <div className="flex items-center justify-between text-xs sm:text-sm">
-              <span className="font-medium text-white/90 flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-[#F4D477]" />
-                Profile Completeness Score
-              </span>
-              <span className="font-bold text-[#F4D477] text-sm">
-                {completion.percent}% Complete
-              </span>
-            </div>
-            <div className="relative mt-2.5 h-2.5 w-full overflow-hidden rounded-full bg-white/15">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-[#D9A514] via-[#F4D477] to-[#D9A514] transition-all duration-500 shadow-sm"
-                style={{ width: `${completion.percent}%` }}
-              />
-            </div>
-            {completion.missing.length > 0 ? (
-              <p className="mt-2 text-xs text-white/60">
-                Tip: Add {completion.missing.slice(0, 2).join(" & ")} to increase verified family
-                interest responses by 5x.
+          ) : (
+            <div className="border border-dashed border-[#cdbfa6] bg-white px-6 py-12 text-center">
+              <UserRound className="mx-auto h-6 w-6 text-[#D1A329]" aria-hidden />
+              <h3 className="mt-4 font-serif text-2xl text-[#24103F]">
+                No profile found for this account.
+              </h3>
+              <p className="mx-auto mt-2 max-w-xs text-[12px] leading-6 text-[#6B6570]">
+                Create your matrimonial profile to appear in discovery and receive interests.
               </p>
-            ) : (
-              <p className="mt-2 text-xs text-emerald-300 flex items-center gap-1">
-                <CheckCircle2 className="h-3.5 w-3.5" /> Your profile is fully complete and ready
-                for matching!
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Quick Actions Ribbon */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Link
-          to="/dashboard/profile"
-          className="group flex items-center gap-3 rounded-2xl border border-[#D9A514]/20 bg-white p-4 shadow-xs hover:border-[#D9A514] hover:shadow-md transition-all duration-200"
-        >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#21083F]/5 text-[#21083F] group-hover:bg-[#21083F] group-hover:text-[#F4D477] transition-colors">
-            <Edit3 className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-foreground group-hover:text-[#21083F] truncate">
-              Complete Profile
-            </p>
-            <p className="text-[10px] text-muted-foreground truncate">Update details</p>
-          </div>
-        </Link>
-
-        <Link
-          to="/search"
-          className="group flex items-center gap-3 rounded-2xl border border-[#D9A514]/20 bg-white p-4 shadow-xs hover:border-[#D9A514] hover:shadow-md transition-all duration-200"
-        >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#087A32]/10 text-[#087A32] group-hover:bg-[#087A32] group-hover:text-white transition-colors">
-            <Search className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-foreground group-hover:text-[#087A32] truncate">
-              Find Matches
-            </p>
-            <p className="text-[10px] text-muted-foreground truncate">Filter alliances</p>
-          </div>
-        </Link>
-
-        <Link
-          to="/dashboard/interests"
-          className="group flex items-center gap-3 rounded-2xl border border-[#D9A514]/20 bg-white p-4 shadow-xs hover:border-[#D9A514] hover:shadow-md transition-all duration-200"
-        >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#351064]/5 text-[#351064] group-hover:bg-[#351064] group-hover:text-white transition-colors">
-            <Mail className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-foreground group-hover:text-[#351064] truncate">
-              View Interests
-            </p>
-            <p className="text-[10px] text-muted-foreground truncate">Sent & received</p>
-          </div>
-        </Link>
-
-        <Link
-          to="/membership"
-          className="group flex items-center gap-3 rounded-2xl border border-[#D9A514]/20 bg-white p-4 shadow-xs hover:border-[#D9A514] hover:shadow-md transition-all duration-200"
-        >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D9A514]/15 text-[#D9A514] group-hover:bg-[#D9A514] group-hover:text-[#21083F] transition-colors">
-            <Crown className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-foreground group-hover:text-[#D9A514] truncate">
-              Upgrade Plan
-            </p>
-            <p className="text-[10px] text-muted-foreground truncate">Unlock contact info</p>
-          </div>
-        </Link>
-      </div>
-
-      {/* 3. Quick Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-2xl border border-[#D9A514]/20 bg-white shadow-xs hover:border-[#D9A514]/50 transition-all">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Shortlisted
-            </CardTitle>
-            <div className="rounded-full bg-rose-50 p-2 text-rose-600">
-              <Heart className="h-4 w-4" />
+              <Link to="/dashboard/profile" className="sbm-button sbm-button--primary mt-5">
+                Create your profile
+              </Link>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="font-serif text-3xl font-bold text-[#21083F]">
-              {actions.shortlistedIds.size}
-            </div>
-            <Link
-              to="/dashboard/shortlist"
-              className="mt-2 inline-flex items-center text-xs font-semibold text-[#087A32] hover:text-[#034B21]"
-            >
-              View candidates <ArrowRight className="ml-1 h-3 w-3" />
-            </Link>
-          </CardContent>
-        </Card>
+          )}
+        </section>
 
-        <Card className="rounded-2xl border border-[#D9A514]/20 bg-white shadow-xs hover:border-[#D9A514]/50 transition-all">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Interests Sent
-            </CardTitle>
-            <div className="rounded-full bg-purple-50 p-2 text-[#351064]">
-              <UserRound className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="font-serif text-3xl font-bold text-[#21083F]">
-              {actions.sentInterests.size}
-            </div>
-            <Link
-              to="/dashboard/interests"
-              className="mt-2 inline-flex items-center text-xs font-semibold text-[#087A32] hover:text-[#034B21]"
-            >
-              Track proposals <ArrowRight className="ml-1 h-3 w-3" />
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl border border-[#D9A514]/20 bg-white shadow-xs hover:border-[#D9A514]/50 transition-all">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Notifications
-            </CardTitle>
-            <div className="rounded-full bg-amber-50 p-2 text-[#D9A514]">
-              <Bell className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="font-serif text-3xl font-bold text-[#21083F]">
-              {unreadCountQuery.data ?? 0}
-            </div>
-            <Link
-              to="/dashboard/notifications"
-              className="mt-2 inline-flex items-center text-xs font-semibold text-[#087A32] hover:text-[#034B21]"
-            >
-              View updates <ArrowRight className="ml-1 h-3 w-3" />
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl border border-[#D9A514]/20 bg-white shadow-xs hover:border-[#D9A514]/50 transition-all">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Membership
-            </CardTitle>
-            <div className="rounded-full bg-yellow-50 p-2 text-[#D9A514]">
-              <Crown className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="font-serif text-xl font-bold text-[#21083F] truncate">
-              {membershipQuery.data?.membership_plans?.name ?? "Standard"}
-            </div>
-            <Link
-              to="/membership"
-              className="mt-2 inline-flex items-center text-xs font-semibold text-[#087A32] hover:text-[#034B21]"
-            >
-              Upgrade benefits <ArrowRight className="ml-1 h-3 w-3" />
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 4. Profile Overview & Next Steps */}
-      <div className="grid gap-6 md:grid-cols-[1fr_1.6fr]">
-        {/* Profile Card Preview */}
-        <Card className="overflow-hidden rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm">
-          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-3.5">
-            <div className="flex items-center justify-between">
-              <CardTitle className="font-serif text-lg font-bold text-[#21083F]">
-                My Public Profile Card
-              </CardTitle>
-              <Badge variant="outline" className="border-[#087A32]/40 text-[#087A32] text-[10px]">
-                <ShieldCheck className="mr-1 h-3 w-3" />
-                Verified
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="p-5 space-y-4">
-            {ownProfileQuery.isLoading ? (
-              <Skeleton className="h-72 w-full rounded-2xl" />
-            ) : profile ? (
-              <div>
-                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-[#D9A514]/30 shadow-md">
-                  <ProtectedPhoto
-                    profileId={profile.id}
-                    displayName={profile.display_name}
-                    ownerMode={true}
-                    storagePath={primaryPhoto?.storage_path}
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#21083F]/90 via-[#21083F]/40 to-transparent p-4 text-white">
-                    <p className="font-serif text-xl font-bold tracking-wide">
-                      {profile.display_name}, {profile.age}
-                    </p>
-                    <p className="text-xs text-[#F4D477]">
-                      {locationLine(profile.city, profile.state) || "Andhra Pradesh"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 space-y-1.5 text-xs sm:text-sm">
-                  <div className="flex items-center justify-between border-b pb-1.5 text-muted-foreground">
-                    <span>Height</span>
-                    <span className="font-semibold text-foreground">
-                      {formatHeight(profile.height_cm)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between border-b pb-1.5 text-muted-foreground">
-                    <span>Education</span>
-                    <span className="font-semibold text-foreground truncate max-w-[160px]">
-                      {profile.education || "Not specified"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between pt-0.5 text-muted-foreground">
-                    <span>Occupation</span>
-                    <span className="font-semibold text-foreground truncate max-w-[160px]">
-                      {profile.occupation || "Not specified"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-5 flex gap-2">
-                  <Button
-                    asChild
-                    size="sm"
-                    className="w-full bg-[#21083F] hover:bg-[#351064] text-white"
-                  >
-                    <Link to="/dashboard/profile">Edit Details</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    size="sm"
-                    variant="outline"
-                    className="w-full border-[#D9A514]/40"
-                  >
-                    <Link to="/profile/$id" params={{ id: profile.id }}>
-                      View as Public
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="py-12 text-center text-sm text-muted-foreground">
-                <p>No matrimonial profile found for this account.</p>
-                <Button
-                  asChild
-                  size="sm"
-                  className="mt-4 bg-[#21083F] hover:bg-[#351064] text-white font-semibold"
-                >
-                  <Link to="/dashboard/profile">Create Your Profile</Link>
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Action Shortcuts & Best Practices */}
-        <div className="space-y-4">
-          <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
-            <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-3.5">
-              <CardTitle className="font-serif text-lg font-bold text-[#21083F]">
-                Alliance Boost &amp; Verification
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-5 space-y-3.5">
-              <div className="flex items-start gap-3.5 rounded-2xl border border-border/60 bg-[#F8F7F4]/50 p-4 hover:border-[#D9A514]/60 hover:bg-[#F8F7F4] transition-all">
-                <div className="rounded-xl bg-[#21083F]/10 p-2.5 text-[#21083F]">
-                  <Camera className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#21083F]">
-                    High-Quality Profile Photos
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
-                    {photosQuery.data?.length
-                      ? `${photosQuery.data.length} photo(s) uploaded and active.`
-                      : "Shettibalija families prioritize profiles with clear, authentic portraits."}
-                  </p>
-                </div>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0 border-[#D9A514]/40"
-                >
-                  <Link to="/dashboard/photos">Manage Photos</Link>
-                </Button>
-              </div>
-
-              <div className="flex items-start gap-3.5 rounded-2xl border border-border/60 bg-[#F8F7F4]/50 p-4 hover:border-[#D9A514]/60 hover:bg-[#F8F7F4] transition-all">
-                <div className="rounded-xl bg-[#087A32]/10 p-2.5 text-[#087A32]">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#087A32]">
-                    Privacy &amp; Contact Permissions
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
-                    Protect phone numbers and horoscope documents until family intent is mutually
-                    confirmed.
-                  </p>
-                </div>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0 border-[#D9A514]/40"
-                >
-                  <Link to="/dashboard/privacy">Privacy</Link>
-                </Button>
-              </div>
-
-              <div className="flex items-start gap-3.5 rounded-2xl border border-border/60 bg-[#F8F7F4]/50 p-4 hover:border-[#D9A514]/60 hover:bg-[#F8F7F4] transition-all">
-                <div className="rounded-xl bg-[#D9A514]/20 p-2.5 text-[#D9A514]">
-                  <Crown className="h-5 w-5 text-[#D9A514]" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#21083F]">
-                    Premium Membership Privileges
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
-                    Direct access to parent contact numbers, horoscope downloads, and priority
-                    support.
-                  </p>
-                </div>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0 border-[#D9A514]/40"
-                >
-                  <Link to="/membership">View Plans</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* 5. Recommended Matches Grid */}
-      <div className="space-y-4 pt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#D9A514]/25 pb-3">
-          <div>
-            <h2 className="font-serif text-2xl font-bold text-[#21083F]">
-              Recommended Matches for You
+        <section>
+          <div className="mb-4">
+            <span className="sbm-kicker">{lang === "te" ? "తర్వాత" : "Next"}</span>
+            <h2 className="mt-2 font-serif text-2xl text-[#24103F]">
+              {lang === "te" ? "ఈ వారం చేయవలసినవి" : "A few things worth doing"}
             </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Handpicked verified matrimonial profiles from the Shettibalija community
+          </div>
+          <div className="divide-y divide-[#ded5c8] border-y border-[#ded5c8]">
+            <NextStep
+              index="01"
+              title={lang === "te" ? "ఒక స్పష్టమైన ఫోటో జోడించండి" : "Add a clear portrait"}
+              text={
+                photosQuery.data?.length
+                  ? `${photosQuery.data.length} photo${photosQuery.data.length === 1 ? "" : "s"} uploaded. Keep at least one recent, clear portrait.`
+                  : "Families look for a recent, clear portrait. You can keep additional photos private."
+              }
+              to="/dashboard/photos"
+              cta={lang === "te" ? "ఫోటోలు" : "Manage photos"}
+              icon={Camera}
+            />
+            <NextStep
+              index="02"
+              title={lang === "te" ? "కుటుంబ వివరాలు పూర్తి చేయండి" : "Complete the family picture"}
+              text={
+                privateDetailsQuery.data
+                  ? "Review the family, lifestyle and horoscope details you have shared."
+                  : "Add the family background, lifestyle and horoscope details families usually ask about."
+              }
+              to="/dashboard/profile"
+              cta={lang === "te" ? "వివరాలు" : "Add details"}
+              icon={UserRound}
+            />
+            <NextStep
+              index="03"
+              title={lang === "te" ? "మీ గోప్యతను సరిచూసుకోండి" : "Check your privacy"}
+              text="Decide who can see your photos and when contact details become available."
+              to="/dashboard/privacy"
+              cta={lang === "te" ? "గోప్యత" : "Privacy settings"}
+              icon={ShieldCheck}
+            />
+            <NextStep
+              index="04"
+              title={lang === "te" ? "సభ్యత్వాన్ని పరిశీలించండి" : "Understand membership"}
+              text={
+                planName
+                  ? `You are on ${planName}. Review the benefits included in your plan.`
+                  : "Your free account is active. Compare plans only if their current benefits are useful."
+              }
+              to="/membership"
+              cta={lang === "te" ? "ప్లాన్లు" : "View plans"}
+              icon={Crown}
+            />
+          </div>
+        </section>
+      </div>
+
+      <section>
+        <div className="mb-5 flex flex-col justify-between gap-3 border-b border-[#ded5c8] pb-4 sm:flex-row sm:items-end">
+          <div>
+            <span className="sbm-kicker">{lang === "te" ? "సమాజం నుండి" : "From the community"}</span>
+            <h2 className="mt-2 font-serif text-2xl text-[#24103F]">
+              {lang === "te" ? "మీకు సరిపోయే ప్రొఫైల్స్" : "Profiles you may wish to look at"}
+            </h2>
+            <p className="mt-1 text-[12px] text-[#6B6570]">
+              Based on the gender preference in your profile. Not a compatibility score.
             </p>
           </div>
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="text-xs font-semibold text-[#087A32] hover:text-[#034B21]"
-          >
-            <Link to="/search">
-              View All Matches <ArrowRight className="ml-1 h-3.5 w-3.5" />
-            </Link>
-          </Button>
+          <Link to="/search" className="sbm-link-arrow shrink-0">
+            {lang === "te" ? "అన్నీ చూడండి" : "See all profiles"}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
         {recommendedQuery.isLoading ? (
-          <div className="flex overflow-x-auto gap-3.5 pb-3 snap-x no-scrollbar md:grid md:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton
-                key={i}
-                className="h-88 w-[230px] shrink-0 snap-start md:w-auto rounded-3xl"
-              />
-            ))}
-          </div>
-        ) : recommendedQuery.data?.length ? (
-          <div className="flex overflow-x-auto gap-3.5 pb-3 snap-x no-scrollbar md:grid md:grid-cols-2 lg:grid-cols-4">
-            {recommendedQuery.data.map((match) => (
-              <div key={match.id} className="w-[230px] sm:w-[260px] shrink-0 snap-start md:w-auto">
-                <ProfileCard profile={match} />
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="overflow-hidden border border-[#ded5c8] bg-white">
+                <div className="sbm-skeleton aspect-[4/5] rounded-none" />
+                <div className="space-y-2 p-4">
+                  <div className="sbm-skeleton h-3 w-3/4" />
+                  <div className="sbm-skeleton h-8 w-full" />
+                </div>
               </div>
             ))}
           </div>
+        ) : recommendedQuery.data?.length ? (
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {recommendedQuery.data.map((match) => (
+              <ProfileCard
+                key={match.id}
+                profile={match}
+                shortlisted={actions.shortlistedIds.has(match.id)}
+                interestSent={actions.sentInterests.has(match.id)}
+                onShortlist={() => actions.toggleShortlist.mutate(match.id)}
+                onInterest={() => actions.sendInterest.mutate(match.id)}
+              />
+            ))}
+          </div>
         ) : (
-          <div className="rounded-3xl border border-dashed border-[#D9A514]/30 p-8 text-center text-sm text-muted-foreground">
-            <p>No new match recommendations found currently.</p>
-            <Button asChild size="sm" className="mt-3 bg-[#21083F] text-white">
-              <Link to="/search">Browse Community Directory</Link>
-            </Button>
+          <div className="border border-dashed border-[#cdbfa6] bg-white px-6 py-12 text-center">
+            <p className="text-sm text-[#6B6570]">
+              {lang === "te"
+                ? "ప్రస్తుతం కొత్త ప్రొఫైల్స్ లేవు. తర్వాత మళ్లీ చూడండి."
+                : "No new profiles are available right now. Check back as more members complete review."}
+            </p>
+            <Link to="/search" className="sbm-button sbm-button--outline mt-4">
+              {lang === "te" ? "అన్వేషణకు వెళ్లండి" : "Open discovery"}
+            </Link>
           </div>
         )}
+      </section>
+    </div>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  to,
+  icon: Icon,
+  compact = false,
+}: {
+  label: string;
+  value: number | string;
+  to: string;
+  icon: typeof Heart;
+  compact?: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      className="group flex flex-col gap-2 border-b border-[#ded5c8] px-4 py-5 transition-colors hover:bg-white sm:border-b-0 sm:border-r sm:last:border-r-0 sm:px-5"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6B6570]">
+          {label}
+        </span>
+        <Icon className="h-3.5 w-3.5 text-[#a98a37]" aria-hidden />
       </div>
+      <span
+        className={
+          compact
+            ? "truncate font-serif text-xl text-[#24103F]"
+            : "font-serif text-3xl leading-none text-[#24103F]"
+        }
+      >
+        {value}
+      </span>
+    </Link>
+  );
+}
+
+function NextStep({
+  index,
+  title,
+  text,
+  to,
+  cta,
+  icon: Icon,
+}: {
+  index: string;
+  title: string;
+  text: string;
+  to: string;
+  cta: string;
+  icon: typeof Heart;
+}) {
+  return (
+    <div className="grid grid-cols-[2rem_1fr_auto] items-start gap-3 py-4 sm:grid-cols-[2.5rem_1fr_auto] sm:gap-4">
+      <span className="font-serif text-lg text-[#D1A329]">{index}</span>
+      <div>
+        <div className="flex items-center gap-2">
+          <Icon className="h-3.5 w-3.5 text-[#6B6570]" aria-hidden />
+          <h3 className="text-[13px] font-semibold text-[#24103F]">{title}</h3>
+        </div>
+        <p className="mt-1 text-[12px] leading-6 text-[#6B6570]">{text}</p>
+      </div>
+      <Link to={to} className="sbm-link-arrow mt-0.5 text-[11px]">
+        {cta}
+        <ArrowRight className="h-3 w-3" />
+      </Link>
     </div>
   );
 }

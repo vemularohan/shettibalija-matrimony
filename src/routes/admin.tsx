@@ -87,12 +87,12 @@ function AdminDashboardPage() {
   return (
     <RequireAuth admin={true}>
       <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
-        <div className="flex items-center gap-3.5 border-b border-[#D9A514]/25 pb-5">
-          <div className="rounded-2xl bg-[#21083F] p-3 text-[#F4D477] shadow-sm border border-[#D9A514]/30">
+        <div className="flex items-center gap-3.5 border-b border-[#D1A329]/25 pb-5">
+          <div className="rounded-2xl bg-[#24103F] p-3 text-[#F5E5B2] shadow-sm border border-[#D1A329]/30">
             <Shield className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="font-serif text-3xl font-bold text-[#21083F]">
+            <h1 className="font-serif text-3xl font-bold text-[#24103F]">
               Shettibalija Administration
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -103,15 +103,15 @@ function AdminDashboardPage() {
 
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-2">
-          <Card className="rounded-3xl border border-[#D9A514]/20 bg-white shadow-xs">
+          <Card className="rounded-3xl border border-[#D1A329]/20 bg-white shadow-xs">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Pending Approvals
               </CardTitle>
-              <FileCheck className="h-4 w-4 text-[#087A32]" />
+              <FileCheck className="h-4 w-4 text-[#087333]" />
             </CardHeader>
             <CardContent>
-              <div className="font-serif text-3xl font-bold text-[#21083F]">
+              <div className="font-serif text-3xl font-bold text-[#24103F]">
                 {pendingProfilesQuery.data?.length ?? 0}
               </div>
             </CardContent>
@@ -133,9 +133,9 @@ function AdminDashboardPage() {
         </div>
 
         {/* Pending Profiles Section */}
-        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
-            <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+        <Card className="rounded-3xl border border-[#D1A329]/25 bg-white shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#D1A329]/15 bg-gradient-to-r from-[#24103F]/5 to-transparent pb-4">
+            <CardTitle className="font-serif text-xl font-bold text-[#24103F]">
               Profiles Pending Review
             </CardTitle>
             <CardDescription>

@@ -1,258 +1,122 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { FormEvent, useState, useEffect, useMemo } from "react";
-import {
-  Search,
-  Filter,
-  RotateCcw,
-  SlidersHorizontal,
-  X,
-  Heart,
-  ArrowRight,
-  ShieldCheck,
-  MapPin,
-  Briefcase,
-  GraduationCap,
-  Sparkles,
-  Send,
-  Eye,
-  CheckCircle2,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Filter, RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ProtectedPhoto } from "@/components/profiles/protected-photo";
-import { type PublicProfileCardData } from "@/components/profiles/profile-card";
-import { EmptyState, ErrorState } from "@/components/shared/empty-state";
+import { ProfileCard, type PublicProfileCardData } from "@/components/profiles/profile-card";
+import { RequireAuth } from "@/components/shared/require-auth";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { supabase } from "@/integrations/supabase/client";
-import { filterDemoProfiles, type DemoProfile } from "@/data/demo-profiles";
 import { validateSearchParams, type SearchParams } from "@/lib/search-params";
 import { SITE_NAME } from "@/lib/site";
-import { formatHeight, locationLine } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n";
 import {
   EDUCATION_OPTIONS,
-  OCCUPATION_OPTIONS,
-  STATES,
-  MARITAL_STATUS_OPTIONS,
   FOOD_HABIT_OPTIONS,
-  NAKSHATRA_OPTIONS,
-  RASHI_OPTIONS,
   HEIGHT_CHOICES,
+  MARITAL_STATUS_OPTIONS,
+  NAKSHATRA_OPTIONS,
+  OCCUPATION_OPTIONS,
+  RASHI_OPTIONS,
+  STATES,
 } from "@/lib/options";
 
 export const Route = createFileRoute("/search")({
   validateSearch: validateSearchParams,
-  component: SearchPage,
+  component: SearchPageRoute,
   head: () => ({
     meta: [
-      { title: `Search Profiles | ${SITE_NAME}` },
-      { name: "description", content: "Search verified Shettibalija matrimony profiles" },
+      { title: `Discover Profiles | ${SITE_NAME}` },
+      {
+        name: "description",
+        content: "Discover reviewed Shettibalija matrimony profiles by the details that matter.",
+      },
     ],
   }),
 });
+
+type Filters = {
+  keyword: string;
+  profileId: string;
+  gender: string;
+  minAge: string;
+  maxAge: string;
+  minHeight: string;
+  maxHeight: string;
+  state: string;
+  education: string;
+  occupation: string;
+  maritalStatus: string;
+  foodHabit: string;
+  gothram: string;
+  star: string;
+  rashi: string;
+};
+
+const EMPTY_FILTERS: Filters = {
+  keyword: "",
+  profileId: "",
+  gender: "",
+  minAge: "",
+  maxAge: "",
+  minHeight: "",
+  maxHeight: "",
+  state: "",
+  education: "",
+  occupation: "",
+  maritalStatus: "",
+  foodHabit: "",
+  gothram: "",
+  star: "",
+  rashi: "",
+};
+
+function SearchPageRoute() {
+  return (
+    <RequireAuth>
+      <SearchPage />
+    </RequireAuth>
+  );
+}
 
 function SearchPage() {
   const searchParams = Route.useSearch();
   const navigate = useNavigate();
   const actions = useProfileActions();
   const { lang } = useLanguage();
-
-  // Local filter states
-  const [keyword, setKeyword] = useState(searchParams.query ?? "");
-  const [profileId, setProfileId] = useState(searchParams.profileId ?? "");
-  const [gender, setGender] = useState(searchParams.gender ?? "");
-  const [minAge, setMinAge] = useState(searchParams.minAge ? String(searchParams.minAge) : "");
-  const [maxAge, setMaxAge] = useState(searchParams.maxAge ? String(searchParams.maxAge) : "");
-  const [minHeight, setMinHeight] = useState(
-    searchParams.minHeight ? String(searchParams.minHeight) : "",
-  );
-  const [maxHeight, setMaxHeight] = useState(
-    searchParams.maxHeight ? String(searchParams.maxHeight) : "",
-  );
-  const [state, setState] = useState(searchParams.state ?? "");
-  const [education, setEducation] = useState(searchParams.education ?? "");
-  const [occupation, setOccupation] = useState(searchParams.occupation ?? "");
-  const [maritalStatus, setMaritalStatus] = useState(searchParams.maritalStatus ?? "");
-  const [foodHabit, setFoodHabit] = useState(searchParams.foodHabit ?? "");
-  const [gothram, setGothram] = useState(searchParams.gothram ?? "");
-  const [star, setStar] = useState(searchParams.star ?? "");
-  const [rashi, setRashi] = useState(searchParams.rashi ?? "");
-  const [photoOnly, setPhotoOnly] = useState(Boolean(searchParams.photoOnly));
-  const [horoscopeOnly, setHoroscopeOnly] = useState(Boolean(searchParams.horoscopeOnly));
+  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [sortBy, setSortBy] = useState(searchParams.sort ?? "recommended");
-
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // Sync state when URL search params change
   useEffect(() => {
-    setKeyword(searchParams.query ?? "");
-    setProfileId(searchParams.profileId ?? "");
-    setGender(searchParams.gender ?? "");
-    setMinAge(searchParams.minAge ? String(searchParams.minAge) : "");
-    setMaxAge(searchParams.maxAge ? String(searchParams.maxAge) : "");
-    setMinHeight(searchParams.minHeight ? String(searchParams.minHeight) : "");
-    setMaxHeight(searchParams.maxHeight ? String(searchParams.maxHeight) : "");
-    setState(searchParams.state ?? "");
-    setEducation(searchParams.education ?? "");
-    setOccupation(searchParams.occupation ?? "");
-    setMaritalStatus(searchParams.maritalStatus ?? "");
-    setFoodHabit(searchParams.foodHabit ?? "");
-    setGothram(searchParams.gothram ?? "");
-    setStar(searchParams.star ?? "");
-    setRashi(searchParams.rashi ?? "");
-    setPhotoOnly(Boolean(searchParams.photoOnly));
-    setHoroscopeOnly(Boolean(searchParams.horoscopeOnly));
+    setFilters({
+      keyword: searchParams.query ?? "",
+      profileId: searchParams.profileId ?? "",
+      gender: searchParams.gender ?? "",
+      minAge: searchParams.minAge ? String(searchParams.minAge) : "",
+      maxAge: searchParams.maxAge ? String(searchParams.maxAge) : "",
+      minHeight: searchParams.minHeight ? String(searchParams.minHeight) : "",
+      maxHeight: searchParams.maxHeight ? String(searchParams.maxHeight) : "",
+      state: searchParams.state ?? "",
+      education: searchParams.education ?? "",
+      occupation: searchParams.occupation ?? "",
+      maritalStatus: searchParams.maritalStatus ?? "",
+      foodHabit: searchParams.foodHabit ?? "",
+      gothram: searchParams.gothram ?? "",
+      star: searchParams.star ?? "",
+      rashi: searchParams.rashi ?? "",
+    });
     setSortBy(searchParams.sort ?? "recommended");
   }, [searchParams]);
 
-  // Active filter count
-  const activeFilterCount = [
-    keyword,
-    profileId,
-    gender,
-    minAge || maxAge,
-    minHeight || maxHeight,
-    state,
-    education,
-    occupation,
-    maritalStatus,
-    foodHabit,
-    gothram,
-    star,
-    rashi,
-    photoOnly,
-    horoscopeOnly,
-  ].filter(Boolean).length;
-
-  function executeSearch(overrides?: Partial<SearchParams>) {
-    void navigate({
-      to: "/search",
-      search: {
-        query: overrides?.query !== undefined ? overrides.query : keyword || undefined,
-        profileId:
-          overrides?.profileId !== undefined ? overrides.profileId : profileId || undefined,
-        gender: overrides?.gender !== undefined ? overrides.gender : gender || undefined,
-        minAge: overrides?.minAge !== undefined ? overrides.minAge : minAge ? Number(minAge) : undefined,
-        maxAge: overrides?.maxAge !== undefined ? overrides.maxAge : maxAge ? Number(maxAge) : undefined,
-        minHeight:
-          overrides?.minHeight !== undefined ? overrides.minHeight : minHeight ? Number(minHeight) : undefined,
-        maxHeight:
-          overrides?.maxHeight !== undefined ? overrides.maxHeight : maxHeight ? Number(maxHeight) : undefined,
-        state: overrides?.state !== undefined ? overrides.state : state || undefined,
-        education:
-          overrides?.education !== undefined ? overrides.education : education || undefined,
-        occupation:
-          overrides?.occupation !== undefined ? overrides.occupation : occupation || undefined,
-        maritalStatus:
-          overrides?.maritalStatus !== undefined
-            ? overrides.maritalStatus
-            : maritalStatus || undefined,
-        foodHabit:
-          overrides?.foodHabit !== undefined ? overrides.foodHabit : foodHabit || undefined,
-        gothram: overrides?.gothram !== undefined ? overrides.gothram : gothram || undefined,
-        star: overrides?.star !== undefined ? overrides.star : star || undefined,
-        rashi: overrides?.rashi !== undefined ? overrides.rashi : rashi || undefined,
-        photoOnly:
-          overrides?.photoOnly !== undefined ? overrides.photoOnly : photoOnly || undefined,
-        horoscopeOnly:
-          overrides?.horoscopeOnly !== undefined
-            ? overrides.horoscopeOnly
-            : horoscopeOnly || undefined,
-        sort: overrides?.sort !== undefined ? overrides.sort : sortBy || undefined,
-        page: 1,
-      },
-    });
-  }
-
-  function handleFilterSubmit(e: FormEvent) {
-    e.preventDefault();
-    executeSearch();
-    setMobileFilterOpen(false);
-  }
-
-  function handleResetFilters() {
-    setKeyword("");
-    setProfileId("");
-    setGender("");
-    setMinAge("");
-    setMaxAge("");
-    setMinHeight("");
-    setMaxHeight("");
-    setState("");
-    setEducation("");
-    setOccupation("");
-    setMaritalStatus("");
-    setFoodHabit("");
-    setGothram("");
-    setStar("");
-    setRashi("");
-    setPhotoOnly(false);
-    setHoroscopeOnly(false);
-    setSortBy("recommended");
-    void navigate({
-      to: "/search",
-      search: {},
-    });
-  }
-
-  const profilesQuery = useQuery({
-    queryKey: ["search-profiles", searchParams],
-    queryFn: async () => {
-      let realProfiles: PublicProfileCardData[] = [];
-      try {
-        let query = supabase.from("approved_matrimonial_profiles").select("*");
-
-        if (searchParams.gender) {
-          query = query.eq("gender", searchParams.gender);
-        }
-        if (searchParams.minAge != null) {
-          query = query.gte("age", searchParams.minAge);
-        }
-        if (searchParams.maxAge != null) {
-          query = query.lte("age", searchParams.maxAge);
-        }
-        if (searchParams.minHeight != null) {
-          query = query.gte("height_cm", searchParams.minHeight);
-        }
-        if (searchParams.maxHeight != null) {
-          query = query.lte("height_cm", searchParams.maxHeight);
-        }
-        if (searchParams.maritalStatus) {
-          query = query.eq("marital_status", searchParams.maritalStatus);
-        }
-        if (searchParams.state) {
-          query = query.eq("state", searchParams.state);
-        }
-        if (searchParams.education) {
-          query = query.eq("education", searchParams.education);
-        }
-        if (searchParams.occupation) {
-          query = query.eq("occupation", searchParams.occupation);
-        }
-
-        query = query.order("created_at", { ascending: false }).limit(40);
-
-        const { data, error } = await query;
-        if (!error && data) {
-          realProfiles = data.filter((p): p is typeof p & { id: string } => Boolean(p.id));
-        }
-      } catch {
-        // Fallback to demo profiles
-      }
-
-      const filteredDemo = filterDemoProfiles({
-        query: searchParams.query,
-        profileId: searchParams.profileId,
+  const activeFilterCount = useMemo(
+    () =>
+      Object.entries({
         gender: searchParams.gender,
-        minAge: searchParams.minAge,
-        maxAge: searchParams.maxAge,
-        minHeight: searchParams.minHeight,
-        maxHeight: searchParams.maxHeight,
+        profileId: searchParams.profileId,
+        age: searchParams.minAge || searchParams.maxAge,
+        height: searchParams.minHeight || searchParams.maxHeight,
         state: searchParams.state,
         education: searchParams.education,
         occupation: searchParams.occupation,
@@ -261,784 +125,606 @@ function SearchPage() {
         gothram: searchParams.gothram,
         star: searchParams.star,
         rashi: searchParams.rashi,
-        photoOnly: searchParams.photoOnly,
-        horoscopeOnly: searchParams.horoscopeOnly,
-      });
+        query: searchParams.query,
+      }).filter(([, value]) => Boolean(value)).length,
+    [searchParams],
+  );
 
-      const realIds = new Set(realProfiles.map((p) => p.id));
-      const combined = [...realProfiles, ...filteredDemo.filter((d) => !realIds.has(d.id))];
+  function executeSearch(overrides?: Partial<SearchParams>) {
+    const next = overrides ?? {};
+    void navigate({
+      to: "/search",
+      search: {
+        query: next.query !== undefined ? next.query : filters.keyword || undefined,
+        profileId: next.profileId !== undefined ? next.profileId : filters.profileId || undefined,
+        gender: next.gender !== undefined ? next.gender : filters.gender || undefined,
+        minAge:
+          next.minAge !== undefined ? next.minAge : filters.minAge ? Number(filters.minAge) : undefined,
+        maxAge:
+          next.maxAge !== undefined ? next.maxAge : filters.maxAge ? Number(filters.maxAge) : undefined,
+        minHeight:
+          next.minHeight !== undefined
+            ? next.minHeight
+            : filters.minHeight
+              ? Number(filters.minHeight)
+              : undefined,
+        maxHeight:
+          next.maxHeight !== undefined
+            ? next.maxHeight
+            : filters.maxHeight
+              ? Number(filters.maxHeight)
+              : undefined,
+        state: next.state !== undefined ? next.state : filters.state || undefined,
+        education: next.education !== undefined ? next.education : filters.education || undefined,
+        occupation: next.occupation !== undefined ? next.occupation : filters.occupation || undefined,
+        maritalStatus:
+          next.maritalStatus !== undefined
+            ? next.maritalStatus
+            : filters.maritalStatus || undefined,
+        foodHabit: next.foodHabit !== undefined ? next.foodHabit : filters.foodHabit || undefined,
+        gothram: next.gothram !== undefined ? next.gothram : filters.gothram || undefined,
+        star: next.star !== undefined ? next.star : filters.star || undefined,
+        rashi: next.rashi !== undefined ? next.rashi : filters.rashi || undefined,
+        sort: next.sort !== undefined ? next.sort : sortBy !== "recommended" ? sortBy : undefined,
+        page: 1,
+      },
+    });
+  }
 
-      // Client-side sorting
-      if (searchParams.sort === "age_asc") {
-        combined.sort((a, b) => (a.age ?? 0) - (b.age ?? 0));
-      } else if (searchParams.sort === "age_desc") {
-        combined.sort((a, b) => (b.age ?? 0) - (a.age ?? 0));
+  function handleFilterSubmit(event: FormEvent) {
+    event.preventDefault();
+    executeSearch();
+    setMobileFilterOpen(false);
+  }
+
+  function resetFilters() {
+    setFilters(EMPTY_FILTERS);
+    setSortBy("recommended");
+    void navigate({ to: "/search", search: {} });
+  }
+
+  function clearFilter(key: keyof Filters) {
+    setFilters((current) => ({ ...current, [key]: "" }));
+    void navigate({
+      to: "/search",
+      search: {
+        query: key === "keyword" ? undefined : searchParams.query,
+        profileId: key === "profileId" ? undefined : searchParams.profileId,
+        gender: key === "gender" ? undefined : searchParams.gender,
+        minAge: key === "minAge" || key === "maxAge" ? undefined : searchParams.minAge,
+        maxAge: key === "minAge" || key === "maxAge" ? undefined : searchParams.maxAge,
+        minHeight: key === "minHeight" || key === "maxHeight" ? undefined : searchParams.minHeight,
+        maxHeight: key === "minHeight" || key === "maxHeight" ? undefined : searchParams.maxHeight,
+        state: key === "state" ? undefined : searchParams.state,
+        education: key === "education" ? undefined : searchParams.education,
+        occupation: key === "occupation" ? undefined : searchParams.occupation,
+        maritalStatus: key === "maritalStatus" ? undefined : searchParams.maritalStatus,
+        foodHabit: key === "foodHabit" ? undefined : searchParams.foodHabit,
+        gothram: key === "gothram" ? undefined : searchParams.gothram,
+        star: key === "star" ? undefined : searchParams.star,
+        rashi: key === "rashi" ? undefined : searchParams.rashi,
+        sort: sortBy !== "recommended" ? sortBy : undefined,
+      },
+    });
+  }
+
+  const profilesQuery = useQuery({
+    queryKey: ["search-profiles", searchParams],
+    queryFn: async () => {
+      let query = supabase.from("approved_matrimonial_profiles").select("*");
+
+      if (searchParams.gender) query = query.eq("gender", searchParams.gender);
+      if (searchParams.minAge != null) query = query.gte("age", searchParams.minAge);
+      if (searchParams.maxAge != null) query = query.lte("age", searchParams.maxAge);
+      if (searchParams.minHeight != null) query = query.gte("height_cm", searchParams.minHeight);
+      if (searchParams.maxHeight != null) query = query.lte("height_cm", searchParams.maxHeight);
+      if (searchParams.maritalStatus) query = query.eq("marital_status", searchParams.maritalStatus);
+      if (searchParams.state) query = query.eq("state", searchParams.state);
+      if (searchParams.education) query = query.eq("education", searchParams.education);
+      if (searchParams.occupation) query = query.eq("occupation", searchParams.occupation);
+      if (searchParams.gothram) query = query.ilike("gothram", `%${searchParams.gothram}%`);
+      if (searchParams.star) query = query.eq("star", searchParams.star);
+      if (searchParams.rashi) query = query.eq("rashi", searchParams.rashi);
+      if (searchParams.foodHabit) query = query.eq("food_habit", searchParams.foodHabit);
+      if (searchParams.profileId) {
+        query = query.or(`profile_code.eq.${searchParams.profileId},id.eq.${searchParams.profileId}`);
+      }
+      if (searchParams.query) {
+        const value = searchParams.query.replace(/[%_]/g, "");
+        query = query.or(
+          `display_name.ilike.%${value}%,education.ilike.%${value}%,occupation.ilike.%${value}%,city.ilike.%${value}%,profile_code.ilike.%${value}%`,
+        );
       }
 
-      return combined;
+      query = query.order("created_at", { ascending: false }).limit(60);
+      const { data, error } = await query;
+      if (error) throw error;
+      const results = (data ?? []).filter((profile): profile is typeof profile & { id: string } =>
+        Boolean(profile.id),
+      ) as PublicProfileCardData[];
+
+      if (searchParams.sort === "age_asc") results.sort((a, b) => (a.age ?? 0) - (b.age ?? 0));
+      if (searchParams.sort === "age_desc") results.sort((a, b) => (b.age ?? 0) - (a.age ?? 0));
+      return results;
     },
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3] pt-14 pb-16">
-      {/* Top Matrimonial Search Header */}
-      <div className="bg-white border-b border-[#E4DDD3] py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="sbm-page min-h-screen bg-[#FAF8F3] pb-16">
+      <header className="border-b border-[#e5ddd1] bg-white">
+        <div className="sbm-container py-9 sm:py-12">
+          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <span className="text-[11px] font-semibold tracking-wider uppercase text-[#087333]">
-                Shettibalija Matrimony Registry
-              </span>
-              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
-                {lang === "te" ? "మ్యాచ్‌ల శోధన" : "Search Profiles"}
-              </h1>
-              <p className="text-xs text-[#6B6570] mt-1">
+              <span className="sbm-kicker">{lang === "te" ? "అన్వేషణ" : "Discover"}</span>
+              <h1 className="sbm-heading mt-3 max-w-2xl">
                 {lang === "te"
-                  ? "శెట్టిబలిజ కమ్యూనిటీలో ధృవీకరించబడిన వధువు/వరుల ప్రొఫైల్స్"
-                  : "Explore verified matrimonial profiles with detailed cultural, education & horoscope criteria"}
+                  ? "మీకు ముఖ్యమైన వివరాలతో ఒక పరిచయాన్ని కనుగొనండి."
+                  : "Find a considered introduction."}
+              </h1>
+              <p className="sbm-body mt-3 max-w-2xl">
+                {lang === "te"
+                  ? "ప్రొఫైల్స్ సమీక్షించబడి, సమాజానికి సంబంధించిన వివరాలతో ఇక్కడ కనిపిస్తాయి. మీ కుటుంబంతో కలిసి చూడండి."
+                  : "Reviewed profiles from the Shettibalija community, with the family, education, work and cultural details families usually ask about."}
               </p>
             </div>
 
-            {/* Quick Keyword / ID Search Bar */}
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
+              onSubmit={(event) => {
+                event.preventDefault();
                 executeSearch();
               }}
-              className="flex items-center gap-2 max-w-md w-full"
+              className="flex w-full max-w-md items-center gap-2"
             >
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#B0A8B8]" />
+                <Search
+                  className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9a929e]"
+                  aria-hidden
+                />
                 <Input
-                  type="text"
-                  placeholder={
-                    lang === "te"
-                      ? "కీవర్డ్ లేదా ID (ఉదా: SBM-D101, Doctor)"
-                      : "Search by Keyword or Profile ID..."
+                  aria-label={lang === "te" ? "కీవర్డ్ లేదా ప్రొఫైల్ ఐడీ" : "Keyword or profile ID"}
+                  value={filters.keyword}
+                  onChange={(event) =>
+                    setFilters((current) => ({ ...current, keyword: event.target.value }))
                   }
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  className="pl-9 h-10 text-xs bg-[#FAF8F3] border-[#E4DDD3] focus-visible:ring-1 focus-visible:ring-[#24103F]"
+                  placeholder={
+                    lang === "te" ? "కీవర్డ్ లేదా ప్రొఫైల్ ఐడీ" : "Name, profession or profile ID"
+                  }
+                  className="h-11 border-[#ded5c8] bg-[#FAF8F3] pl-9 text-sm focus-visible:ring-[#D1A329]"
                 />
               </div>
-              <Button type="submit" className="h-10 px-4 bg-[#24103F] text-xs font-semibold text-white hover:bg-[#311552]">
-                Search
-              </Button>
+              <button type="submit" className="sbm-button sbm-button--primary h-11 shrink-0">
+                {lang === "te" ? "వెతకండి" : "Search"}
+              </button>
             </form>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Main Two-Column Search Layout */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8">
-        {/* Mobile Filter Toggle Button */}
-        <div className="lg:hidden mb-4 flex items-center justify-between bg-white p-3 rounded-lg border border-[#E4DDD3]">
-          <div className="text-xs font-medium text-[#24103F]">
-            {profilesQuery.data ? `${profilesQuery.data.length} Profiles Available` : "Searching..."}
-          </div>
-          <Button
+      <div className="sbm-container pt-8">
+        <div className="mb-5 flex items-center justify-between gap-4 lg:hidden">
+          <p className="text-[12px] font-semibold text-[#4f4755]">
+            {profilesQuery.isLoading
+              ? "Searching..."
+              : `${profilesQuery.data?.length ?? 0} ${lang === "te" ? "ప్రొఫైల్స్" : "profiles"}`}
+          </p>
+          <button
             type="button"
-            variant="outline"
-            size="sm"
             onClick={() => setMobileFilterOpen(true)}
-            className="h-8 text-xs font-semibold border-[#D1A329] text-[#24103F] flex items-center gap-1.5"
+            className="sbm-button sbm-button--outline h-10"
           >
-            <Filter className="h-3.5 w-3.5 text-[#D1A329]" />
-            Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
-          </Button>
+            <Filter className="h-3.5 w-3.5" aria-hidden />
+            {lang === "te" ? "ఫిల్టర్లు" : "Filters"}
+            {activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[290px_1fr] gap-8 items-start">
-          {/* ========================================================
-              LEFT SIDEBAR: Matrimonial Filters (Desktop)
-             ======================================================== */}
-          <aside className="hidden lg:block sticky top-20 bg-white rounded-xl border border-[#E4DDD3] p-5 shadow-xs">
-            <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-[#E4DDD3]">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-[#087333]" />
-                <h2 className="text-sm font-bold text-[#24103F]">Refine Matches</h2>
-              </div>
-              {activeFilterCount > 0 && (
+        <div className="grid items-start gap-8 lg:grid-cols-[17rem_1fr]">
+          <aside className="sticky top-20 hidden lg:block">
+            <div className="rounded-sm border border-[#ded5c8] bg-white p-5">
+              <div className="flex items-center justify-between border-b border-[#e5ddd1] pb-4">
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="h-4 w-4 text-[#D1A329]" aria-hidden />
+                  <h2 className="text-sm font-bold text-[#24103F]">
+                    {lang === "te" ? "పరిధిని సవరించండి" : "Refine"}
+                  </h2>
+                </div>
                 <button
                   type="button"
-                  onClick={handleResetFilters}
-                  className="text-[11px] text-[#087333] hover:underline flex items-center gap-1 font-medium"
+                  onClick={resetFilters}
+                  className="text-[11px] font-semibold text-[#087333] hover:underline"
                 >
-                  <RotateCcw className="h-3 w-3" />
-                  Reset
+                  {lang === "te" ? "రీసెట్" : "Reset"}
                 </button>
-              )}
+              </div>
+              <FilterPanel
+                filters={filters}
+                setFilters={setFilters}
+                onSubmit={handleFilterSubmit}
+                lang={lang}
+              />
             </div>
-
-            <form onSubmit={handleFilterSubmit} className="space-y-4">
-              {/* 1. Looking For */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Looking For</Label>
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024] focus:border-[#24103F] focus:outline-none"
-                >
-                  <option value="">Bride / Groom (All)</option>
-                  <option value="bride">Bride (వధువు)</option>
-                  <option value="groom">Groom (వరుడు)</option>
-                </select>
-              </div>
-
-              {/* 2. Matrimony / Profile ID */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Search by Profile ID</Label>
-                <Input
-                  type="text"
-                  placeholder="e.g. SBM-D101"
-                  value={profileId}
-                  onChange={(e) => setProfileId(e.target.value)}
-                  className="h-9 text-xs bg-white border-[#E4DDD3]"
-                />
-              </div>
-
-              {/* 3. Age Range */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Age Range (Years)</Label>
-                <div className="flex items-center gap-1.5">
-                  <Input
-                    type="number"
-                    min={18}
-                    max={70}
-                    placeholder="21"
-                    value={minAge}
-                    onChange={(e) => setMinAge(e.target.value)}
-                    className="h-9 text-xs px-2 text-center"
-                  />
-                  <span className="text-xs text-[#6B6570]">to</span>
-                  <Input
-                    type="number"
-                    min={18}
-                    max={70}
-                    placeholder="35"
-                    value={maxAge}
-                    onChange={(e) => setMaxAge(e.target.value)}
-                    className="h-9 text-xs px-2 text-center"
-                  />
-                </div>
-              </div>
-
-              {/* 4. Height Range */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Height Range</Label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <select
-                    value={minHeight}
-                    onChange={(e) => setMinHeight(e.target.value)}
-                    className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs text-[#242024]"
-                  >
-                    <option value="">Min Height</option>
-                    {HEIGHT_CHOICES.map((h) => (
-                      <option key={h.cm} value={h.cm}>
-                        {h.label}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    value={maxHeight}
-                    onChange={(e) => setMaxHeight(e.target.value)}
-                    className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2 text-xs text-[#242024]"
-                  >
-                    <option value="">Max Height</option>
-                    {HEIGHT_CHOICES.map((h) => (
-                      <option key={h.cm} value={h.cm}>
-                        {h.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* 5. Location / State */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Location / State</Label>
-                <select
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
-                >
-                  <option value="">All Locations</option>
-                  {STATES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 6. Education */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Education</Label>
-                <select
-                  value={education}
-                  onChange={(e) => setEducation(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
-                >
-                  <option value="">Any Education</option>
-                  {EDUCATION_OPTIONS.map((ed) => (
-                    <option key={ed} value={ed}>
-                      {ed}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 7. Occupation */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Occupation</Label>
-                <select
-                  value={occupation}
-                  onChange={(e) => setOccupation(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
-                >
-                  <option value="">Any Occupation</option>
-                  {OCCUPATION_OPTIONS.map((occ) => (
-                    <option key={occ} value={occ}>
-                      {occ}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 8. Marital Status */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Marital Status</Label>
-                <select
-                  value={maritalStatus}
-                  onChange={(e) => setMaritalStatus(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
-                >
-                  <option value="">Any Status</option>
-                  {MARITAL_STATUS_OPTIONS.map((m) => (
-                    <option key={m.value} value={m.value}>
-                      {m.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 9. Star / Nakshatra */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Star / Nakshatra</Label>
-                <select
-                  value={star}
-                  onChange={(e) => setStar(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024]"
-                >
-                  <option value="">Any Star</option>
-                  {NAKSHATRA_OPTIONS.map((n) => (
-                    <option key={n.value} value={n.value}>
-                      {n.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 10. Gothram */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">Gothram</Label>
-                <Input
-                  type="text"
-                  placeholder="e.g. Janakula"
-                  value={gothram}
-                  onChange={(e) => setGothram(e.target.value)}
-                  className="h-9 text-xs bg-white border-[#E4DDD3]"
-                />
-              </div>
-
-              {/* 11. Verification & Trust Checkboxes */}
-              <div className="space-y-2 pt-2 border-t border-[#E4DDD3]">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={photoOnly}
-                    onChange={(e) => setPhotoOnly(e.target.checked)}
-                    className="h-3.5 w-3.5 rounded border-[#E4DDD3] text-[#24103F] focus:ring-[#24103F]"
-                  />
-                  <span className="text-xs text-[#4A4550]">Profiles with Photo only</span>
-                </label>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={horoscopeOnly}
-                    onChange={(e) => setHoroscopeOnly(e.target.checked)}
-                    className="h-3.5 w-3.5 rounded border-[#E4DDD3] text-[#24103F] focus:ring-[#24103F]"
-                  />
-                  <span className="text-xs text-[#4A4550]">Horoscope Added only</span>
-                </label>
-              </div>
-
-              {/* Apply Filters Button */}
-              <Button
-                type="submit"
-                className="w-full h-10 rounded-md bg-[#24103F] text-xs font-semibold text-white hover:bg-[#311552] transition-colors shadow-xs"
-              >
-                Apply Filters
-              </Button>
-            </form>
           </aside>
 
-          {/* ========================================================
-              RIGHT MAIN CONTENT: Search Results & Matrimonial Cards
-             ======================================================== */}
           <main className="min-w-0">
-            {/* Results Header: Count & Sort */}
-            <div className="bg-white rounded-xl border border-[#E4DDD3] p-4 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="mb-5 flex flex-col justify-between gap-3 border-b border-[#ded5c8] pb-4 sm:flex-row sm:items-end">
               <div>
-                <h2 className="text-base font-serif font-bold text-[#24103F]">
-                  {lang === "te" ? "సిఫార్సు చేసిన మ్యాచ్‌లు" : "Recommended Matches"}
-                </h2>
-                <p className="text-xs text-[#6B6570]">
+                <p className="sbm-kicker">{lang === "te" ? "ఫలితాలు" : "Results"}</p>
+                <h2 className="mt-2 font-serif text-2xl text-[#24103F]">
                   {profilesQuery.isLoading
-                    ? "Searching matching profiles..."
-                    : `${profilesQuery.data?.length ?? 0} Matrimonial Profiles Found`}
-                </p>
+                    ? lang === "te"
+                      ? "వెతుకుతోంది..."
+                      : "Looking through the community..."
+                    : `${profilesQuery.data?.length ?? 0} ${lang === "te" ? "ప్రొఫైల్స్" : "profiles"}`}
+                </h2>
               </div>
-
-              {/* Sort Dropdown */}
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#6B6570] shrink-0">Sort By:</span>
+                <label htmlFor="search-sort" className="text-[11px] font-semibold text-[#6B6570]">
+                  {lang === "te" ? "క్రమం" : "Sort"}
+                </label>
                 <select
+                  id="search-sort"
                   value={sortBy}
-                  onChange={(e) => {
-                    const nextSort = e.target.value;
+                  onChange={(event) => {
+                    const nextSort = event.target.value;
                     setSortBy(nextSort);
-                    executeSearch({ sort: nextSort });
+                    executeSearch({ sort: nextSort === "recommended" ? undefined : nextSort });
                   }}
-                  className="h-8 rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024] focus:border-[#24103F]"
+                  className="sbm-field h-9 min-h-0 w-auto py-1 text-[12px]"
                 >
-                  <option value="recommended">Recommended</option>
-                  <option value="newest">Newest First</option>
-                  <option value="age_asc">Age: Low to High</option>
-                  <option value="age_desc">Age: High to Low</option>
+                  <option value="recommended">Newest</option>
+                  <option value="newest">Recently added</option>
+                  <option value="age_asc">Age: low to high</option>
+                  <option value="age_desc">Age: high to low</option>
                 </select>
               </div>
             </div>
 
-            {/* Active Filter Chips */}
-            {activeFilterCount > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5 mb-5">
-                <span className="text-xs text-[#6B6570] mr-1">Active Filters:</span>
-                {gender && (
-                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
-                    {gender === "bride" ? "Bride" : "Groom"}
-                    <X
-                      className="h-3 w-3 ml-1 cursor-pointer"
-                      onClick={() => {
-                        setGender("");
-                        executeSearch({ gender: undefined });
-                      }}
-                    />
-                  </Badge>
-                )}
-                {state && (
-                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
-                    {state}
-                    <X
-                      className="h-3 w-3 ml-1 cursor-pointer"
-                      onClick={() => {
-                        setState("");
-                        executeSearch({ state: undefined });
-                      }}
-                    />
-                  </Badge>
-                )}
-                {(minAge || maxAge) && (
-                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
-                    Age: {minAge || "18"} - {maxAge || "70"}
-                    <X
-                      className="h-3 w-3 ml-1 cursor-pointer"
-                      onClick={() => {
-                        setMinAge("");
-                        setMaxAge("");
-                        executeSearch({ minAge: undefined, maxAge: undefined });
-                      }}
-                    />
-                  </Badge>
-                )}
-                {education && (
-                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
-                    {education}
-                    <X
-                      className="h-3 w-3 ml-1 cursor-pointer"
-                      onClick={() => {
-                        setEducation("");
-                        executeSearch({ education: undefined });
-                      }}
-                    />
-                  </Badge>
-                )}
-                {keyword && (
-                  <Badge variant="outline" className="text-xs bg-white border-[#E4DDD3]">
-                    "{keyword}"
-                    <X
-                      className="h-3 w-3 ml-1 cursor-pointer"
-                      onClick={() => {
-                        setKeyword("");
-                        executeSearch({ query: undefined });
-                      }}
-                    />
-                  </Badge>
-                )}
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  className="text-xs text-[#087333] hover:underline ml-1 font-semibold"
-                >
-                  Clear All
+            {activeFilterCount > 0 ? (
+              <div className="mb-5 flex flex-wrap items-center gap-2">
+                {searchParams.gender ? <Chip label={searchParams.gender === "bride" ? "Bride" : "Groom"} onClear={() => clearFilter("gender")} /> : null}
+                {searchParams.state ? <Chip label={searchParams.state} onClear={() => clearFilter("state")} /> : null}
+                {searchParams.minAge || searchParams.maxAge ? (
+                  <Chip label={`Age ${searchParams.minAge ?? 18}–${searchParams.maxAge ?? 70}`} onClear={() => clearFilter("minAge")} />
+                ) : null}
+                {searchParams.education ? <Chip label={searchParams.education} onClear={() => clearFilter("education")} /> : null}
+                {searchParams.occupation ? <Chip label={searchParams.occupation} onClear={() => clearFilter("occupation")} /> : null}
+                {searchParams.maritalStatus ? (
+                  <Chip
+                    label={MARITAL_STATUS_OPTIONS.find((item) => item.value === searchParams.maritalStatus)?.label ?? searchParams.maritalStatus}
+                    onClear={() => clearFilter("maritalStatus")}
+                  />
+                ) : null}
+                {searchParams.star ? <Chip label={searchParams.star} onClear={() => clearFilter("star")} /> : null}
+                {searchParams.gothram ? <Chip label={searchParams.gothram} onClear={() => clearFilter("gothram")} /> : null}
+                {searchParams.query ? <Chip label={`“${searchParams.query}”`} onClear={() => clearFilter("keyword")} /> : null}
+                <button type="button" onClick={resetFilters} className="ml-1 text-[11px] font-bold text-[#087333] hover:underline">
+                  Clear all
                 </button>
               </div>
-            )}
+            ) : null}
 
-            {/* Results Profiles Listing */}
             {profilesQuery.isLoading ? (
-              <div className="space-y-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <Skeleton key={i} className="h-44 w-full rounded-xl" />
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="overflow-hidden rounded-sm border border-[#ded5c8] bg-white">
+                    <div className="sbm-skeleton aspect-[4/5] rounded-none" />
+                    <div className="space-y-2 p-4">
+                      <div className="sbm-skeleton h-3 w-4/5" />
+                      <div className="sbm-skeleton h-3 w-3/5" />
+                      <div className="sbm-skeleton mt-4 h-8 w-full" />
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : profilesQuery.isError ? (
-              <ErrorState
-                title="Failed to load profiles"
-                description="There was an error querying the matrimonial database. Please try again."
-                onRetry={() => void profilesQuery.refetch()}
-              />
+              <div className="rounded-sm border border-[#ded5c8] bg-white px-6 py-16 text-center">
+                <h3 className="font-serif text-2xl text-[#24103F]">Something went wrong.</h3>
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#6B6570]">
+                  We could not load profiles just now. Please try again.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void profilesQuery.refetch()}
+                  className="sbm-button sbm-button--primary mt-6"
+                >
+                  Try again
+                </button>
+              </div>
             ) : !profilesQuery.data?.length ? (
-              <EmptyState
-                title="No matching profiles found"
-                description="Try adjusting or clearing your search filters to view more profiles."
-                actionLabel="Reset All Filters"
-                onAction={handleResetFilters}
-              />
+              <div className="rounded-sm border border-dashed border-[#cdbfa6] bg-white px-6 py-16 text-center sm:py-20">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-[#D1A329]/30 bg-[#FAF8F3]">
+                  <Search className="h-5 w-5 text-[#D1A329]" aria-hidden />
+                </div>
+                <h3 className="mt-5 font-serif text-2xl text-[#24103F]">
+                  {lang === "te" ? "ఇంకా సరిపోయే ప్రొఫైల్ కనిపించలేదు." : "We couldn't find a close match yet."}
+                </h3>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#6B6570]">
+                  {lang === "te"
+                    ? "వయస్సు పరిధిని విస్తరించండి లేదా ఒక ఫిల్టర్ తొలగించి మళ్లీ ప్రయత్నించండి."
+                    : "Try widening the age range or removing one filter. New profiles appear as members complete their review."}
+                </p>
+                <button type="button" onClick={resetFilters} className="sbm-button sbm-button--outline mt-6">
+                  <RotateCcw className="h-3.5 w-3.5" aria-hidden />
+                  {lang === "te" ? "ఫిల్టర్లను రీసెట్ చేయండి" : "Reset all filters"}
+                </button>
+              </div>
             ) : (
-              <div className="space-y-4">
-                {profilesQuery.data.map((profile) => {
-                  const isShortlisted = actions.shortlistedIds.has(profile.id);
-                  const isInterestSent = actions.sentInterests.has(profile.id);
-                  const demoObj = profile as DemoProfile;
-                  const candidateName = profile.display_name ?? "Community Member";
-                  const candidateCode = profile.profile_code ?? profile.id;
-                  const location = locationLine(profile.city, profile.state);
-                  const formattedHeight = profile.height_cm ? formatHeight(profile.height_cm) : null;
-
-                  return (
-                    <article
-                      key={profile.id}
-                      className="rounded-xl border border-[#E4DDD3] bg-white p-4 sm:p-5 shadow-xs hover:shadow-sm transition-all flex flex-col sm:flex-row gap-5"
-                    >
-                      {/* Left: Candidate Photo thumbnail with Code */}
-                      <div className="sm:w-44 flex-shrink-0 flex flex-col items-center">
-                        <div className="relative aspect-[3/4] w-full max-w-[176px] rounded-lg overflow-hidden bg-[#F0EDE6] border border-[#E4DDD3]">
-                          <ProtectedPhoto
-                            profileId={profile.id}
-                            displayName={candidateName}
-                            photoUrl={profile.photo_url}
-                            className="h-full w-full object-cover"
-                            compact
-                          />
-                          {/* Top-right heart button */}
-                          <button
-                            type="button"
-                            onClick={() => actions.toggleShortlist.mutate(profile.id)}
-                            className="absolute top-2 right-2 h-7 w-7 rounded-full bg-white/90 flex items-center justify-center text-[#6B6570] hover:text-rose-500 shadow-xs"
-                          >
-                            <Heart
-                              className={`h-3.5 w-3.5 ${
-                                isShortlisted ? "fill-rose-500 text-rose-500" : ""
-                              }`}
-                            />
-                          </button>
-                        </div>
-                        <span className="mt-2 text-[10px] font-semibold tracking-wider text-[#6B6570] bg-[#FAF8F3] px-2 py-0.5 rounded border border-[#E4DDD3]">
-                          ID: {candidateCode}
-                        </span>
-                      </div>
-
-                      {/* Center: Details & Demographics */}
-                      <div className="flex-1 min-w-0 flex flex-col justify-between">
-                        <div>
-                          {/* Name & Age Row */}
-                          <div className="flex flex-wrap items-baseline gap-2 mb-1">
-                            <h3 className="font-serif text-lg font-bold text-[#24103F]">
-                              {candidateName}
-                            </h3>
-                            <span className="text-xs text-[#6B6570]">
-                              {profile.age ? `${profile.age} yrs` : "—"}
-                              {formattedHeight ? ` • ${formattedHeight}` : ""}
-                            </span>
-                            <span className="inline-flex items-center gap-1 rounded bg-[#087333]/10 px-2 py-0.5 text-[10px] font-semibold text-[#087333] border border-[#087333]/20">
-                              <ShieldCheck className="h-3 w-3" />
-                              Verified Member
-                            </span>
-                          </div>
-
-                          {/* 2-Column Matrimonial Key-Value Details */}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-4 my-3 text-xs">
-                            <div className="flex items-center gap-1.5 text-[#4A4550]">
-                              <GraduationCap className="h-3.5 w-3.5 text-[#087333] shrink-0" />
-                              <span className="font-medium text-[#242024]">Education:</span>
-                              <span className="truncate">{profile.education ?? "—"}</span>
-                            </div>
-
-                            <div className="flex items-center gap-1.5 text-[#4A4550]">
-                              <Briefcase className="h-3.5 w-3.5 text-[#087333] shrink-0" />
-                              <span className="font-medium text-[#242024]">Profession:</span>
-                              <span className="truncate">{profile.occupation ?? "—"}</span>
-                            </div>
-
-                            <div className="flex items-center gap-1.5 text-[#4A4550]">
-                              <MapPin className="h-3.5 w-3.5 text-[#087333] shrink-0" />
-                              <span className="font-medium text-[#242024]">Location:</span>
-                              <span className="truncate">{location || "—"}</span>
-                            </div>
-
-                            <div className="flex items-center gap-1.5 text-[#4A4550]">
-                              <Sparkles className="h-3.5 w-3.5 text-[#D1A329] shrink-0" />
-                              <span className="font-medium text-[#242024]">Cultural:</span>
-                              <span className="truncate">
-                                {demoObj.gothram ? `Got: ${demoObj.gothram}` : ""}
-                                {demoObj.star ? ` • ${demoObj.star}` : ""}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Brief About / Family summary */}
-                          {(demoObj.about_me || profile.family_summary) && (
-                            <p className="text-xs text-[#6B6570] line-clamp-2 leading-relaxed bg-[#FAF8F3] p-2.5 rounded-md border border-[#E4DDD3]/60 mb-3">
-                              {demoObj.about_me || profile.family_summary}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Action Bar */}
-                        <div className="pt-2 border-t border-[#E4DDD3]/60 flex flex-wrap items-center justify-between gap-2.5">
-                          <span className="text-[11px] text-[#B0A8B8]">
-                            Community: Shettibalija
-                          </span>
-
-                          <div className="flex items-center gap-2">
-                            <Button
-                              type="button"
-                              variant={isInterestSent ? "outline" : "default"}
-                              size="sm"
-                              onClick={() => actions.sendInterest.mutate(profile.id)}
-                              className={`h-8 text-xs font-semibold ${
-                                isInterestSent
-                                  ? "border-[#087333] text-[#087333] bg-[#087333]/5"
-                                  : "bg-[#24103F] text-white hover:bg-[#311552]"
-                              }`}
-                            >
-                              {isInterestSent ? (
-                                <>
-                                  <CheckCircle2 className="h-3.5 w-3.5 mr-1 text-[#087333]" />
-                                  Interest Sent
-                                </>
-                              ) : (
-                                <>
-                                  <Send className="h-3.5 w-3.5 mr-1" />
-                                  Send Interest
-                                </>
-                              )}
-                            </Button>
-
-                            <Button
-                              asChild
-                              variant="outline"
-                              size="sm"
-                              className="h-8 text-xs font-medium border-[#E4DDD3] text-[#242024] hover:border-[#24103F]"
-                            >
-                              <Link
-                                to="/profile/$id"
-                                params={{ id: profile.id }}
-                                className="flex items-center gap-1"
-                              >
-                                View Profile
-                                <ArrowRight className="h-3 w-3" />
-                              </Link>
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {profilesQuery.data.map((profile) => (
+                  <ProfileCard
+                    key={profile.id}
+                    profile={profile}
+                    shortlisted={actions.shortlistedIds.has(profile.id)}
+                    interestSent={actions.sentInterests.has(profile.id)}
+                    onShortlist={() => actions.toggleShortlist.mutate(profile.id)}
+                    onInterest={() => actions.sendInterest.mutate(profile.id)}
+                  />
+                ))}
               </div>
             )}
           </main>
         </div>
       </div>
 
-      {/* Mobile Filters Drawer / Sheet */}
       <Sheet open={mobileFilterOpen} onOpenChange={setMobileFilterOpen}>
-        <SheetContent side="right" className="w-[min(100%,22rem)] bg-[#FAF8F3] p-0 flex flex-col">
-          <SheetHeader className="p-4 border-b border-[#E4DDD3] flex flex-row items-center justify-between">
-            <SheetTitle className="text-base font-serif font-bold text-[#24103F]">
-              Search Filters
+        <SheetContent side="right" className="flex w-[min(100%,22rem)] flex-col bg-[#FAF8F3] p-0">
+          <SheetHeader className="flex flex-row items-center justify-between border-b border-[#ded5c8] p-4">
+            <SheetTitle className="font-serif text-xl text-[#24103F]">
+              {lang === "te" ? "ఫిల్టర్లు" : "Filters"}
             </SheetTitle>
             <button
+              type="button"
               onClick={() => setMobileFilterOpen(false)}
-              className="h-8 w-8 flex items-center justify-center rounded-md text-[#6B6570]"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[#6B6570]"
+              aria-label="Close filters"
             >
               <X className="h-4 w-4" />
             </button>
           </SheetHeader>
-
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {/* Looking For */}
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Looking For</Label>
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-[#E4DDD3] bg-white px-3 text-xs"
-              >
-                <option value="">Bride / Groom (All)</option>
-                <option value="bride">Bride (వధువు)</option>
-                <option value="groom">Groom (వరుడు)</option>
-              </select>
-            </div>
-
-            {/* Profile ID */}
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Profile ID</Label>
-              <Input
-                type="text"
-                placeholder="e.g. SBM-D101"
-                value={profileId}
-                onChange={(e) => setProfileId(e.target.value)}
-                className="h-10 text-xs bg-white border-[#E4DDD3]"
-              />
-            </div>
-
-            {/* Age Range */}
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Age Range</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  min={18}
-                  max={70}
-                  placeholder="21"
-                  value={minAge}
-                  onChange={(e) => setMinAge(e.target.value)}
-                  className="h-10 text-xs text-center bg-white border-[#E4DDD3]"
-                />
-                <span className="text-xs text-[#6B6570]">to</span>
-                <Input
-                  type="number"
-                  min={18}
-                  max={70}
-                  placeholder="35"
-                  value={maxAge}
-                  onChange={(e) => setMaxAge(e.target.value)}
-                  className="h-10 text-xs text-center bg-white border-[#E4DDD3]"
-                />
-              </div>
-            </div>
-
-            {/* State */}
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Location / State</Label>
-              <select
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-[#E4DDD3] bg-white px-3 text-xs"
-              >
-                <option value="">All Locations</option>
-                {STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Education */}
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Education</Label>
-              <select
-                value={education}
-                onChange={(e) => setEducation(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-[#E4DDD3] bg-white px-3 text-xs"
-              >
-                <option value="">Any Education</option>
-                {EDUCATION_OPTIONS.map((ed) => (
-                  <option key={ed} value={ed}>
-                    {ed}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Marital Status */}
-            <div className="space-y-1">
-              <Label className="text-xs font-semibold text-[#24103F]">Marital Status</Label>
-              <select
-                value={maritalStatus}
-                onChange={(e) => setMaritalStatus(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-[#E4DDD3] bg-white px-3 text-xs"
-              >
-                <option value="">Any Status</option>
-                {MARITAL_STATUS_OPTIONS.map((m) => (
-                  <option key={m.value} value={m.value}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Photo & Horoscope */}
-            <div className="space-y-2 pt-2 border-t border-[#E4DDD3]">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={photoOnly}
-                  onChange={(e) => setPhotoOnly(e.target.checked)}
-                  className="h-4 w-4 rounded text-[#24103F]"
-                />
-                <span className="text-xs text-[#242024]">Profiles with Photo only</span>
-              </label>
-
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={horoscopeOnly}
-                  onChange={(e) => setHoroscopeOnly(e.target.checked)}
-                  className="h-4 w-4 rounded text-[#242024]"
-                />
-                <span className="text-xs text-[#242024]">Horoscope Added only</span>
-              </label>
-            </div>
-          </div>
-
-          <div className="p-4 border-t border-[#E4DDD3] bg-white flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                handleResetFilters();
-                setMobileFilterOpen(false);
-              }}
-              className="flex-1 h-10 text-xs"
-            >
-              Reset All
-            </Button>
-            <Button
-              type="button"
-              onClick={handleFilterSubmit}
-              className="flex-1 h-10 bg-[#24103F] text-white text-xs font-semibold"
-            >
-              Apply Filters
-            </Button>
+          <div className="flex-1 overflow-y-auto p-4">
+            <FilterPanel
+              filters={filters}
+              setFilters={setFilters}
+              onSubmit={handleFilterSubmit}
+              lang={lang}
+              compact
+            />
           </div>
         </SheetContent>
       </Sheet>
     </div>
+  );
+}
+
+function Chip({ label, onClear }: { label: string; onClear: () => void }) {
+  return (
+    <span className="sbm-chip">
+      {label}
+      <button type="button" onClick={onClear} aria-label={`Remove ${label} filter`}>
+        <X className="h-3 w-3" />
+      </button>
+    </span>
+  );
+}
+
+function FilterPanel({
+  filters,
+  setFilters,
+  onSubmit,
+  lang,
+  compact = false,
+}: {
+  filters: Filters;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  onSubmit: (event: FormEvent) => void;
+  lang: "en" | "te";
+  compact?: boolean;
+}) {
+  function update<K extends keyof Filters>(key: K, value: Filters[K]) {
+    setFilters((current) => ({ ...current, [key]: value }));
+  }
+
+  return (
+    <form onSubmit={onSubmit} className={compact ? "space-y-5" : "mt-4 space-y-4"}>
+      <div>
+        <label htmlFor="filter-gender" className="sbm-label">
+          {lang === "te" ? "వెతుకుతున్నది" : "Looking for"}
+        </label>
+        <select id="filter-gender" className="sbm-field" value={filters.gender} onChange={(event) => update("gender", event.target.value)}>
+          <option value="">{lang === "te" ? "వధువు లేదా వరుడు" : "Bride or groom"}</option>
+          <option value="bride">{lang === "te" ? "వధువు" : "Bride"}</option>
+          <option value="groom">{lang === "te" ? "వరుడు" : "Groom"}</option>
+        </select>
+      </div>
+
+      <div>
+        <span className="sbm-label">{lang === "te" ? "వయస్సు" : "Age"}</span>
+        <div className="flex items-center gap-2">
+          <input
+            aria-label={lang === "te" ? "కనిష్ఠ వయస్సు" : "Minimum age"}
+            type="number"
+            min={18}
+            max={70}
+            className="sbm-field text-center"
+            value={filters.minAge}
+            onChange={(event) => update("minAge", event.target.value)}
+            placeholder="21"
+          />
+          <span className="text-xs text-[#9a929e]">to</span>
+          <input
+            aria-label={lang === "te" ? "గరిష్ఠ వయస్సు" : "Maximum age"}
+            type="number"
+            min={18}
+            max={70}
+            className="sbm-field text-center"
+            value={filters.maxAge}
+            onChange={(event) => update("maxAge", event.target.value)}
+            placeholder="35"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="filter-state" className="sbm-label">
+          {lang === "te" ? "ప్రాంతం" : "Location"}
+        </label>
+        <select id="filter-state" className="sbm-field" value={filters.state} onChange={(event) => update("state", event.target.value)}>
+          <option value="">{lang === "te" ? "అన్ని ప్రాంతాలు" : "Anywhere"}</option>
+          {STATES.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="filter-education" className="sbm-label">
+          {lang === "te" ? "విద్య" : "Education"}
+        </label>
+        <select id="filter-education" className="sbm-field" value={filters.education} onChange={(event) => update("education", event.target.value)}>
+          <option value="">{lang === "te" ? "ఏదైనా" : "Any education"}</option>
+          {EDUCATION_OPTIONS.map((education) => (
+            <option key={education} value={education}>
+              {education}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="filter-occupation" className="sbm-label">
+          {lang === "te" ? "ఉద్యోగం" : "Occupation"}
+        </label>
+        <select id="filter-occupation" className="sbm-field" value={filters.occupation} onChange={(event) => update("occupation", event.target.value)}>
+          <option value="">{lang === "te" ? "ఏదైనా" : "Any occupation"}</option>
+          {OCCUPATION_OPTIONS.map((occupation) => (
+            <option key={occupation} value={occupation}>
+              {occupation}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="filter-marital" className="sbm-label">
+          {lang === "te" ? "వైవాహిక స్థితి" : "Marital status"}
+        </label>
+        <select id="filter-marital" className="sbm-field" value={filters.maritalStatus} onChange={(event) => update("maritalStatus", event.target.value)}>
+          <option value="">{lang === "te" ? "అన్ని స్థితులు" : "Any status"}</option>
+          {MARITAL_STATUS_OPTIONS.map((status) => (
+            <option key={status.value} value={status.value}>
+              {lang === "te" ? status.labelTe : status.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <details className="border-t border-[#e5ddd1] pt-4">
+        <summary className="cursor-pointer list-none text-[12px] font-bold text-[#24103F]">
+          {lang === "te" ? "మరిన్ని వివరాలు" : "More details"}
+        </summary>
+        <div className="mt-4 space-y-4">
+          <div>
+            <label htmlFor="filter-profile-id" className="sbm-label">
+              {lang === "te" ? "ప్రొఫైల్ ఐడీ" : "Profile ID"}
+            </label>
+            <Input
+              id="filter-profile-id"
+              value={filters.profileId}
+              onChange={(event) => update("profileId", event.target.value)}
+              className="h-11 border-[#d9d0c3] text-sm"
+              placeholder="e.g. SBM-1024"
+            />
+          </div>
+
+          <div>
+            <span className="sbm-label">{lang === "te" ? "ఎత్తు" : "Height"}</span>
+            <div className="grid grid-cols-2 gap-2">
+              <select className="sbm-field" value={filters.minHeight} onChange={(event) => update("minHeight", event.target.value)}>
+                <option value="">Min</option>
+                {HEIGHT_CHOICES.map((choice) => (
+                  <option key={choice.cm} value={choice.cm}>
+                    {choice.label}
+                  </option>
+                ))}
+              </select>
+              <select className="sbm-field" value={filters.maxHeight} onChange={(event) => update("maxHeight", event.target.value)}>
+                <option value="">Max</option>
+                {HEIGHT_CHOICES.map((choice) => (
+                  <option key={choice.cm} value={choice.cm}>
+                    {choice.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="filter-star" className="sbm-label">
+              {lang === "te" ? "నక్షత్రం" : "Star"}
+            </label>
+            <select id="filter-star" className="sbm-field" value={filters.star} onChange={(event) => update("star", event.target.value)}>
+              <option value="">{lang === "te" ? "ఏదైనా" : "Any star"}</option>
+              {NAKSHATRA_OPTIONS.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {lang === "te" ? item.labelTe : item.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="filter-rashi" className="sbm-label">
+              {lang === "te" ? "రాశి" : "Rashi"}
+            </label>
+            <select id="filter-rashi" className="sbm-field" value={filters.rashi} onChange={(event) => update("rashi", event.target.value)}>
+              <option value="">{lang === "te" ? "ఏదైనా" : "Any rashi"}</option>
+              {RASHI_OPTIONS.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {lang === "te" ? item.labelTe : item.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="filter-gothram" className="sbm-label">
+              {lang === "te" ? "గోత్రం" : "Gothram"}
+            </label>
+            <Input
+              id="filter-gothram"
+              value={filters.gothram}
+              onChange={(event) => update("gothram", event.target.value)}
+              className="h-11 border-[#d9d0c3] text-sm"
+              placeholder={lang === "te" ? "ఉదా. జనకుల" : "e.g. Janakula"}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="filter-food" className="sbm-label">
+              {lang === "te" ? "ఆహారం" : "Food habit"}
+            </label>
+            <select id="filter-food" className="sbm-field" value={filters.foodHabit} onChange={(event) => update("foodHabit", event.target.value)}>
+              <option value="">{lang === "te" ? "ఏదైనా" : "Any"}</option>
+              {FOOD_HABIT_OPTIONS.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {lang === "te" ? item.labelTe : item.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </details>
+
+      <div className="flex gap-2 border-t border-[#e5ddd1] pt-4">
+        <button type="submit" className="sbm-button sbm-button--primary flex-1">
+          {lang === "te" ? "వర్తించండి" : "Apply filters"}
+        </button>
+        <button type="button" onClick={() => setFilters(EMPTY_FILTERS)} className="sbm-button sbm-button--outline px-3" aria-label="Clear filters">
+          <RotateCcw className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </form>
   );
 }

@@ -170,9 +170,9 @@ function DashboardPhotosPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#D9A514]/25 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#D1A329]/25 pb-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-[#21083F]">Manage Photos</h1>
+          <h1 className="font-serif text-3xl font-bold text-[#24103F]">Profile photos</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Upload up to 5 clear photos. Photos are protected according to your privacy settings.
           </p>
@@ -203,13 +203,13 @@ function DashboardPhotosPage() {
             asChild
             disabled={uploading}
             variant="outline"
-            className="h-10 rounded-xl border-[#D9A514]/40 text-[#21083F] font-semibold text-xs touch-press"
+            className="h-10 rounded-xl border-[#D1A329]/40 text-[#24103F] font-semibold text-xs touch-press"
           >
             <label
               htmlFor="camera-photo-input"
               className="cursor-pointer flex items-center gap-1.5"
             >
-              <Camera className="h-4 w-4 text-[#D9A514]" />
+              <Camera className="h-4 w-4 text-[#D1A329]" />
               <span>Take Photo</span>
             </label>
           </Button>
@@ -217,21 +217,21 @@ function DashboardPhotosPage() {
           <Button
             asChild
             disabled={uploading}
-            className="h-10 rounded-xl bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-semibold text-xs shadow-md border border-[#D9A514]/30 touch-press"
+            className="h-10 rounded-xl bg-gradient-to-r from-[#087333] to-[#087333] hover:from-[#034B21] hover:to-[#087333] text-white font-semibold text-xs shadow-md border border-[#D1A329]/30 touch-press"
           >
             <label
               htmlFor="gallery-photo-input"
               className="cursor-pointer flex items-center gap-1.5"
             >
-              <Upload className="h-4 w-4 text-[#F4D477]" />
+              <Upload className="h-4 w-4 text-[#F5E5B2]" />
               <span>{uploading ? "Optimizing & Uploading..." : "Choose Gallery"}</span>
             </label>
           </Button>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#D9A514]/20 bg-amber-50/50 p-3 sm:p-4 text-xs text-[#21083F] flex items-center gap-2">
-        <AlertCircle className="h-4 w-4 text-[#D9A514] shrink-0" />
+      <div className="rounded-2xl border border-[#D1A329]/20 bg-amber-50/50 p-3 sm:p-4 text-xs text-[#24103F] flex items-center gap-2">
+        <AlertCircle className="h-4 w-4 text-[#D1A329] shrink-0" />
         <span>
           Images are automatically optimized for mobile speeds. Clear front-facing portraits in
           formal or traditional attire are recommended.
@@ -249,7 +249,7 @@ function DashboardPhotosPage() {
                 htmlFor="camera-photo-input"
                 className="cursor-pointer flex items-center gap-1.5"
               >
-                <Camera className="h-4 w-4 text-[#D9A514]" />
+                <Camera className="h-4 w-4 text-[#D1A329]" />
                 Take Photo
               </label>
             </Button>

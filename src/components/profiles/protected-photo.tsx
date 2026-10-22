@@ -7,7 +7,6 @@ import { getAuthorizedPhotos } from "@/functions/photos";
 import { supabase } from "@/integrations/supabase/client";
 import { PHOTO_BUCKET, SITE_NAME_TE } from "@/lib/site";
 import { initials } from "@/lib/format";
-import { isDemoId } from "@/data/demo-profiles";
 import { ShettibalijaLogo } from "@/components/brand/logo";
 
 type Props = {
@@ -43,14 +42,6 @@ export function ProtectedPhoto({
       setUrl(photoUrl);
       setLocked(false);
       setHasPhotos(true);
-      return;
-    }
-
-    // Demo profiles without static photoUrl skip network query
-    if (isDemoId(profileId)) {
-      setUrl(null);
-      setLocked(false);
-      setHasPhotos(false);
       return;
     }
 
@@ -109,7 +100,7 @@ export function ProtectedPhoto({
   const showPhoto = Boolean(url && !imgError);
 
   return (
-    <div className={cn("relative overflow-hidden bg-[#21083F]", className)}>
+    <div className={cn("relative overflow-hidden bg-[#24103F]", className)}>
       {showPhoto ? (
         <img
           src={url!}
@@ -120,7 +111,7 @@ export function ProtectedPhoto({
         />
       ) : (
         /* Shettibalija Official Branded Avatar */
-        <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#21083F] via-[#2f0c54] to-[#140424] p-4 text-center select-none overflow-hidden">
+        <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#24103F] via-[#2f0c54] to-[#140424] p-4 text-center select-none overflow-hidden">
           {/* Subtle Logo Watermark in background */}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-10">
             <img
@@ -134,7 +125,7 @@ export function ProtectedPhoto({
           {/* Central Monogram Ring */}
           <div
             className={cn(
-              "relative z-10 flex items-center justify-center rounded-full border border-[#D9A514]/40 bg-black/30 shadow-[0_0_20px_rgba(217,165,20,0.25)] backdrop-blur-xs transition group-hover:scale-105",
+              "relative z-10 flex items-center justify-center rounded-full border border-[#D1A329]/40 bg-black/30 shadow-[0_0_20px_rgba(217,165,20,0.25)] backdrop-blur-xs transition group-hover:scale-105",
               compact ? "h-14 w-14" : "h-20 w-20",
             )}
           >
@@ -150,8 +141,8 @@ export function ProtectedPhoto({
             {initials(displayName)}
           </span>
 
-          <div className="relative z-10 mt-1.5 inline-flex items-center gap-1 rounded-full bg-[#D9A514]/15 border border-[#D9A514]/30 px-2.5 py-0.5 text-[10px] font-semibold text-[#F4D477]">
-            <Sparkles className="h-3 w-3 text-[#D9A514]" />
+          <div className="relative z-10 mt-1.5 inline-flex items-center gap-1 rounded-full bg-[#D1A329]/15 border border-[#D1A329]/30 px-2.5 py-0.5 text-[10px] font-semibold text-[#F5E5B2]">
+            <Sparkles className="h-3 w-3 text-[#D1A329]" />
             <span>{SITE_NAME_TE}</span>
           </div>
         </div>
@@ -159,20 +150,20 @@ export function ProtectedPhoto({
 
       {/* Locked overlay for privacy if photo exists but user is unauthorized */}
       {hasPhotos && locked && !ownerMode ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#21083F]/85 px-4 text-center text-white backdrop-blur-md">
-          <div className="rounded-full bg-black/40 p-2.5 border border-[#D9A514]/40 shadow-lg">
-            <Lock className="h-5 w-5 text-[#F4D477]" aria-hidden />
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#24103F]/85 px-4 text-center text-white backdrop-blur-md">
+          <div className="rounded-full bg-black/40 p-2.5 border border-[#D1A329]/40 shadow-lg">
+            <Lock className="h-5 w-5 text-[#F5E5B2]" aria-hidden />
           </div>
           <p className="mt-2 text-sm font-bold text-white tracking-wide">Photo Protected</p>
           {!compact ? (
             <>
               <p className="mt-1 text-xs text-white/80 max-w-[15rem] leading-relaxed">
-                Connect or upgrade membership to view this candidate's verified photo.
+                This photo is private. It becomes available when the member chooses to share it.
               </p>
               <Button
                 asChild
                 size="sm"
-                className="mt-3 rounded-full bg-gradient-to-r from-[#034B21] to-[#087A32] text-xs font-bold text-white border border-[#D9A514]/40 hover:shadow-md"
+                className="mt-3 rounded-full bg-gradient-to-r from-[#034B21] to-[#087333] text-xs font-bold text-white border border-[#D1A329]/40 hover:shadow-md"
               >
                 <Link to="/membership">View Membership</Link>
               </Button>

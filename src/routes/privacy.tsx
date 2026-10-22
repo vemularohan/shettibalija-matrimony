@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Card, CardContent } from "@/components/ui/card";
+import { LegalPage } from "@/components/shared/legal-page";
 import { SITE_NAME } from "@/lib/site";
 
 export const Route = createFileRoute("/privacy")({
@@ -17,74 +17,75 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#21083F]/[0.02] via-[#F8F7F4] to-[#F8F7F4] py-16">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 text-center">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#D9A514]">
-            COMMUNITY SECURITY &amp; DATA PRIVACY
-          </span>
-          <h1 className="mt-2 font-serif text-3xl sm:text-4xl font-bold text-[#21083F]">
-            Privacy Policy
-          </h1>
-          <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
-            Last updated: October 2026
-          </p>
-        </div>
-
-        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
-          <CardContent className="p-6 md:p-10 space-y-6 text-sm text-foreground/90 leading-relaxed">
-            <section className="space-y-2 border-b border-[#D9A514]/15 pb-4">
-              <h2 className="font-serif text-lg font-bold text-[#21083F]">
-                1. Information We Collect
-              </h2>
+    <LegalPage
+      kicker="Privacy"
+      title="Privacy policy"
+      updated="October 2026"
+      intro="This policy explains what information the platform holds, how contact details and photographs are protected, and the choices available to members."
+      sections={[
+        {
+          id: "information-we-collect",
+          title: "1. Information we collect",
+          body: (
+            <p>
+              When you create an account, we collect the matrimonial details you choose to provide,
+              including name, contact details, date of birth, educational background, professional
+              details, photographs and optional family background information.
+            </p>
+          ),
+        },
+        {
+          id: "contact-details",
+          title: "2. Confidentiality of contact details",
+          body: (
+            <p>
+              Direct contact phone numbers and personal email addresses are not displayed publicly
+              on the open website. Contact details are released only through the platform&apos;s
+              access rules and according to your selected privacy controls.
+            </p>
+          ),
+        },
+        {
+          id: "photo-protection",
+          title: "3. Photo protection",
+          body: (
+            <p>
+              You maintain control over your photograph visibility. You may choose to display your
+              photo to signed-in members, or restrict photos so that only members you approve can
+              view them. The access rules are enforced at the data layer, not only in the interface.
+            </p>
+          ),
+        },
+        {
+          id: "data-security",
+          title: "4. Data security",
+          body: (
+            <>
               <p>
-                When you create an account, we collect necessary matrimonial details including name,
-                contact details, date of birth, educational background, professional details,
-                photographs, and optional family background information.
+                We use encryption in transit, Row Level Security policies in our database and
+                restricted access to credentials and private storage. We do not sell or lease
+                personal member data to third-party marketing companies.
               </p>
-            </section>
-
-            <section className="space-y-2 border-b border-[#D9A514]/15 pb-4">
-              <h2 className="font-serif text-lg font-bold text-[#21083F]">
-                2. Confidentiality of Contact Details
-              </h2>
               <p>
-                Direct contact phone numbers and personal email addresses are NEVER displayed
-                publicly on the open website. Only verified members who request contact and are
-                authorized will receive access according to your selected privacy controls.
+                No internet service can promise absolute security. If you believe your account has
+                been accessed without permission, contact support immediately.
               </p>
-            </section>
-
-            <section className="space-y-2 border-b border-[#D9A514]/15 pb-4">
-              <h2 className="font-serif text-lg font-bold text-[#21083F]">3. Photo Protection</h2>
-              <p>
-                You maintain control over your photograph visibility. You may choose to display your
-                photo to logged-in members or lock photos so that only members you explicitly
-                approve can view them.
-              </p>
-            </section>
-
-            <section className="space-y-2 border-b border-[#D9A514]/15 pb-4">
-              <h2 className="font-serif text-lg font-bold text-[#21083F]">4. Data Security</h2>
-              <p>
-                We implement industry-standard encryption, Row Level Security (RLS) policies in our
-                cloud database, and secure credential handling. We do not sell or lease personal
-                member data to third-party marketing companies.
-              </p>
-            </section>
-
-            <section className="space-y-2">
-              <h2 className="font-serif text-lg font-bold text-[#21083F]">
-                5. Account Deletion &amp; Data Rights
-              </h2>
-              <p>
-                Members may update, hide, or request deletion of their profile at any time through
-                their dashboard settings or by reaching out to support@shettibalijamatrimony.org.
-              </p>
-            </section>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+            </>
+          ),
+        },
+        {
+          id: "account-deletion",
+          title: "5. Account deletion and data rights",
+          body: (
+            <p>
+              Members may update, hide or request deletion of their profile through their dashboard
+              settings, or by writing to support@shettibalijamatrimony.org from their registered
+              email address. We will explain what will be removed and any records we are required to
+              retain.
+            </p>
+          ),
+        },
+      ]}
+    />
   );
 }

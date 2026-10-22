@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Menu, X, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { useUnreadNotificationCount } from "@/hooks/use-member-data";
@@ -21,20 +20,15 @@ export function SiteHeader() {
 
   useEffect(() => {
     function handleScroll() {
-      setScrolled(window.scrollY > 12);
+      setScrolled(window.scrollY > 16);
     }
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Prevent background scrolling when mobile sheet is open
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
@@ -48,132 +42,120 @@ export function SiteHeader() {
 
   const navLinks = [
     { to: "/", label: lang === "te" ? "హోమ్" : "Home" },
-    { to: "/search", label: lang === "te" ? "ప్రొఫైల్స్ శోధన" : "Search Profiles" },
-    { to: "/#how-it-works", label: lang === "te" ? "విధానం" : "How It Works" },
+    { to: "/search", label: lang === "te" ? "అన్వేషణ" : "Discover" },
+    { to: "/#how-it-works", label: lang === "te" ? "ఎలా పనిచేస్తుంది" : "How it works" },
     { to: "/membership", label: lang === "te" ? "సభ్యత్వం" : "Membership" },
-    { to: "/#success-stories", label: lang === "te" ? "విజయ గాథలు" : "Success Stories" },
-    { to: "/about", label: lang === "te" ? "మా గురించి" : "About Us" },
+    { to: "/success-stories", label: lang === "te" ? "కథలు" : "Stories" },
+    { to: "/about", label: lang === "te" ? "మా గురించి" : "About" },
   ];
 
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        "bg-[#FAF8F3]/95 backdrop-blur-sm border-b border-[#E4DDD3]",
-        scrolled && "shadow-[0_2px_12px_rgba(36,16,63,0.06),0_1px_0_rgba(255,255,255,0.8)_inset]",
+        "fixed inset-x-0 top-0 z-50 border-b transition-all duration-300",
+        scrolled
+          ? "border-[#ded5c8] bg-[#FAF8F3]/97 shadow-[0_10px_30px_rgba(36,16,63,0.06)] backdrop-blur-md"
+          : "border-[#e9e2d7] bg-[#FAF8F3]/95 backdrop-blur-sm",
       )}
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Left: Logo + Brand Name */}
-        <Link to="/" className="flex items-center gap-2.5 focus:outline-none group">
-          <ShettibalijaLogo
-            size="sm"
-            priority
-            imgClassName="transition-opacity duration-200 group-hover:opacity-80"
-          />
-          <div className="flex flex-col leading-none">
-            <span className="font-sans text-sm font-semibold text-[#242024] tracking-tight">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <Link
+          to="/"
+          className="flex shrink-0 items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1A329] focus-visible:ring-offset-2"
+        >
+          <ShettibalijaLogo size="sm" priority />
+          <span className="flex flex-col leading-none">
+            <span className="font-sans text-[13px] font-bold tracking-[-0.015em] text-[#242024]">
               {SITE_NAME}
             </span>
-            <span className="text-[10px] font-medium text-[#D1A329] tracking-wide">
+            <span className="sbm-telugu mt-1 text-[9px] font-medium tracking-wide text-[#a37d1c]">
               {SITE_NAME_TE}
             </span>
-          </div>
+          </span>
         </Link>
 
-        {/* Center: Desktop Nav */}
-        <nav className="hidden items-center gap-5 xl:gap-6 lg:flex" aria-label="Primary Navigation">
+        <nav
+          className="hidden items-center gap-5 lg:flex xl:gap-7"
+          aria-label="Primary navigation"
+        >
           {navLinks.map((item) => (
             <Link
-              key={item.label}
+              key={item.to}
               to={item.to}
-              className="text-[13px] font-medium text-[#6B6570] hover:text-[#24103F] transition-colors duration-150"
-              activeProps={{ className: "text-[#24103F] font-semibold" }}
+              className="relative py-2 text-[12px] font-semibold text-[#5e5663] transition-colors hover:text-[#24103F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1A329] focus-visible:ring-offset-2"
+              activeProps={{ className: "text-[#24103F]" }}
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        {/* Right: Actions */}
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <LanguageSwitcher size="sm" />
-
           {!loading && user ? (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               {isAdmin || isModerator ? (
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 text-xs text-[#6B6570] hover:text-[#242024]"
+                <Link
+                  to="/admin"
+                  className="px-2.5 py-2 text-[12px] font-semibold text-[#6b6570] hover:text-[#24103F]"
                 >
-                  <Link to="/admin">Admin</Link>
-                </Button>
+                  Admin
+                </Link>
               ) : null}
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs text-[#6B6570] hover:text-[#242024]"
+              <Link
+                to="/dashboard"
+                className="px-2.5 py-2 text-[12px] font-semibold text-[#6b6570] hover:text-[#24103F]"
               >
-                <Link to="/dashboard">Dashboard</Link>
-              </Button>
-              <Button
-                asChild
-                variant="ghost"
-                size="icon"
-                className="relative h-8 w-8 text-[#6B6570] hover:text-[#242024]"
+                {lang === "te" ? "డ్యాష్‌బోర్డ్" : "Dashboard"}
+              </Link>
+              <Link
+                to="/dashboard/notifications"
+                className="relative flex h-8 w-8 items-center justify-center rounded-full text-[#6b6570] transition-colors hover:bg-[#f0ebe3] hover:text-[#24103F]"
                 aria-label="Notifications"
               >
-                <Link to="/dashboard/notifications">
-                  <Bell className="h-4 w-4" />
-                  {(unread ?? 0) > 0 ? (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#087333] px-1 text-[8px] text-white font-bold">
-                      {unread}
-                    </span>
-                  ) : null}
-                </Link>
-              </Button>
+                <Bell className="h-4 w-4" />
+                {(unread ?? 0) > 0 ? (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#087333] px-1 text-[8px] font-bold text-white">
+                    {unread}
+                  </span>
+                ) : null}
+              </Link>
               <button
+                type="button"
                 onClick={() => void handleLogout()}
-                className="flex items-center gap-1 text-xs text-[#6B6570] hover:text-[#242024] transition-colors"
+                className="flex items-center gap-1 px-1.5 py-2 text-[12px] font-medium text-[#6b6570] hover:text-[#24103F]"
               >
                 <LogOut className="h-3.5 w-3.5" />
-                Logout
+                <span className="sr-only sm:not-sr-only">
+                  {lang === "te" ? "లాగ్ అవుట్" : "Log out"}
+                </span>
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="h-8 text-xs font-medium text-[#242024] hover:text-[#24103F]"
+              <Link
+                to="/login"
+                search={{}}
+                className="px-2.5 py-2 text-[12px] font-semibold text-[#4f4755] hover:text-[#24103F]"
               >
-                <Link to="/login">{lang === "te" ? "లాగిన్" : "Login"}</Link>
-              </Button>
-              <Button
-                asChild
-                size="sm"
-                className="h-8 rounded-md bg-[#24103F] px-3.5 text-xs font-semibold text-white hover:bg-[#311552] transition-all shadow-xs active:translate-y-px"
+                {lang === "te" ? "లాగిన్" : "Login"}
+              </Link>
+              <Link
+                to="/register"
+                className="sbm-button sbm-button--primary min-h-0 px-4 py-2.5 text-[12px]"
               >
-                <Link to="/register">
-                  {lang === "te" ? "ఉచిత రిజిస్ట్రేషన్" : "Register Free"}
-                </Link>
-              </Button>
+                {lang === "te" ? "ప్రొఫైల్ ప్రారంభించండి" : "Begin your profile"}
+              </Link>
             </div>
           )}
         </div>
 
-        {/* Mobile Controls */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-1.5 lg:hidden">
           <LanguageSwitcher size="sm" />
-
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button
-                className="flex h-9 w-9 items-center justify-center rounded-md text-[#6B6570] hover:text-[#242024] hover:bg-[#F0EDE6] transition-colors"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-[#4f4755] transition-colors hover:bg-[#f0ebe3] hover:text-[#24103F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1A329]"
                 aria-label="Open navigation menu"
               >
                 <Menu className="h-5 w-5" />
@@ -181,117 +163,87 @@ export function SiteHeader() {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="w-[min(100%,20rem)] bg-[#FAF8F3] border-l border-[#E4DDD3] p-0"
+              className="w-[min(100%,21rem)] border-l border-[#ded5c8] bg-[#FAF8F3] p-0"
             >
               <SheetHeader className="sr-only">
                 <SheetTitle>{SITE_NAME}</SheetTitle>
               </SheetHeader>
 
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-[#E4DDD3]">
+              <div className="flex items-center justify-between border-b border-[#ded5c8] px-5 py-4">
                 <div className="flex items-center gap-2.5">
                   <ShettibalijaLogo size="sm" priority />
-                  <span className="font-sans text-sm font-semibold text-[#242024]">
-                    {SITE_NAME}
-                  </span>
+                  <div>
+                    <p className="text-sm font-bold text-[#242024]">{SITE_NAME}</p>
+                    <p className="sbm-telugu text-[9px] text-[#a37d1c]">{SITE_NAME_TE}</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
-                  className="h-8 w-8 flex items-center justify-center rounded-md text-[#6B6570] hover:text-[#242024] hover:bg-[#F0EDE6] transition-colors"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-[#6b6570] hover:bg-[#f0ebe3] hover:text-[#24103F]"
                   aria-label="Close menu"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
-              {/* Navigation Links */}
-              <nav className="flex flex-col px-3 py-4 gap-0.5" aria-label="Mobile Navigation">
+              <nav className="flex flex-col px-3 py-5" aria-label="Mobile navigation">
                 {navLinks.map((item) => (
                   <Link
                     key={item.to}
                     to={item.to}
-                    className="flex items-center px-3 py-2.5 rounded-md text-sm font-medium text-[#6B6570] hover:text-[#242024] hover:bg-[#F0EDE6] transition-colors"
-                    activeProps={{ className: "text-[#24103F] font-semibold bg-[#F0EDE6]" }}
+                    className="flex items-center border-b border-[#e8e0d4]/70 px-3 py-3 text-sm font-semibold text-[#4f4755] transition-colors hover:text-[#24103F]"
+                    activeProps={{ className: "text-[#24103F]" }}
                     onClick={() => setOpen(false)}
                   >
                     {item.label}
                   </Link>
                 ))}
 
-                <div className="mt-3 mb-1 h-px bg-[#E4DDD3]" />
-
-                {/* Language Switcher */}
-                <div className="px-3 py-2 flex items-center justify-between">
-                  <span className="text-xs text-[#6B6570]">
+                <div className="mt-5 flex items-center justify-between px-3 py-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6B6570]">
                     {lang === "te" ? "భాష" : "Language"}
                   </span>
                   <LanguageSwitcher size="sm" />
                 </div>
 
-                <div className="mt-2 h-px bg-[#E4DDD3]" />
-
-                {/* Auth Actions */}
                 {!loading && user ? (
-                  <div className="flex flex-col gap-0.5 mt-1">
+                  <div className="mt-4 flex flex-col gap-2 px-3">
                     <Link
                       to="/dashboard"
                       onClick={() => setOpen(false)}
-                      className="flex items-center px-3 py-2.5 rounded-md text-sm font-medium text-[#6B6570] hover:text-[#242024] hover:bg-[#F0EDE6] transition-colors"
+                      className="sbm-button sbm-button--primary w-full"
                     >
-                      Dashboard
-                    </Link>
-                    <Link
-                      to="/dashboard/profile"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center px-3 py-2.5 rounded-md text-sm font-medium text-[#6B6570] hover:text-[#242024] hover:bg-[#F0EDE6] transition-colors"
-                    >
-                      My Profile
-                    </Link>
-                    <Link
-                      to="/dashboard/notifications"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center px-3 py-2.5 rounded-md text-sm font-medium text-[#6B6570] hover:text-[#242024] hover:bg-[#F0EDE6] transition-colors"
-                    >
-                      Notifications
-                      {(unread ?? 0) > 0 && (
-                        <span className="ml-auto text-xs font-bold text-[#087333]">{unread}</span>
-                      )}
+                      {lang === "te" ? "నా డ్యాష్‌బోర్డ్" : "My dashboard"}
                     </Link>
                     <button
                       type="button"
-                      className="flex items-center gap-1.5 px-3 py-2.5 rounded-md text-sm font-medium text-rose-600 hover:bg-rose-50 transition-colors text-left"
+                      className="sbm-button sbm-button--outline w-full text-rose-700"
                       onClick={() => void handleLogout()}
                     >
                       <LogOut className="h-3.5 w-3.5" />
-                      Logout
+                      {lang === "te" ? "లాగ్ అవుట్" : "Log out"}
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-2 px-3 pt-3">
-                    <Button
-                      asChild
-                      className="h-10 rounded-md bg-[#24103F] text-white text-sm font-semibold hover:bg-[#311552]"
+                  <div className="mt-4 flex flex-col gap-2 px-3">
+                    <Link
+                      to="/register"
+                      onClick={() => setOpen(false)}
+                      className="sbm-button sbm-button--primary w-full"
                     >
-                      <Link to="/register" onClick={() => setOpen(false)}>
-                        {lang === "te" ? "ఉచిత రిజిస్ట్రేషన్" : "Register Free"}
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="h-10 rounded-md border-[#E4DDD3] text-sm font-medium text-[#242024]"
+                      {lang === "te" ? "ప్రొఫైల్ ప్రారంభించండి" : "Begin your profile"}
+                    </Link>
+                    <Link
+                      to="/login"
+                      search={{}}
+                      onClick={() => setOpen(false)}
+                      className="sbm-button sbm-button--outline w-full"
                     >
-                      <Link to="/login" onClick={() => setOpen(false)}>
-                        {lang === "te" ? "లాగిన్" : "Login"}
-                      </Link>
-                    </Button>
+                      {lang === "te" ? "లాగిన్" : "Login"}
+                    </Link>
                   </div>
                 )}
               </nav>
-
-              <div className="absolute bottom-6 left-0 right-0 px-6 text-center text-[11px] text-[#B0A8B8]">
-                Shettibalija Sangham Matrimony
-              </div>
             </SheetContent>
           </Sheet>
         </div>

@@ -75,7 +75,7 @@ export function ShettibalijaLogo({
         <span
           className={cn(
             "block truncate font-serif text-base font-bold leading-tight sm:text-lg md:text-xl tracking-tight",
-            isDark ? "text-white" : "text-[#32105F]",
+            isDark ? "text-white" : "text-[#24103F]",
           )}
         >
           {SITE_NAME}
@@ -83,7 +83,7 @@ export function ShettibalijaLogo({
         <span
           className={cn(
             "block truncate text-[11px] font-semibold tracking-wide",
-            isDark ? "text-[#F3D36A]" : "text-[#D9A514]",
+            isDark ? "text-[#F3D36A]" : "text-[#D1A329]",
           )}
         >
           {SITE_NAME_TE}

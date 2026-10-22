@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, ShieldCheck } from "lucide-react";
+import { Heart } from "lucide-react";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
 import { ShettibalijaLogo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
@@ -9,161 +9,109 @@ export function SiteFooter() {
   const { lang } = useLanguage();
 
   const matrimonyLinks = [
-    { to: "/search", label: lang === "te" ? "ప్రొఫైల్స్ శోధన" : "Search Profiles" },
-    { to: "/register", label: lang === "te" ? "ఉచిత రిజిస్ట్రేషన్" : "Register Free" },
-    { to: "/dashboard", label: lang === "te" ? "నా మ్యాచ్‌లు" : "My Matches" },
-    { to: "/membership", label: lang === "te" ? "సభ్యత్వ ప్రణాళికలు" : "Membership" },
-    { to: "/#success-stories", label: lang === "te" ? "విజయ గాథలు" : "Success Stories" },
+    { to: "/search", label: lang === "te" ? "ప్రొఫైల్స్ అన్వేషణ" : "Discover profiles" },
+    { to: "/register", label: lang === "te" ? "ప్రొఫైల్ సృష్టించండి" : "Create a profile" },
+    { to: "/dashboard", label: lang === "te" ? "నా డ్యాష్‌బోర్డ్" : "My dashboard" },
+    { to: "/membership", label: lang === "te" ? "సభ్యత్వం" : "Membership" },
   ];
 
   const communityLinks = [
     { to: "/about", label: lang === "te" ? "శెట్టిబలిజ సంఘం" : "Shettibalija Sangham" },
-    { to: "/about", label: lang === "te" ? "సమాజం గురించి" : "About the Community" },
-    { to: "/about", label: lang === "te" ? "సాంస్కృతిక సమాచారం" : "Community Information" },
-  ];
-
-  const helpLinks = [
-    { to: "/#faq", label: lang === "te" ? "తరచూ అడిగే ప్రశ్నలు (FAQ)" : "FAQs" },
-    { to: "/contact", label: lang === "te" ? "సంప్రదించండి" : "Contact" },
-    { to: "/contact", label: lang === "te" ? "సహాయం & మద్దతు" : "Support" },
-    { to: "/contact", label: lang === "te" ? "ప్రొఫైల్ రిపోర్ట్" : "Report Profile" },
+    { to: "/success-stories", label: lang === "te" ? "కుటుంబ కథలు" : "Family stories" },
+    { to: "/help", label: lang === "te" ? "సహాయ కేంద్రం" : "Help centre" },
   ];
 
   const legalLinks = [
-    { to: "/privacy", label: lang === "te" ? "గోప్యతా విధానం" : "Privacy Policy" },
-    { to: "/terms", label: lang === "te" ? "నిబంధనలు & షరతులు" : "Terms & Conditions" },
-    { to: "/refund", label: lang === "te" ? "రీఫండ్ విధానం" : "Refund Policy" },
+    { to: "/privacy", label: lang === "te" ? "గోప్యతా విధానం" : "Privacy" },
+    { to: "/terms", label: lang === "te" ? "నిబంధనలు" : "Terms" },
+    { to: "/refund", label: lang === "te" ? "రీఫండ్ విధానం" : "Refunds" },
+    { to: "/contact", label: lang === "te" ? "సంప్రదించండి" : "Contact" },
   ];
 
   return (
-    <footer className="bg-[#1C0A30] text-white border-t border-white/10">
-      {/* Top muted gold decorative bar */}
-      <div className="h-px bg-gradient-to-r from-transparent via-[#D1A329]/60 to-transparent" />
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14 pb-10">
-        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-          {/* Column 1: Brand & Language */}
-          <div className="space-y-4 sm:col-span-2 md:col-span-1 lg:col-span-1">
-            <div className="flex items-center gap-2.5">
+    <footer className="border-t border-white/10 bg-[#1b0a30] text-white">
+      <div className="h-px bg-gradient-to-r from-transparent via-[#D1A329]/50 to-transparent" />
+      <div className="mx-auto max-w-7xl px-4 pb-10 pt-14 sm:px-6 lg:px-8">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div className="max-w-sm">
+            <div className="flex items-center gap-3">
               <ShettibalijaLogo size="sm" linkToHome theme="dark" />
               <div>
-                <h3 className="font-sans text-sm font-semibold text-white tracking-tight">{SITE_NAME}</h3>
-                <p className="text-[10px] text-[#D1A329] font-medium">{SITE_NAME_TE}</p>
+                <p className="text-sm font-bold tracking-tight">{SITE_NAME}</p>
+                <p className="sbm-telugu mt-0.5 text-[10px] text-[#D1A329]">{SITE_NAME_TE}</p>
               </div>
             </div>
-
-            <p className="text-xs text-white/60 leading-relaxed">
+            <p className="mt-5 text-[13px] leading-7 text-white/65">
               {lang === "te"
-                ? "శెట్టిబలిజ కుటుంబాల కోసం ప్రత్యేకంగా రూపొందించబడిన విశ్వసనీయ వివాహ వేదిక."
-                : "A trusted matrimonial platform created for the Shettibalija community. Rooted in shared values and family trust."}
+                ? "శెట్టిబలిజ కుటుంబాల కోసం ఒక ప్రశాంతమైన, గోప్యతా కేంద్రిత వివాహ వేదిక. మన విలువలు, మన బంధాలు."
+                : "A calm, privacy-first matrimonial space for Shettibalija families. Built around shared roots, family involvement and considered introductions."}
             </p>
-
-            <div className="pt-2">
-              <p className="text-[10px] uppercase font-semibold text-white/40 mb-1 tracking-wider">
+            <div className="mt-6">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/40">
                 {lang === "te" ? "భాష" : "Language"}
               </p>
               <LanguageSwitcher theme="dark" size="sm" />
             </div>
-
-            <div className="flex items-center gap-1.5 text-[11px] text-[#087333] pt-1">
-              <ShieldCheck className="h-4 w-4 shrink-0 text-[#087333]" />
-              <span className="font-medium text-white/80">
-                {lang === "te" ? "ధృవీకరించబడిన కమ్యూనిటీ పోర్టల్" : "Verified Community Platform"}
-              </span>
-            </div>
           </div>
 
-          {/* Column 2: Matrimony */}
-          <div className="space-y-3">
-            <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#D1A329]">
-              {lang === "te" ? "మ్యాట్రిమోనీ" : "Matrimony"}
-            </p>
-            <ul className="space-y-2 text-xs">
-              {matrimonyLinks.map(({ to, label }) => (
-                <li key={label}>
-                  <Link
-                    to={to}
-                    className="text-white/65 hover:text-white transition-colors duration-150"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 3: Community */}
-          <div className="space-y-3">
-            <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#D1A329]">
-              {lang === "te" ? "కమ్యూనిటీ" : "Community"}
-            </p>
-            <ul className="space-y-2 text-xs">
-              {communityLinks.map(({ to, label }) => (
-                <li key={label}>
-                  <Link
-                    to={to}
-                    className="text-white/65 hover:text-white transition-colors duration-150"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 4: Help */}
-          <div className="space-y-3">
-            <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#D1A329]">
-              {lang === "te" ? "సహాయం" : "Help"}
-            </p>
-            <ul className="space-y-2 text-xs">
-              {helpLinks.map(({ to, label }) => (
-                <li key={label}>
-                  <Link
-                    to={to}
-                    className="text-white/65 hover:text-white transition-colors duration-150"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <div className="pt-2 text-[11px] text-white/50">
-              <p>support@shettibalijamatrimony.com</p>
-              <p>Andhra Pradesh &amp; Telangana</p>
-            </div>
-          </div>
-
-          {/* Column 5: Legal */}
-          <div className="space-y-3">
-            <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#D1A329]">
-              {lang === "te" ? "చట్టపరమైన" : "Legal"}
-            </p>
-            <ul className="space-y-2 text-xs">
-              {legalLinks.map(({ to, label }) => (
-                <li key={label}>
-                  <Link
-                    to={to}
-                    className="text-white/65 hover:text-white transition-colors duration-150"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <FooterColumn title={lang === "te" ? "మ్యాట్రిమోనీ" : "Matrimony"} links={matrimonyLinks} />
+          <FooterColumn title={lang === "te" ? "సమాజం" : "Community"} links={communityLinks} />
+          <FooterColumn title={lang === "te" ? "చట్టపరమైనవి" : "Legal"} links={legalLinks} />
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/40">
-          <p>© {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</p>
-          <div className="flex items-center gap-1.5">
-            <span>Crafted with</span>
-            <Heart className="h-3 w-3 fill-[#087333] text-[#087333]" />
-            <span>for the Shettibalija Community</span>
+        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 text-[11px] text-white/45 sm:flex-row sm:items-center">
+          <p>
+            © {new Date().getFullYear()} {SITE_NAME}. {lang === "te" ? "అన్ని హక్కులు రక్షించబడ్డాయి." : "All rights reserved."}
+          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <a
+              href="mailto:support@shettibalijamatrimony.org"
+              className="transition-colors hover:text-white"
+            >
+              support@shettibalijamatrimony.org
+            </a>
+            <a
+              href="https://commons.wikimedia.org/wiki/File:Rituals_Hindu_wedding_Telangana_south_India_culture.jpg"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors hover:text-white"
+            >
+              {lang === "te" ? "ఫోటో: Dinesh Cyanam / CC BY-SA 2.0" : "Photography: Dinesh Cyanam / CC BY-SA 2.0"}
+            </a>
+            <span className="hidden h-3 w-px bg-white/15 sm:block" />
+            <span className="flex items-center gap-1.5">
+              {lang === "te" ? "శెట్టిబలిజ సమాజం కోసం" : "For the Shettibalija community"}
+              <Heart className="h-3 w-3 fill-[#D1A329] text-[#D1A329]" aria-hidden />
+            </span>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: { to: string; label: string }[];
+}) {
+  return (
+    <div>
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#D1A329]">{title}</p>
+      <ul className="mt-4 space-y-3">
+        {links.map(({ to, label }) => (
+          <li key={label}>
+            <Link
+              to={to}
+              className="text-[13px] text-white/70 transition-colors hover:text-white"
+            >
+              {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

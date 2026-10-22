@@ -54,10 +54,10 @@ export function MobileBottomNav() {
 
     return (
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#D9A514]/25 bg-white/95 backdrop-blur-xl shadow-[0_-8px_25px_rgba(33,8,63,0.08)] pb-[env(safe-area-inset-bottom,8px)] pt-1.5 lg:hidden select-none"
-        aria-label="Member Navigation"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#ded5c8] bg-[#FAF8F3] pb-[env(safe-area-inset-bottom,6px)] lg:hidden select-none"
+        aria-label="Member navigation"
       >
-        <ul className="grid grid-cols-5 items-center">
+        <ul className="grid grid-cols-5 items-stretch">
           {memberItems.map((item) => {
             const Icon = item.icon;
             const active = item.isActive;
@@ -66,31 +66,21 @@ export function MobileBottomNav() {
                 <Link
                   to={item.to}
                   className={cn(
-                    "flex flex-col items-center justify-center gap-1 py-1 px-1 text-center touch-press transition-colors",
-                    active ? "text-[#21083F]" : "text-muted-foreground hover:text-foreground",
+                    "flex flex-col items-center justify-center gap-1 border-t-2 px-1 pb-1.5 pt-2 text-center transition-colors",
+                    active
+                      ? "border-[#D1A329] text-[#24103F]"
+                      : "border-transparent text-[#6B6570] hover:text-[#24103F]",
                   )}
                 >
                   <div className="relative flex items-center justify-center">
-                    <div
-                      className={cn(
-                        "flex h-8 w-11 items-center justify-center rounded-full transition-all duration-200",
-                        active ? "bg-[#21083F] text-[#F4D477] shadow-xs" : "text-muted-foreground",
-                      )}
-                    >
-                      <Icon className={cn("h-4 w-4", active && "stroke-[2.5]")} />
-                    </div>
+                    <Icon className={cn("h-4 w-4", active && "stroke-[2.4]")} />
                     {item.badge ? (
-                      <span className="absolute -top-1 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#087A32] px-1 text-[9px] font-bold text-white shadow-xs">
+                      <span className="absolute -right-2 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center bg-[#087333] px-1 text-[8px] font-bold text-white">
                         {item.badge}
                       </span>
                     ) : null}
                   </div>
-                  <span
-                    className={cn(
-                      "text-[10px] tracking-tight leading-none",
-                      active ? "font-bold text-[#21083F]" : "font-medium text-muted-foreground",
-                    )}
-                  >
+                  <span className={cn("text-[9px] leading-none", active && "font-bold")}>
                     {item.label}
                   </span>
                 </Link>
@@ -132,10 +122,10 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-[#D9A514]/25 bg-white/95 backdrop-blur-xl shadow-[0_-8px_25px_rgba(33,8,63,0.08)] pb-[env(safe-area-inset-bottom,8px)] pt-1.5 lg:hidden select-none"
-      aria-label="Public Mobile Navigation"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-[#ded5c8] bg-[#FAF8F3] pb-[env(safe-area-inset-bottom,6px)] lg:hidden select-none"
+      aria-label="Public mobile navigation"
     >
-      <ul className="grid grid-cols-4 items-center">
+      <ul className="grid grid-cols-4 items-stretch">
         {guestItems.map((item) => {
           const Icon = item.icon;
           const active = item.isActive;
@@ -144,24 +134,14 @@ export function MobileBottomNav() {
               <Link
                 to={item.to}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1 py-1 px-1 text-center touch-press transition-colors",
-                  active ? "text-[#21083F]" : "text-muted-foreground hover:text-foreground",
+                  "flex flex-col items-center justify-center gap-1 border-t-2 px-1 pb-1.5 pt-2 text-center transition-colors",
+                  active
+                    ? "border-[#D1A329] text-[#24103F]"
+                    : "border-transparent text-[#6B6570] hover:text-[#24103F]",
                 )}
               >
-                <div
-                  className={cn(
-                    "flex h-8 w-11 items-center justify-center rounded-full transition-all duration-200",
-                    active ? "bg-[#21083F] text-[#F4D477] shadow-xs" : "text-muted-foreground",
-                  )}
-                >
-                  <Icon className={cn("h-4 w-4", active && "stroke-[2.5]")} />
-                </div>
-                <span
-                  className={cn(
-                    "text-[10px] tracking-tight leading-none",
-                    active ? "font-bold text-[#21083F]" : "font-medium text-muted-foreground",
-                  )}
-                >
+                <Icon className={cn("h-4 w-4", active && "stroke-[2.4]")} />
+                <span className={cn("text-[9px] leading-none", active && "font-bold")}>
                   {item.label}
                 </span>
               </Link>

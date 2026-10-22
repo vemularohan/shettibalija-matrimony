@@ -24,9 +24,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/lib/i18n";
 import {
   MARITAL_STATUS_OPTIONS,
@@ -246,53 +243,68 @@ export function DetailedProfileForm({
 
   const calculatedAge = calculateAgeFromDob(formData.dateOfBirth);
   const progressPercent = Math.round((currentStep / 10) * 100);
+  const sectionDescriptions: Record<number, string> =
+    lang === "te"
+      ? {
+          1: "ప్రాథమిక వివరాలు మరియు జన్మ వివరాలు",
+          2: "జ్యోతిష్య వివరాలు (ఐచ్ఛికం). ప్రైవేట్ పత్రాలు సురక్షితంగా నిల్వ చేయబడతాయి.",
+          3: "విద్యార్హతలు, ఉద్యోగ రకం మరియు ఆదాయం",
+          4: "ఎత్తు మొదలైన శారీరక వివరాలు, ఐచ్ఛికంగా వర్ణం",
+          5: "తల్లిదండ్రులు, తోబుట్టువులు, కుటుంబ నిర్మాణం మరియు నేపథ్యం",
+          6: "సమాజ మూలాలు, సాంప్రదాయ వృత్తులు మరియు స్వస్థలం",
+          7: "ఆహార అలవాట్లు మరియు వ్యక్తిగత జీవనశైలి",
+          8: "కుటుంబ సంబంధాల కోసం రక్షిత సంప్రదింపు వివరాలు",
+          9: "కావలసిన వయస్సు, ఎత్తు, విద్య, ఉద్యోగం మరియు ఇతర అభిరుచులు",
+          10: "చట్టపరమైన ప్రకటన మరియు సమర్పణ అనుమతి",
+        }
+      : {
+          1: "Basic candidate credentials and birth details",
+          2: "Astrological details (optional). Private documents are stored securely.",
+          3: "Professional qualifications, employment type and remuneration",
+          4: "Normalised physical measurements and optional complexion",
+          5: "Parents, siblings, family structure and background",
+          6: "Community roots, traditional professions and native origins",
+          7: "Dietary preferences and personal lifestyle habits",
+          8: "Protected contact information for family matchmaking",
+          9: "Desired age, height, education, occupation and preferences",
+          10: "Legal declaration and submission consent",
+        };
 
   return (
-    <div className="space-y-6">
-      {/* Top Header with Language Switcher and Draft Save */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#E4DDD3] bg-white p-4 shadow-xs">
-        <div className="flex items-center gap-2.5">
-          <Badge className="bg-[#24103F] text-white border-0 font-medium text-xs px-2.5 py-0.5">
-            {t("stepOf")} {currentStep} {t("of")} 10
-          </Badge>
-          <span className="text-sm font-medium text-[#24103F]">
-            {sections[currentStep - 1]?.title}
+    <div className="sbm-form space-y-6">
+      <div className="sbm-form__top">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="sbm-form__step-count">
+            {lang === "te" ? `దశ ${currentStep} / 10` : `Step ${currentStep} of 10`}
+          </span>
+          <span className="text-[13px] font-semibold text-[#24103F]">
+            {sections[currentStep - 1]?.title.replace(/^\d+\.\s*/, "")}
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button
+        <div className="flex flex-wrap items-center gap-4">
+          <button
             type="button"
-            variant="ghost"
-            size="sm"
             onClick={handleSaveDraft}
-            className="text-xs font-medium text-muted-foreground hover:text-[#24103F]"
+            className="sbm-link-arrow text-[11px]"
           >
-            <Save className="mr-1.5 h-3.5 w-3.5 text-[#D1A329]" />
+            <Save className="h-3.5 w-3.5 text-[#D1A329]" aria-hidden />
             {t("saveDraft")}
-          </Button>
+          </button>
 
-          {/* Bilingual Switcher */}
-          <div className="inline-flex items-center rounded-lg border border-[#E4DDD3] bg-[#FAF8F3] p-0.5 text-xs font-medium">
+          <div className="flex items-center gap-2 text-[11px]">
             <button
               type="button"
               onClick={() => setLanguage("en")}
-              className={`rounded-md px-2.5 py-1 transition-colors ${
-                lang === "en"
-                  ? "bg-[#24103F] text-white shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={lang === "en" ? "font-bold text-[#24103F]" : "text-[#6B6570]"}
             >
               EN
             </button>
+            <span className="h-3 w-px bg-[#ded5c8]" />
             <button
               type="button"
               onClick={() => setLanguage("te")}
-              className={`rounded-md px-2.5 py-1 transition-colors ${
-                lang === "te"
-                  ? "bg-[#24103F] text-white shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={lang === "te" ? "font-bold text-[#24103F]" : "text-[#6B6570]"}
             >
               తెలుగు
             </button>
@@ -300,24 +312,25 @@ export function DetailedProfileForm({
         </div>
       </div>
 
-      {/* Subtle Progress Bar */}
-      <div className="space-y-1.5">
-        <div className="flex justify-between text-xs text-[#6B6570] px-1">
-          <span className="text-[#087333] font-medium">{progressPercent}% Completed</span>
-          <span className="text-[#24103F] font-medium">{sections[currentStep - 1]?.title}</span>
+      <div>
+        <div className="flex justify-between gap-4 text-[11px] text-[#6B6570]">
+          <span>
+            {lang === "te" ? `${progressPercent}% పూర్తయింది` : `${progressPercent}% complete`}
+          </span>
+          <span className="text-[#24103F]">
+            {sections[currentStep - 1]?.title.replace(/^\d+\.\s*/, "")}
+          </span>
         </div>
-        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-[#E4DDD3]">
+        <div className="mt-2 h-px w-full bg-[#ded5c8]">
           <div
-            className="h-full rounded-full bg-[#24103F] transition-all duration-300"
+            className="h-px bg-[#087333] transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
       </div>
 
-      {/* Step Pills Navigator */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="sbm-form__steps" role="tablist" aria-label="Profile sections">
         {sections.map((sec) => {
-          const Icon = sec.icon;
           const isActive = currentStep === sec.num;
           const isDone = currentStep > sec.num;
 
@@ -325,37 +338,31 @@ export function DetailedProfileForm({
             <button
               key={sec.num}
               type="button"
+              role="tab"
+              aria-selected={isActive}
               onClick={() => setCurrentStep(sec.num)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition-colors ${
-                isActive
-                  ? "bg-[#24103F] text-white font-medium"
-                  : isDone
-                    ? "bg-[#087333]/10 text-[#087333] font-medium border border-[#087333]/30"
-                    : "bg-white text-muted-foreground border border-[#E4DDD3] hover:border-[#24103F]"
-              }`}
+              className={`sbm-form__step ${isActive ? "is-active" : ""} ${isDone ? "is-done" : ""}`}
             >
-              <Icon className="h-3.5 w-3.5" />
-              <span>{sec.num}.</span>
-              <span className="hidden sm:inline">{sec.title.split(".")[1]?.trim()}</span>
+              <span className="sbm-form__step-number">{String(sec.num).padStart(2, "0")}</span>
+              <span>{sec.title.replace(/^\d+\.\s*/, "")}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Main Form Box */}
       <form onSubmit={handleSubmit}>
-        <Card className="rounded-xl border border-[#E4DDD3] bg-white shadow-xs overflow-hidden">
-          <CardContent className="p-6 sm:p-8">
+        <div className="sbm-form__panel">
+          <div className="p-5 sm:p-8">
             {/* STEP 1: PERSONAL DETAILS */}
             {currentStep === 1 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#21083F] flex items-center gap-2.5">
-                    <User className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <User className="h-6 w-6 text-[#D1A329]" />
                     {t("secPersonal")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Basic candidate credentials and birth details
+                    {sectionDescriptions[1]}
                   </p>
                 </div>
 
@@ -475,13 +482,13 @@ export function DetailedProfileForm({
             {/* STEP 2: HOROSCOPE DETAILS */}
             {currentStep === 2 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <Sparkles className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <Sparkles className="h-6 w-6 text-[#D1A329]" />
                     {t("secHoroscope")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Astrological details (Optional). Private documents are stored securely.
+                    {sectionDescriptions[2]}
                   </p>
                 </div>
 
@@ -609,13 +616,13 @@ export function DetailedProfileForm({
             {/* STEP 3: EDUCATION & CAREER */}
             {currentStep === 3 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <Briefcase className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <Briefcase className="h-6 w-6 text-[#D1A329]" />
                     {t("secCareer")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Professional qualifications, employment type, and remuneration
+                    {sectionDescriptions[3]}
                   </p>
                 </div>
 
@@ -752,13 +759,13 @@ export function DetailedProfileForm({
             {/* STEP 4: PHYSICAL DETAILS */}
             {currentStep === 4 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <Ruler className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <Ruler className="h-6 w-6 text-[#D1A329]" />
                     {t("secPhysical")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Normalized physical measurements and optional complexion
+                    {sectionDescriptions[4]}
                   </p>
                 </div>
 
@@ -806,13 +813,13 @@ export function DetailedProfileForm({
             {/* STEP 5: FAMILY DETAILS */}
             {currentStep === 5 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <Users className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <Users className="h-6 w-6 text-[#D1A329]" />
                     {t("secFamily")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Detailed parents, siblings, family structure, and background
+                    {sectionDescriptions[5]}
                   </p>
                 </div>
 
@@ -969,13 +976,13 @@ export function DetailedProfileForm({
             {/* STEP 6: COMMUNITY DETAILS */}
             {currentStep === 6 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <Compass className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <Compass className="h-6 w-6 text-[#D1A329]" />
                     {t("secCommunity")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Community roots, traditional professions, and native origins
+                    {sectionDescriptions[6]}
                   </p>
                 </div>
 
@@ -1047,13 +1054,13 @@ export function DetailedProfileForm({
             {/* STEP 7: FOOD & LIFESTYLE */}
             {currentStep === 7 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <Utensils className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <Utensils className="h-6 w-6 text-[#D1A329]" />
                     {t("secLifestyle")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Dietary preferences and personal lifestyle habits
+                    {sectionDescriptions[7]}
                   </p>
                 </div>
 
@@ -1130,13 +1137,13 @@ export function DetailedProfileForm({
             {/* STEP 8: CONTACT DETAILS */}
             {currentStep === 8 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <Phone className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <Phone className="h-6 w-6 text-[#D1A329]" />
                     {t("secContact")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Protected contact information for family matchmaking
+                    {sectionDescriptions[8]}
                   </p>
                 </div>
 
@@ -1187,13 +1194,13 @@ export function DetailedProfileForm({
             {/* STEP 9: PARTNER REQUIREMENTS */}
             {currentStep === 9 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <HeartHandshake className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <HeartHandshake className="h-6 w-6 text-[#D1A329]" />
                     {t("secPartner")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Desired age, height, education, occupation, and preferences
+                    {sectionDescriptions[9]}
                   </p>
                 </div>
 
@@ -1360,13 +1367,13 @@ export function DetailedProfileForm({
             {/* STEP 10: DECLARATION & CONSENT */}
             {currentStep === 10 && (
               <div className="space-y-6">
-                <div className="border-b border-[#D9A514]/25 pb-3.5">
-                  <h3 className="font-serif text-2xl font-bold text-[#32105F] flex items-center gap-2.5">
-                    <CheckCircle2 className="h-6 w-6 text-[#D9A514]" />
+                <div className="border-b border-[#D1A329]/25 pb-3.5">
+                  <h3 className="font-serif text-2xl font-bold text-[#24103F] flex items-center gap-2.5">
+                    <CheckCircle2 className="h-6 w-6 text-[#D1A329]" />
                     {t("secConsent")}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Legal declaration and submission consent
+                    {sectionDescriptions[10]}
                   </p>
                 </div>
 
@@ -1476,21 +1483,20 @@ export function DetailedProfileForm({
               </div>
             )}
 
-            {/* Bottom Navigation Buttons (Sticky at bottom on mobile) */}
-            <div className="mt-8 flex items-center justify-between gap-3 border-t border-[#D9A514]/25 pt-5 sticky bottom-0 bg-white/95 backdrop-blur-md -mx-6 -mb-6 p-4 rounded-b-3xl z-30 shadow-xs">
+            <div className="sbm-form__nav">
               <div>
-                {currentStep > 1 && (
+                {currentStep > 1 ? (
                   <Button
                     type="button"
                     variant="outline"
                     onClick={handlePrevious}
                     disabled={isSubmitting}
-                    className="h-11 px-4 sm:px-5 rounded-xl border-[#21083F]/30 text-[#21083F] hover:bg-[#21083F]/5 font-semibold text-xs touch-press"
+                    className="h-11 px-4 rounded-none border-[#cfc5b8] bg-white text-[11px] font-semibold text-[#24103F] hover:bg-[#f7f3ec] sm:px-5"
                   >
-                    <ChevronLeft className="mr-1 h-4 w-4 text-[#D9A514]" />
+                    <ChevronLeft className="mr-1 h-4 w-4 text-[#D1A329]" />
                     {t("previous")}
                   </Button>
-                )}
+                ) : null}
               </div>
 
               <div className="flex items-center gap-2">
@@ -1498,26 +1504,25 @@ export function DetailedProfileForm({
                   <Button
                     type="button"
                     onClick={handleNext}
-                    className="h-11 px-6 sm:px-8 rounded-xl bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold text-xs shadow-md border border-[#D9A514]/30 touch-press"
+                    className="h-11 rounded-none bg-[#24103F] px-6 text-[11px] font-bold text-white hover:bg-[#341753] sm:px-8"
                   >
                     {t("next")}
-                    <ChevronRight className="ml-1.5 h-4 w-4 text-[#F4D477]" />
+                    <ChevronRight className="ml-1.5 h-4 w-4 text-[#D1A329]" />
                   </Button>
                 ) : (
                   <Button
                     type="submit"
-                    size="lg"
                     disabled={isSubmitting || !formData.declarationAccepted}
-                    className="h-12 px-6 sm:px-8 rounded-xl bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold text-xs shadow-xl border border-[#D9A514]/40 touch-press"
+                    className="h-12 rounded-none bg-[#087333] px-6 text-[11px] font-bold text-white hover:bg-[#065c29] sm:px-8"
                   >
-                    <CheckCircle2 className="mr-2 h-4 w-4 text-[#F4D477]" />
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
                     {isSubmitting ? t("submitting") : submitButtonText || t("completeProfile")}
                   </Button>
                 )}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </form>
     </div>
   );

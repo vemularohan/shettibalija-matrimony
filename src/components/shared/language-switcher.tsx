@@ -30,11 +30,11 @@ export function LanguageSwitcher({
           type="button"
           onClick={() => setLanguage("te")}
           className={cn(
-            "transition-colors hover:text-[#F4D477]",
+            "transition-colors hover:text-[#F5E5B2]",
             lang === "te"
               ? isDark
-                ? "font-bold text-[#F4D477]"
-                : "font-bold text-[#21083F]"
+                ? "font-bold text-[#F5E5B2]"
+                : "font-bold text-[#24103F]"
               : "opacity-70",
           )}
         >
@@ -45,11 +45,11 @@ export function LanguageSwitcher({
           type="button"
           onClick={() => setLanguage("en")}
           className={cn(
-            "transition-colors hover:text-[#F4D477]",
+            "transition-colors hover:text-[#F5E5B2]",
             lang === "en"
               ? isDark
-                ? "font-bold text-[#F4D477]"
-                : "font-bold text-[#21083F]"
+                ? "font-bold text-[#F5E5B2]"
+                : "font-bold text-[#24103F]"
               : "opacity-70",
           )}
         >
@@ -66,7 +66,7 @@ export function LanguageSwitcher({
       className={cn(
         "inline-flex items-center rounded-full p-0.5 shadow-sm transition-all",
         isDark
-          ? "border border-[#D9A514]/30 bg-black/40 backdrop-blur-md"
+          ? "border border-[#D1A329]/30 bg-black/40 backdrop-blur-md"
           : "border border-[#E8E0D2] bg-white/90 backdrop-blur-md",
         className,
       )}
@@ -79,7 +79,7 @@ export function LanguageSwitcher({
           "rounded-full transition-all duration-200 font-semibold tracking-wide",
           size === "sm" ? "px-2.5 py-0.5 text-[11px]" : "px-3 py-1 text-xs",
           lang === "en"
-            ? "bg-[#D9A514] text-[#21083F] font-bold shadow-xs scale-[1.02]"
+            ? "bg-[#D1A329] text-[#24103F] font-bold shadow-xs scale-[1.02]"
             : isDark
               ? "text-white/80 hover:text-white"
               : "text-muted-foreground hover:text-foreground",
@@ -95,7 +95,7 @@ export function LanguageSwitcher({
           "rounded-full transition-all duration-200 font-semibold tracking-wide",
           size === "sm" ? "px-2.5 py-0.5 text-[11px]" : "px-3 py-1 text-xs",
           lang === "te"
-            ? "bg-[#D9A514] text-[#21083F] font-bold shadow-xs scale-[1.02]"
+            ? "bg-[#D1A329] text-[#24103F] font-bold shadow-xs scale-[1.02]"
             : isDark
               ? "text-white/80 hover:text-white"
               : "text-muted-foreground hover:text-foreground",

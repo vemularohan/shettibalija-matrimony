@@ -8,7 +8,7 @@ import { EmptyState, ErrorState } from "@/components/shared/empty-state";
 import { useAuth } from "@/hooks/use-auth";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { supabase } from "@/integrations/supabase/client";
-import { findDemoProfile, isDemoId } from "@/data/demo-profiles";
+import { MemberPageHeader } from "@/components/dashboard/member-page-header";
 
 export const Route = createFileRoute("/dashboard/shortlist")({
   component: DashboardShortlistPage,
@@ -38,32 +38,21 @@ function DashboardShortlistPage() {
               ) as PublicProfileCardData[];
           }
         } catch {
-          // Continue to include demo profiles
+          // Keep the page usable if a profile is no longer available.
         }
       }
 
-      const dbIds = new Set(dbProfiles.map((p) => p.id));
-      const demoProfiles: PublicProfileCardData[] = [];
-      for (const id of actions.shortlistedIds) {
-        if (isDemoId(id) && !dbIds.has(id)) {
-          const found = findDemoProfile(id);
-          if (found) demoProfiles.push(found);
-        }
-      }
-
-      return [...dbProfiles, ...demoProfiles];
+      return dbProfiles;
     },
   });
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-[#D9A514]/25 pb-4">
-        <h1 className="font-serif text-3xl font-bold text-[#21083F]">Shortlisted Profiles</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Candidate profiles you have bookmarked for family review, horoscope matching, and
-          discussion.
-        </p>
-      </div>
+      <MemberPageHeader
+        kicker="Shortlist"
+        title="Shortlisted profiles"
+        description="Profiles you have set aside for family review, horoscope matching or a later conversation."
+      />
 
       {shortlistQuery.isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
@@ -84,7 +73,7 @@ function DashboardShortlistPage() {
           description="Browse profiles and click 'Shortlist' to save candidates you are interested in."
         >
           <div className="mt-4">
-            <Button asChild className="min-h-[44px] rounded-xl bg-[#21083F] text-white">
+            <Button asChild className="min-h-[44px] rounded-xl bg-[#24103F] text-white">
               <Link to="/search">
                 <Search className="mr-1.5 h-4 w-4" />
                 Search Profiles

@@ -8,6 +8,7 @@ import { EmptyState, ErrorState } from "@/components/shared/empty-state";
 import { useAuth } from "@/hooks/use-auth";
 import { useOwnMatrimonialProfile } from "@/hooks/use-member-data";
 import { supabase } from "@/integrations/supabase/client";
+import { MemberPageHeader } from "@/components/dashboard/member-page-header";
 
 export const Route = createFileRoute("/dashboard/contacts")({
   component: DashboardContactsPage,
@@ -38,13 +39,11 @@ function DashboardContactsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-[#D9A514]/25 pb-4">
-        <h1 className="font-serif text-3xl font-bold text-[#21083F]">Contact Phone Requests</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Requests for candidate and guardian contact phone numbers authorized by Shettibalija
-          membership.
-        </p>
-      </div>
+      <MemberPageHeader
+        kicker="Contact"
+        title="Contact requests"
+        description="Track requests for candidate or guardian contact details. A number is shared only when the family authorises it."
+      />
 
       {contactsQuery.isLoading ? (
         <div className="space-y-3">

@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { Heart, ArrowRight, MapPin } from "lucide-react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { ArrowRight, Check, Heart, MapPin, Send } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { ProtectedPhoto } from "@/components/profiles/protected-photo";
-import { locationLine } from "@/lib/format";
+import { formatHeight, locationLine } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export type PublicProfileCardData = {
@@ -16,7 +15,6 @@ export type PublicProfileCardData = {
   city: string | null;
   state: string | null;
   family_summary: string | null;
-  is_demo?: boolean | undefined;
   interest_tag?: string | null | undefined;
   photo_url?: string | null | undefined;
   star?: string | null | undefined;
@@ -31,9 +29,9 @@ export type PublicProfileCardData = {
 export function ProfileCard({
   profile,
   shortlisted,
-  interestSent: _interestSent,
+  interestSent,
   onShortlist,
-  onInterest: _onInterest,
+  onInterest,
   className,
 }: {
   profile: PublicProfileCardData;
@@ -43,109 +41,114 @@ export function ProfileCard({
   onInterest?: () => void;
   className?: string;
 }) {
-  const navigate = useNavigate();
-  const [isLikedLocally, setIsLikedLocally] = useState(false);
-  const name = profile.display_name ?? "Community Member";
-  const isShortlisted = shortlisted ?? isLikedLocally;
+  const name = profile.display_name ?? "Community member";
   const profileTarget = profile.profile_code ?? profile.id;
   const location = locationLine(profile.city, profile.state);
-
-  function handleHeartClick(e: React.MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsLikedLocally(!isShortlisted);
-    onShortlist?.();
-  }
-
-  function handleCardClick() {
-    void navigate({ to: "/profiles/$code", params: { code: profileTarget } });
-  }
+  const height = profile.height_cm ? formatHeight(profile.height_cm) : null;
 
   return (
     <article
-      onClick={handleCardClick}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-md bg-white cursor-pointer touch-press",
-        // Physical depth — like a printed photograph laid on a warm surface
-        "depth-card",
-        // Subtle warm border
-        "border border-[#E4DDD3]",
-        // Smooth transition
-        "transition-all duration-300",
+        "group relative flex h-full flex-col overflow-hidden rounded-sm border border-[#ded5c8] bg-white",
+        "transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-[#cdbb95] hover:shadow-[0_14px_35px_rgba(36,16,63,0.08)]",
         className,
       )}
     >
-      {/* Photo */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#F0EDE6]">
+      <Link
+        to="/profiles/$code"
+        params={{ code: profileTarget }}
+        className="relative block aspect-[4/5] overflow-hidden bg-[#efe9df] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D1A329]"
+      >
         <ProtectedPhoto
           profileId={profile.id}
           displayName={name}
           photoUrl={profile.photo_url}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
           compact
         />
-
-        {/* Gradient overlay — photo print vignette at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-
-        {/* Gold architectural corner — top left only, subtle */}
-        <div
-          className="absolute top-0 left-0 pointer-events-none"
-          style={{ width: 20, height: 20, borderTop: "1.5px solid rgba(209,163,41,0.5)", borderLeft: "1.5px solid rgba(209,163,41,0.5)" }}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1b0a30]/80 via-[#1b0a30]/8 to-transparent" />
+        <span
+          aria-hidden
+          className="absolute left-0 top-0 h-6 w-6 border-l border-t border-[#D1A329]/70"
         />
-
-        {/* Shortlist heart */}
-        <button
-          type="button"
-          onClick={handleHeartClick}
-          aria-label={isShortlisted ? "Remove from shortlist" : "Shortlist"}
-          className={cn(
-            "absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full transition-all duration-150",
-            "shadow-[0_1px_4px_rgba(0,0,0,0.15)]",
-            isShortlisted
-              ? "bg-white text-rose-500"
-              : "bg-white/85 text-[#6B6570] hover:text-rose-500",
-          )}
-        >
-          <Heart className={cn("h-3.5 w-3.5", isShortlisted && "fill-rose-500")} />
-        </button>
-
-        {/* Bottom caption — printed photo label */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-          <p className="text-sm font-semibold leading-tight">
+        <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+          <p className="font-serif text-xl leading-tight tracking-[-0.01em]">
             {name}
-            <span className="font-normal opacity-80">, {profile.age ?? "—"}</span>
+            {profile.age ? <span className="font-sans text-[13px] font-medium text-white/75">, {profile.age}</span> : null}
           </p>
-          {location && (
-            <p className="mt-0.5 flex items-center gap-1 text-[11px] text-white/80">
-              <MapPin className="h-2.5 w-2.5 shrink-0" />
-              {location}
+          {location ? (
+            <p className="mt-1 flex items-center gap-1 text-[11px] text-white/75">
+              <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+              <span className="truncate">{location}</span>
             </p>
-          )}
+          ) : null}
         </div>
-      </div>
+      </Link>
 
-      {/* Minimal card footer — printed label area */}
-      <div
-        className="flex items-center justify-between px-3 py-2.5 border-t border-[#E4DDD3]"
-        style={{ background: "linear-gradient(to bottom, #ffffff, #fdfcf9)" }}
-      >
-        {profile.occupation ? (
-          <span className="text-[11px] text-[#6B6570] truncate">{profile.occupation}</span>
-        ) : profile.education ? (
-          <span className="text-[11px] text-[#6B6570] truncate">{profile.education}</span>
-        ) : (
-          <span className="text-[11px] text-[#B0A8B8]">{profile.profile_code ?? "—"}</span>
-        )}
-        <Link
-          to="/profiles/$code"
-          params={{ code: profileTarget }}
-          onClick={(e) => e.stopPropagation()}
-          className="flex items-center gap-0.5 text-[11px] font-semibold text-[#24103F] hover:text-[#087333] transition-colors shrink-0 ml-2"
-        >
-          View
-          <ArrowRight className="h-3 w-3" />
-        </Link>
+      <div className="flex flex-1 flex-col p-4">
+        <div className="min-h-[2.5rem] space-y-1 text-[12px] leading-5 text-[#5f5765]">
+          {profile.education ? <p className="truncate">{profile.education}</p> : null}
+          {profile.occupation ? <p className="truncate text-[#24103F]">{profile.occupation}</p> : null}
+          {!profile.education && !profile.occupation ? (
+            <p className="text-[#9a929e]">Profile details are being completed.</p>
+          ) : null}
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#6B6570]">
+          {height ? <span>{height}</span> : null}
+          {profile.star ? <span>{profile.star}</span> : null}
+          {profile.gothram ? <span>{profile.gothram}</span> : null}
+          {profile.profile_code ? <span className="ml-auto font-medium tracking-wide">{profile.profile_code}</span> : null}
+        </div>
+
+        <div className="mt-auto flex items-center gap-1.5 pt-4">
+          <button
+            type="button"
+            onClick={onShortlist}
+            aria-pressed={Boolean(shortlisted)}
+            aria-label={shortlisted ? `Remove ${name} from shortlist` : `Shortlist ${name}`}
+            className={cn(
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border transition-colors",
+              shortlisted
+                ? "border-[#087333]/30 bg-[#087333]/8 text-[#087333]"
+                : "border-[#ded5c8] text-[#6B6570] hover:border-[#24103F] hover:text-[#24103F]",
+            )}
+          >
+            <Heart className={cn("h-3.5 w-3.5", shortlisted && "fill-current")} aria-hidden />
+          </button>
+
+          <button
+            type="button"
+            onClick={onInterest}
+            className={cn(
+              "flex h-8 flex-1 items-center justify-center gap-1.5 rounded-sm border px-2 text-[11px] font-bold transition-colors",
+              interestSent
+                ? "border-[#087333]/30 bg-[#087333]/8 text-[#087333]"
+                : "border-[#24103F] bg-[#24103F] text-white hover:bg-[#35165a]",
+            )}
+          >
+            {interestSent ? (
+              <>
+                <Check className="h-3.5 w-3.5" aria-hidden />
+                Interest sent
+              </>
+            ) : (
+              <>
+                <Send className="h-3 w-3" aria-hidden />
+                Interest
+              </>
+            )}
+          </button>
+
+          <Link
+            to="/profiles/$code"
+            params={{ code: profileTarget }}
+            className="flex h-8 shrink-0 items-center justify-center rounded-sm border border-[#ded5c8] px-2 text-[#24103F] transition-colors hover:border-[#24103F]"
+            aria-label={`View ${name}'s profile`}
+          >
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+          </Link>
+        </div>
       </div>
     </article>
   );

@@ -125,7 +125,7 @@ export const TRANSLATIONS = {
     contactNumber: "Contact Number",
     contactPrivacyNotice:
       "Your contact number is stored securely. It is not publicly visible and only shared through authorized requests.",
-    showContactSetting: "Allow verified matches to see contact number directly",
+    showContactSetting: "Allow accepted matches to see contact number directly",
 
     // Section 9: Partner Requirements
     prefAgeRange: "Preferred Age Range (Years)",

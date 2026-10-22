@@ -18,17 +18,17 @@ export function EmptyState({
   children?: ReactNode;
 }) {
   return (
-    <div className="rounded-3xl border border-dashed border-[#D9A514]/35 bg-gradient-to-b from-[#FAF9F6] to-white px-6 py-12 text-center shadow-xs">
-      <div className="mx-auto mb-3.5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#21083F]/5 text-[#21083F] border border-[#D9A514]/20 shadow-xs">
-        {icon ?? <Sparkles className="h-6 w-6 text-[#D9A514]" />}
+    <div className="rounded-3xl border border-dashed border-[#D1A329]/35 bg-gradient-to-b from-[#FAF9F6] to-white px-6 py-12 text-center shadow-xs">
+      <div className="mx-auto mb-3.5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#24103F]/5 text-[#24103F] border border-[#D1A329]/20 shadow-xs">
+        {icon ?? <Sparkles className="h-6 w-6 text-[#D1A329]" />}
       </div>
-      <h3 className="font-serif text-lg sm:text-xl font-bold text-[#21083F]">{title}</h3>
+      <h3 className="font-serif text-lg sm:text-xl font-bold text-[#24103F]">{title}</h3>
       <p className="mx-auto mt-2 max-w-md text-xs sm:text-sm text-muted-foreground leading-relaxed">
         {description}
       </p>
       {actionLabel && onAction ? (
         <Button
-          className="mt-5 min-h-[44px] rounded-xl bg-[#21083F] hover:bg-[#351064] text-white px-5 text-sm font-semibold touch-press shadow-sm"
+          className="mt-5 min-h-[44px] rounded-xl bg-[#24103F] hover:bg-[#351064] text-white px-5 text-sm font-semibold touch-press shadow-sm"
           onClick={onAction}
         >
           {actionLabel}

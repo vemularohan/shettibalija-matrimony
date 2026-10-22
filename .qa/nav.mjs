@@ -1,0 +1,11 @@
+import { chromium } from 'playwright-core';
+const browser = await chromium.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+await page.goto('http://localhost:8082/contact', { waitUntil: 'networkidle' });
+const link = page.getByRole('link', { name: 'How it works' }).first();
+console.log('href', await link.getAttribute('href'));
+await link.click();
+await page.waitForTimeout(900);
+console.log('url', page.url(), 'scrollY', await page.evaluate(() => window.scrollY));
+console.log('section top', await page.evaluate(() => document.querySelector('#how-it-works')?.getBoundingClientRect().top));
+await browser.close();

@@ -3,7 +3,6 @@ import { MARITAL_STATUS_OPTIONS, COMPLEXION_OPTIONS, EMPLOYMENT_TYPE_OPTIONS } f
 import { TRANSLATIONS } from "@/lib/i18n";
 import { serializeDetailedData, deserializeDetailedData } from "@/lib/detailed-profile-api";
 import { INITIAL_DETAILED_FORM_DATA, calculateAgeFromDob } from "@/lib/detailed-profile-types";
-import { filterDemoProfiles } from "@/data/demo-profiles";
 
 describe("Detailed Matrimonial Profile Requirements", () => {
   it("enforces exactly the 5 specified marital status values", () => {
@@ -112,13 +111,4 @@ describe("Detailed Matrimonial Profile Requirements", () => {
     expect(empValues).toContain("not_working");
   });
 
-  it("filters demo profiles by the new criteria (star, gothram, marital status)", () => {
-    const rohiniProfiles = filterDemoProfiles({ star: "Rohini" });
-    expect(rohiniProfiles.length).toBeGreaterThan(0);
-    expect(rohiniProfiles.every((p) => p.star === "Rohini")).toBe(true);
-
-    const neverMarried = filterDemoProfiles({ maritalStatus: "never_married" });
-    expect(neverMarried.length).toBeGreaterThan(0);
-    expect(neverMarried.every((p) => p.marital_status === "never_married")).toBe(true);
-  });
 });

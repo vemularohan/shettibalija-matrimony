@@ -40,17 +40,17 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProtectedPhoto } from "@/components/profiles/protected-photo";
 import { EmptyState, ErrorState } from "@/components/shared/empty-state";
+import { RequireAuth } from "@/components/shared/require-auth";
 import { useProfileActions } from "@/hooks/use-profile-actions";
 import { supabase } from "@/integrations/supabase/client";
 import { formatHeight, locationLine } from "@/lib/format";
 import { REPORT_REASONS } from "@/lib/options";
 import { SITE_NAME } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n";
-import { findDemoProfile } from "@/data/demo-profiles";
 import { deserializeDetailedData } from "@/lib/detailed-profile-api";
 
 export const Route = createFileRoute("/profile/$id")({
-  component: ProfileDetailPage,
+  component: ProfileDetailRoute,
   head: () => ({
     meta: [
       { title: `Profile Details | ${SITE_NAME}` },
@@ -58,6 +58,14 @@ export const Route = createFileRoute("/profile/$id")({
     ],
   }),
 });
+
+function ProfileDetailRoute() {
+  return (
+    <RequireAuth>
+      <ProfileDetailPage />
+    </RequireAuth>
+  );
+}
 
 export function ProfileDetailPage() {
   const { lang, t } = useLanguage();
@@ -72,10 +80,6 @@ export function ProfileDetailPage() {
     enabled: Boolean(identifier),
     queryFn: async () => {
       if (!identifier) return null;
-
-      // Check if it matches a demo profile first
-      const demo = findDemoProfile(identifier);
-      if (demo) return demo;
 
       // Try finding by id first in approved profiles
       const { data: byId } = await supabase
@@ -246,84 +250,56 @@ export function ProfileDetailPage() {
 
   const aboutMe = (profile as { about_me?: string | null })?.about_me;
   const isProfileApproved =
-    (profile as { moderation_status?: string }).moderation_status === "approved" ||
-    Boolean((profile as { is_demo?: boolean }).is_demo) ||
-    Boolean(profile.id);
+    (profile as { moderation_status?: string }).moderation_status === "approved";
   const isPhotoAvailable = Boolean((profile as { photo_url?: string | null })?.photo_url);
-  const isMobileVerified = Boolean(
-    (profile as { is_demo?: boolean }).is_demo ||
-      (profile as { mobile_verified?: boolean }).mobile_verified
-  );
+  const isMobileVerified = Boolean((profile as { mobile_verified?: boolean }).mobile_verified);
   const isHoroscopeProvided = Boolean(
     horoscopeAvailable === "yes" ||
-      (profile as { horoscope_available?: boolean }).horoscope_available ||
-      star ||
-      rashi
+    (profile as { horoscope_available?: boolean }).horoscope_available ||
+    star ||
+    rashi,
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3] py-8">
+    <div className="sbm-page min-h-screen bg-[#FAF8F3] pb-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 flex items-center justify-between">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="text-xs font-medium text-muted-foreground hover:text-[#24103F]"
-          >
-            <Link to="/search">
-              <ArrowLeft className="mr-1.5 h-3.5 w-3.5 text-[#D1A329]" />
-              {lang === "te" ? "శోధనకు తిరిగి వెళ్లండి" : "Back to Search"}
-            </Link>
-          </Button>
+        <div className="mb-6 flex items-center justify-between border-b border-[#ded5c8] pb-4">
+          <Link to="/search" className="sbm-link-arrow text-[12px]">
+            <ArrowLeft className="h-3.5 w-3.5 text-[#D1A329]" />
+            {lang === "te" ? "అన్వేషణకు తిరిగి" : "Back to discovery"}
+          </Link>
 
-          <span className="text-xs font-semibold tracking-wide text-[#087333]">
-            {SITE_NAME} • {profile.profile_code || "PROFILE"}
+          <span className="text-[11px] font-semibold tracking-[0.08em] text-[#087333]">
+            {SITE_NAME} · {profile.profile_code || "PROFILE"}
           </span>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
+        <div className="grid gap-8 lg:grid-cols-[340px_1fr]">
           {/* Left Column: Photo & Action Panel (Sticky on Desktop) */}
           <div className="space-y-4">
-            <div className="lg:sticky lg:top-24 space-y-4">
-              {/* Photo Box — Handcrafted luxury album mount */}
-              <div
-                className="relative rounded-2xl p-2.5 sm:p-3 transition-all duration-300"
-                style={{
-                  background: "linear-gradient(150deg, #ffffff 0%, #FAF8F3 100%)",
-                  border: "1px solid rgba(209,163,41,0.30)",
-                  boxShadow:
-                    "0 1px 0 rgba(255,255,255,0.95), 0 8px 30px rgba(36,16,63,0.08), 0 2px 6px rgba(36,16,63,0.04), inset 0 1px 0 rgba(255,255,255,0.9)",
-                }}
-              >
-                {/* Architectural corner brackets */}
-                <span className="arch-corner arch-corner-tl" style={{ width: 16, height: 16, top: 8, left: 8 }} />
-                <span className="arch-corner arch-corner-tr" style={{ width: 16, height: 16, top: 8, right: 8 }} />
-                <span className="arch-corner arch-corner-bl" style={{ width: 16, height: 16, bottom: 8, left: 8 }} />
-                <span className="arch-corner arch-corner-br" style={{ width: 16, height: 16, bottom: 8, right: 8 }} />
-
-                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-[#FAF8F3] shadow-xs">
+            <div className="space-y-4 lg:sticky lg:top-20">
+              <div className="border border-[#ded5c8] bg-white p-2">
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#efe9df]">
                   <ProtectedPhoto
                     profileId={profileId}
                     displayName={displayName}
                     photoUrl={(profile as { photo_url?: string | null })?.photo_url}
                     className="h-full w-full object-cover"
                   />
-
-                  {/* Insignia overlay badge */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-[#24103F]/90 px-3 py-1 text-[11px] font-medium text-[#FAF8F3] backdrop-blur-xs border border-[#D1A329]/40 shadow-xs">
-                    <ShieldCheck className="h-3.5 w-3.5 text-[#D1A329]" />
-                    <span>Verified Profile</span>
-                  </div>
                 </div>
 
-                <div className="p-3 pt-4 text-center">
-                  <p className="font-serif text-xl font-medium text-[#24103F] truncate">
-                    {displayName}, {profile.age ?? "—"}
+                <div className="px-2 pb-2 pt-4 text-center">
+                  <p className="truncate font-serif text-2xl text-[#24103F]">
+                    {displayName}
+                    {profile.age ? (
+                      <span className="font-sans text-sm font-medium text-[#6B6570]">
+                        , {profile.age}
+                      </span>
+                    ) : null}
                   </p>
-                  <p className="flex items-center justify-center gap-1 text-xs text-[#6B6570] mt-1">
+                  <p className="mt-1 flex items-center justify-center gap-1 text-[11px] text-[#6B6570]">
                     <MapPin className="h-3.5 w-3.5 text-[#D1A329]" />
-                    {locationLine(profile.city, profile.state) || "Andhra Pradesh"}
+                    {locationLine(profile.city, profile.state) || "Location not specified"}
                   </p>
                 </div>
               </div>
@@ -355,7 +331,9 @@ export function ProfileDetailPage() {
                   <Button
                     variant="outline"
                     className={`w-full py-5 text-xs font-medium rounded-md border-[#E4DDD3] hover:border-[#24103F] active:translate-y-px transition-all shadow-xs ${
-                      isShortlisted ? "bg-rose-50 text-rose-700 border-rose-300" : "text-[#24103F] bg-white"
+                      isShortlisted
+                        ? "bg-rose-50 text-rose-700 border-rose-300"
+                        : "text-[#24103F] bg-white"
                     }`}
                     onClick={() => actions.toggleShortlist.mutate(profileId)}
                   >
@@ -397,7 +375,7 @@ export function ProfileDetailPage() {
                   </DialogTrigger>
                   <DialogContent className="rounded-xl border border-[#E4DDD3]">
                     <DialogHeader>
-                      <DialogTitle className="font-serif text-xl text-[#21083F]">
+                      <DialogTitle className="font-serif text-xl text-[#24103F]">
                         Report Matrimonial Profile
                       </DialogTitle>
                       <DialogDescription>
@@ -444,38 +422,18 @@ export function ProfileDetailPage() {
           {/* Right Column: Profile Information Cards */}
           <div className="space-y-6">
             {/* Main Profile Summary Banner — Luxury Wedding Album Page */}
-            <div
-              className="rounded-2xl p-6 sm:p-8 relative overflow-hidden"
-              style={{
-                background: "linear-gradient(145deg, #ffffff 0%, #FAF8F3 100%)",
-                border: "1px solid rgba(209,163,41,0.30)",
-                boxShadow:
-                  "0 1px 0 rgba(255,255,255,0.95), 0 6px 20px rgba(36,16,63,0.06), 0 1px 3px rgba(36,16,63,0.04), inset 0 1px 0 rgba(255,255,255,0.85)",
-              }}
-            >
-              {/* Subtle gold architectural corner brackets */}
-              <span className="arch-corner arch-corner-tl" style={{ width: 18, height: 18, top: 10, left: 10 }} />
-              <span className="arch-corner arch-corner-tr" style={{ width: 18, height: 18, top: 10, right: 10 }} />
-
+            <div className="relative overflow-hidden border border-[#ded5c8] bg-white p-6 sm:p-8">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-xs font-semibold tracking-wider text-[#087333]">
                   {profile.profile_code || "PROFILE"}
                 </span>
-                {(profile as { is_demo?: boolean }).is_demo ? (
-                  <Badge
-                    variant="outline"
-                    className="bg-amber-50 text-amber-800 border-amber-200 text-xs font-normal"
-                  >
-                    Demo Profile
-                  </Badge>
-                ) : null}
                 {isProfileApproved && (
                   <Badge
                     variant="outline"
                     className="border-[#087333]/30 bg-emerald-50/80 text-[#087333] text-xs font-normal"
                   >
                     <ShieldCheck className="mr-1 h-3.5 w-3.5 text-[#087333]" />
-                    Profile Verified
+                    Reviewed profile
                   </Badge>
                 )}
                 {isMobileVerified && (
@@ -484,16 +442,7 @@ export function ProfileDetailPage() {
                     className="border-[#087333]/30 bg-emerald-50/80 text-[#087333] text-xs font-normal"
                   >
                     <CheckCircle2 className="mr-1 h-3.5 w-3.5 text-[#087333]" />
-                    Mobile Verified
-                  </Badge>
-                )}
-                {isPhotoAvailable && (
-                  <Badge
-                    variant="outline"
-                    className="border-[#D1A329]/40 bg-amber-50/60 text-[#24103F] text-xs font-normal"
-                  >
-                    <CheckCircle2 className="mr-1 h-3.5 w-3.5 text-[#D1A329]" />
-                    Photo Verified
+                    Mobile number verified
                   </Badge>
                 )}
                 {isHoroscopeProvided && (
@@ -593,9 +542,9 @@ export function ProfileDetailPage() {
                 value="personal"
                 className="rounded-xl border border-[#E4DDD3] bg-white overflow-hidden px-5 sm:px-6 border-b-0"
               >
-                <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#21083F] hover:no-underline cursor-pointer">
+                <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#24103F] hover:no-underline cursor-pointer">
                   <div className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-[#D9A514]" />
+                    <User className="h-5 w-5 text-[#D1A329]" />
                     <span>{lang === "te" ? "వ్యక్తిగత వివరాలు" : "Personal Details"}</span>
                   </div>
                 </AccordionTrigger>
@@ -649,9 +598,9 @@ export function ProfileDetailPage() {
                   value="horoscope"
                   className="rounded-xl border border-[#E4DDD3] bg-white overflow-hidden px-5 sm:px-6 border-b-0"
                 >
-                  <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#21083F] hover:no-underline cursor-pointer">
+                  <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#24103F] hover:no-underline cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-[#D9A514]" />
+                      <Sparkles className="h-5 w-5 text-[#D1A329]" />
                       <span>{lang === "te" ? "జాతక వివరాలు" : "Horoscope Details"}</span>
                     </div>
                   </AccordionTrigger>
@@ -678,7 +627,7 @@ export function ProfileDetailPage() {
                       {gothram ? (
                         <div>
                           <p className="text-xs text-muted-foreground">Gothram</p>
-                          <p className="font-semibold text-[#087A32]">{gothram}</p>
+                          <p className="font-semibold text-[#087333]">{gothram}</p>
                         </div>
                       ) : null}
                     </div>
@@ -700,29 +649,29 @@ export function ProfileDetailPage() {
                 value="career"
                 className="rounded-xl border border-[#E4DDD3] bg-white overflow-hidden px-5 sm:px-6 border-b-0"
               >
-                <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#21083F] hover:no-underline cursor-pointer">
+                <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#24103F] hover:no-underline cursor-pointer">
                   <div className="flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-[#D9A514]" />
+                    <GraduationCap className="h-5 w-5 text-[#D1A329]" />
                     <span>{lang === "te" ? "విద్య & ఉద్యోగం" : "Education & Career"}</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pb-6 pt-1">
                   <div className="grid gap-4 sm:grid-cols-2 text-sm">
                     <div className="flex items-start gap-3 rounded-2xl border border-border/50 bg-[#F8F7F4]/50 p-3.5">
-                      <GraduationCap className="h-5 w-5 text-[#087A32] shrink-0 mt-0.5" />
+                      <GraduationCap className="h-5 w-5 text-[#087333] shrink-0 mt-0.5" />
                       <div>
                         <p className="text-xs text-muted-foreground">Highest Education</p>
-                        <p className="font-semibold text-[#21083F]">
+                        <p className="font-semibold text-[#24103F]">
                           {profile.education || "Not specified"}
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-3 rounded-2xl border border-border/50 bg-[#F8F7F4]/50 p-3.5">
-                      <Briefcase className="h-5 w-5 text-[#087A32] shrink-0 mt-0.5" />
+                      <Briefcase className="h-5 w-5 text-[#087333] shrink-0 mt-0.5" />
                       <div>
                         <p className="text-xs text-muted-foreground">Occupation / Job</p>
-                        <p className="font-semibold text-[#21083F]">
+                        <p className="font-semibold text-[#24103F]">
                           {designation ? `${designation} — ` : ""}
                           {profile.occupation || "Not specified"}
                         </p>
@@ -748,7 +697,7 @@ export function ProfileDetailPage() {
                     {salaryAmount ? (
                       <div className="sm:col-span-2">
                         <p className="text-xs text-muted-foreground">Salary / Remuneration</p>
-                        <p className="font-semibold text-[#087A32]">
+                        <p className="font-semibold text-[#087333]">
                           {salaryCurrency} {salaryAmount} ({salaryPeriod})
                         </p>
                       </div>
@@ -762,9 +711,9 @@ export function ProfileDetailPage() {
                 value="family"
                 className="rounded-xl border border-[#E4DDD3] bg-white overflow-hidden px-5 sm:px-6 border-b-0"
               >
-                <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#21083F] hover:no-underline cursor-pointer">
+                <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#24103F] hover:no-underline cursor-pointer">
                   <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-[#D9A514]" />
+                    <Users className="h-5 w-5 text-[#D1A329]" />
                     <span>{lang === "te" ? "కుటుంబ వివరాలు" : "Family Particulars"}</span>
                   </div>
                 </AccordionTrigger>
@@ -837,9 +786,9 @@ export function ProfileDetailPage() {
                 value="community"
                 className="rounded-xl border border-[#E4DDD3] bg-white overflow-hidden px-5 sm:px-6 border-b-0"
               >
-                <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#21083F] hover:no-underline cursor-pointer">
+                <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#24103F] hover:no-underline cursor-pointer">
                   <div className="flex items-center gap-2">
-                    <Compass className="h-5 w-5 text-[#D9A514]" />
+                    <Compass className="h-5 w-5 text-[#D1A329]" />
                     <span>{lang === "te" ? "కుల & మూలాల వివరాలు" : "Community & Roots"}</span>
                   </div>
                 </AccordionTrigger>
@@ -847,7 +796,7 @@ export function ProfileDetailPage() {
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 text-sm">
                     <div>
                       <p className="text-xs text-muted-foreground">Community</p>
-                      <p className="font-bold text-[#087A32]">
+                      <p className="font-bold text-[#087333]">
                         {profile.community || "Shettibalija"}
                       </p>
                     </div>
@@ -885,9 +834,9 @@ export function ProfileDetailPage() {
                   value="lifestyle"
                   className="rounded-xl border border-[#E4DDD3] bg-white overflow-hidden px-5 sm:px-6 border-b-0"
                 >
-                  <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#21083F] hover:no-underline cursor-pointer">
+                  <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#24103F] hover:no-underline cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <Utensils className="h-5 w-5 text-[#D9A514]" />
+                      <Utensils className="h-5 w-5 text-[#D1A329]" />
                       <span>{lang === "te" ? "ఆహారం & జీవనశైలి" : "Food & Lifestyle"}</span>
                     </div>
                   </AccordionTrigger>
@@ -954,9 +903,9 @@ export function ProfileDetailPage() {
                     value="partner"
                     className="rounded-xl border border-[#E4DDD3] bg-white overflow-hidden px-5 sm:px-6 border-b-0"
                   >
-                    <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#21083F] hover:no-underline cursor-pointer">
+                    <AccordionTrigger className="py-5 font-serif text-lg font-bold text-[#24103F] hover:no-underline cursor-pointer">
                       <div className="flex items-center gap-2">
-                        <HeartHandshake className="h-5 w-5 text-[#D9A514]" />
+                        <HeartHandshake className="h-5 w-5 text-[#D1A329]" />
                         <span>
                           {lang === "te" ? "భాగస్వామి ఆకాంక్షలు" : "Partner Requirements"}
                         </span>
@@ -1027,18 +976,18 @@ export function ProfileDetailPage() {
       </div>
 
       {/* Mobile Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-[#D9A514]/30 p-2.5 pb-[env(safe-area-inset-bottom,12px)] flex items-center gap-2 md:hidden shadow-[0_-8px_25px_rgba(33,8,63,0.12)]">
+      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-2 border-t border-[#ded5c8] bg-[#FAF8F3] p-2.5 pb-[env(safe-area-inset-bottom,12px)] md:hidden">
         <Button
           variant="outline"
           size="sm"
           onClick={() => actions.toggleShortlist.mutate(profileId)}
-          className={`h-11 px-3.5 rounded-xl border-[#D9A514]/40 touch-press ${
-            isShortlisted ? "bg-rose-50 text-rose-700 border-rose-300" : "text-[#21083F]"
+          className={`h-11 rounded-none border-[#cfc5b8] bg-white px-3.5 ${
+            isShortlisted ? "border-[#b64e3b]/40 bg-[#fff5f2] text-[#8c3024]" : "text-[#24103F]"
           }`}
           aria-label="Shortlist profile"
         >
           <Heart
-            className={`h-4 w-4 ${isShortlisted ? "fill-rose-500 text-rose-500" : "text-[#D9A514]"}`}
+            className={`h-4 w-4 ${isShortlisted ? "fill-[#8c3024] text-[#8c3024]" : "text-[#D1A329]"}`}
           />
         </Button>
 
@@ -1046,30 +995,30 @@ export function ProfileDetailPage() {
           variant="outline"
           size="sm"
           onClick={() => actions.sendContactRequest.mutate(profileId)}
-          className="h-11 px-3.5 rounded-xl border-[#D9A514]/40 text-[#21083F] font-semibold text-xs touch-press"
+          className="h-11 rounded-none border-[#cfc5b8] bg-white px-3.5 text-[11px] font-semibold text-[#24103F]"
         >
-          <PhoneCall className="mr-1 h-3.5 w-3.5 text-[#087A32]" />
+          <PhoneCall className="mr-1 h-3.5 w-3.5 text-[#087333]" />
           <span>Contact</span>
         </Button>
 
         <Button
-          className={`flex-1 h-11 rounded-xl text-xs font-bold shadow-md touch-press ${
+          className={`h-11 flex-1 rounded-none text-[11px] font-bold ${
             isInterestSent
-              ? "bg-muted text-muted-foreground"
-              : "bg-gradient-to-r from-[#087A32] to-[#0A963E] text-white border border-[#D9A514]/30"
+              ? "bg-[#e8e1d7] text-[#6B6570]"
+              : "bg-[#24103F] text-white hover:bg-[#341753]"
           }`}
           disabled={isInterestSent}
           onClick={() => actions.sendInterest.mutate(profileId)}
         >
-          <Send className="mr-1.5 h-3.5 w-3.5 text-[#F4D477]" />
+          <Send className="mr-1.5 h-3.5 w-3.5 text-[#D1A329]" />
           <span>
             {isInterestSent
               ? lang === "te"
                 ? "ఆసక్తి పంపబడింది"
-                : "Interest Sent"
+                : "Interest sent"
               : lang === "te"
                 ? "ఆసక్తిని పంపండి"
-                : "Send Interest"}
+                : "Send interest"}
           </span>
         </Button>
       </div>

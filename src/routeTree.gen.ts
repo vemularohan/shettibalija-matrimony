@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -21,10 +22,12 @@ import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SuccessStoriesRouteImport } from './routes/success-stories'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardContactsRouteImport } from './routes/dashboard/contacts'
 import { Route as DashboardInterestsRouteImport } from './routes/dashboard/interests'
+import { Route as DashboardMatchesRouteImport } from './routes/dashboard/matches'
 import { Route as DashboardNotificationsRouteImport } from './routes/dashboard/notifications'
 import { Route as DashboardPaymentsRouteImport } from './routes/dashboard/payments'
 import { Route as DashboardPhotosRouteImport } from './routes/dashboard/photos'
@@ -58,6 +61,11 @@ const ContactRoute = ContactRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -95,6 +103,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SuccessStoriesRoute = SuccessStoriesRouteImport.update({
+  id: '/success-stories',
+  path: '/success-stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -113,6 +126,11 @@ const DashboardContactsRoute = DashboardContactsRouteImport.update({
 const DashboardInterestsRoute = DashboardInterestsRouteImport.update({
   id: '/interests',
   path: '/interests',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardMatchesRoute = DashboardMatchesRouteImport.update({
+  id: '/matches',
+  path: '/matches',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
@@ -167,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/privacy': typeof PrivacyRoute
@@ -174,9 +193,11 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
+  '/dashboard/matches': typeof DashboardMatchesRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/photos': typeof DashboardPhotosRoute
@@ -193,6 +214,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
+  '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/privacy': typeof PrivacyRoute
@@ -200,9 +222,11 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
+  '/dashboard/matches': typeof DashboardMatchesRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/photos': typeof DashboardPhotosRoute
@@ -221,6 +245,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/privacy': typeof PrivacyRoute
@@ -228,9 +253,11 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
+  '/dashboard/matches': typeof DashboardMatchesRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/payments': typeof DashboardPaymentsRoute
   '/dashboard/photos': typeof DashboardPhotosRoute
@@ -250,6 +277,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/dashboard'
+    | '/help'
     | '/login'
     | '/membership'
     | '/privacy'
@@ -257,9 +285,11 @@ export interface FileRouteTypes {
     | '/register'
     | '/search'
     | '/settings'
+    | '/success-stories'
     | '/terms'
     | '/dashboard/contacts'
     | '/dashboard/interests'
+    | '/dashboard/matches'
     | '/dashboard/notifications'
     | '/dashboard/payments'
     | '/dashboard/photos'
@@ -276,6 +306,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
+    | '/help'
     | '/login'
     | '/membership'
     | '/privacy'
@@ -283,9 +314,11 @@ export interface FileRouteTypes {
     | '/register'
     | '/search'
     | '/settings'
+    | '/success-stories'
     | '/terms'
     | '/dashboard/contacts'
     | '/dashboard/interests'
+    | '/dashboard/matches'
     | '/dashboard/notifications'
     | '/dashboard/payments'
     | '/dashboard/photos'
@@ -303,6 +336,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/dashboard'
+    | '/help'
     | '/login'
     | '/membership'
     | '/privacy'
@@ -310,9 +344,11 @@ export interface FileRouteTypes {
     | '/register'
     | '/search'
     | '/settings'
+    | '/success-stories'
     | '/terms'
     | '/dashboard/contacts'
     | '/dashboard/interests'
+    | '/dashboard/matches'
     | '/dashboard/notifications'
     | '/dashboard/payments'
     | '/dashboard/photos'
@@ -331,6 +367,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   MembershipRoute: typeof MembershipRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -338,6 +375,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
+  SuccessStoriesRoute: typeof SuccessStoriesRoute
   TermsRoute: typeof TermsRoute
   ProfileIdRoute: typeof ProfileIdRoute
   ProfilesCodeRoute: typeof ProfilesCodeRoute
@@ -378,6 +416,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -429,6 +474,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/success-stories': {
+      id: '/success-stories'
+      path: '/success-stories'
+      fullPath: '/success-stories'
+      preLoaderRoute: typeof SuccessStoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -455,6 +507,13 @@ declare module '@tanstack/react-router' {
       path: '/interests'
       fullPath: '/dashboard/interests'
       preLoaderRoute: typeof DashboardInterestsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/matches': {
+      id: '/dashboard/matches'
+      path: '/matches'
+      fullPath: '/dashboard/matches'
+      preLoaderRoute: typeof DashboardMatchesRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/notifications': {
@@ -526,6 +585,7 @@ declare module '@tanstack/react-router' {
 interface DashboardRouteChildren {
   DashboardContactsRoute: typeof DashboardContactsRoute
   DashboardInterestsRoute: typeof DashboardInterestsRoute
+  DashboardMatchesRoute: typeof DashboardMatchesRoute
   DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardPaymentsRoute: typeof DashboardPaymentsRoute
   DashboardPhotosRoute: typeof DashboardPhotosRoute
@@ -539,6 +599,7 @@ interface DashboardRouteChildren {
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardContactsRoute: DashboardContactsRoute,
   DashboardInterestsRoute: DashboardInterestsRoute,
+  DashboardMatchesRoute: DashboardMatchesRoute,
   DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardPaymentsRoute: DashboardPaymentsRoute,
   DashboardPhotosRoute: DashboardPhotosRoute,
@@ -559,6 +620,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   MembershipRoute: MembershipRoute,
   PrivacyRoute: PrivacyRoute,
@@ -566,6 +628,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
+  SuccessStoriesRoute: SuccessStoriesRoute,
   TermsRoute: TermsRoute,
   ProfileIdRoute: ProfileIdRoute,
   ProfilesCodeRoute: ProfilesCodeRoute,

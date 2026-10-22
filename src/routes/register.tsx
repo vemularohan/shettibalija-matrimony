@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
@@ -29,6 +29,8 @@ export const Route = createFileRoute("/register")({
 
 function RegisterPage() {
   const { user, loading } = useAuth();
+  const { lang } = useLanguage();
+  const isTe = lang === "te";
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -59,7 +61,7 @@ function RegisterPage() {
         ...prev,
         fullName: qName || prev.fullName,
         contactNumber: qPhone || prev.contactNumber,
-        gender: qGender === "groom" ? "groom" : "bride",
+        gender: qGender === "groom" ? "groom" : qGender === "bride" ? "bride" : prev.gender,
       }));
     }
   }, []);
@@ -148,32 +150,37 @@ function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] pb-16">
-      {/* Top Luxury Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-[#21083F] via-[#2d0c54] to-[#351064] text-white pt-24 pb-14 px-4 border-b border-[#D9A514]/30">
-        <div className="mx-auto max-w-4xl text-center space-y-3 flex flex-col items-center">
-          <div className="rounded-2xl p-2 bg-black/30 border border-[#D9A514]/30 shadow-md">
-            <ShettibalijaLogo size="lg" linkToHome priority theme="dark" />
+    <div className="min-h-screen bg-[#FAF8F3] pb-16">
+      <div className="register-frontdoor">
+        <div className="register-frontdoor__inner">
+          <div className="register-frontdoor__brand">
+            <ShettibalijaLogo size="md" linkToHome priority />
+            <span>{SITE_NAME_TE}</span>
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#F4D477]">
-              {SITE_NAME_TE}
-            </p>
-            <h1 className="mt-1 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              Create Your Matrimonial Profile
+          <div className="register-frontdoor__copy">
+            <p>{isTe ? "మీ సమాజం. మీ కథ. మీ తదుపరి అధ్యాయం." : "Your community. Your story. Your next chapter."}</p>
+            <h1>
+              {isTe ? "మీ మ్యాట్రిమోనీ ప్రొఫైల్ సృష్టించండి" : "Create your matrimonial profile"}
             </h1>
-            <p className="mt-2 text-sm sm:text-base text-white/80 max-w-xl mx-auto">
-              Join verified Shettibalija families seeking marriage alliances with complete details
-              in Telugu and English.
+            <p>
+              {isTe
+                ? "మీ కుటుంబానికి ఆలోచనాత్మకమైన ప్రొఫైల్, మరియు అర్థవంతమైన శెట్టిబలిజ పరిచయాలను మరింత గోప్యంగా ప్రారంభించే మార్గం."
+                : "A thoughtful profile for your family, and a more private way to begin meaningful Shettibalija introductions."}
             </p>
+            <div className="register-frontdoor__note">
+              <span aria-hidden>·</span>
+              {isTe
+                ? "ఏ దశలోనైనా డ్రాఫ్ట్ సేవ్ చేసి తిరిగి రావచ్చు. సంప్రదింపు వివరాలు డిఫాల్ట్‌గా గోప్యంగా ఉంటాయి."
+                : "You can save a draft and return at any step. Contact details stay private by default."}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 py-8 space-y-6">
+      <div className="mx-auto max-w-4xl space-y-7 px-4 py-8 sm:px-6">
         {errorMessage ? (
           <div
-            className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
+            className="border-l-2 border-[#b64e3b] bg-[#fff5f2] px-4 py-3 text-[12px] leading-6 text-[#8c3024]"
             role="alert"
           >
             {errorMessage}
@@ -181,43 +188,43 @@ function RegisterPage() {
         ) : null}
 
         {successMessage ? (
-          <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-8 text-center text-sm text-emerald-800 space-y-3 shadow-md">
-            <p className="font-serif text-2xl font-bold text-emerald-900">{successMessage}</p>
-            <p className="text-xs text-emerald-700">
-              Please verify your email address to log in and manage your matrimony profile.
+          <div className="border border-[#087333]/25 bg-[#eef5f0] px-6 py-10 text-center sm:px-10">
+            <p className="font-serif text-3xl leading-tight text-[#24103F]">{successMessage}</p>
+            <p className="mx-auto mt-3 max-w-md text-[13px] leading-7 text-[#5f5765]">
+              {isTe
+                ? "మీ మ్యాట్రిమోనీ ప్రొఫైల్‌ను నిర్వహించడానికి దయచేసి మీ ఇమెయిల్ చిరునామాను ధృవీకరించండి."
+                : "Please verify your email address to log in and manage your matrimony profile."}
             </p>
-            <div className="pt-2">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-xl bg-[#087A32] text-white hover:bg-[#045522]"
-              >
-                <Link to="/login">Proceed to Login</Link>
+            <div className="mt-6">
+              <Button asChild className="rounded-none bg-[#087333] px-6 text-white hover:bg-[#065c29]">
+                <Link to="/login" search={{}}>{isTe ? "లాగిన్‌కు కొనసాగండి" : "Proceed to login"}</Link>
               </Button>
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
-            {/* Account Login Credentials Card */}
-            <Card className="bg-white border-[#D9A514]/30 shadow-lg rounded-3xl p-2 sm:p-4">
-              <CardHeader className="pb-3 border-b border-border/80 mb-4">
-                <CardTitle className="text-lg font-serif font-bold text-[#21083F]">
-                  Step 0: Account Credentials (Login Info)
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Your email and password to access and update your matrimony account securely
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+          <div className="space-y-7">
+            <section className="sbm-form__account">
+              <div className="grid gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:gap-10">
+                <div>
+                  <span className="sbm-kicker">{isTe ? "ఖాతా" : "Account"}</span>
+                  <h2 className="mt-3 font-serif text-3xl text-[#24103F]">
+                    {isTe ? "మీ లాగిన్ వివరాలు" : "Your login details"}
+                  </h2>
+                  <p className="mt-2 max-w-sm text-[12px] leading-6 text-[#6B6570]">
+                    {isTe
+                      ? "మీ ప్రొఫైల్, ఆసక్తులు మరియు షార్ట్‌లిస్ట్‌కు తిరిగి రావడానికి ఈ ఇమెయిల్ మరియు పాస్‌వర్డ్‌ను ఉపయోగిస్తారు. మేము పబ్లిక్ లాగిన్ సృష్టించము."
+                      : "You will use this email and password to return to your profile, interests and shortlist. We do not create a public login."}
+                  </p>
+                </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="reg-email">Email Address *</Label>
+                    <Label htmlFor="reg-email">{isTe ? "ఇమెయిల్ చిరునామా *" : "Email address *"}</Label>
                     <Input
                       id="reg-email"
                       type="email"
                       required
                       autoComplete="email"
-                      placeholder="e.g. name@example.com"
+                      placeholder="name@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={submitting}
@@ -225,7 +232,7 @@ function RegisterPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="reg-password">Password (min 6 characters) *</Label>
+                    <Label htmlFor="reg-password">{isTe ? "పాస్‌వర్డ్ (కనీసం 6 అక్షరాలు) *" : "Password (at least 6 characters) *"}</Label>
                     <Input
                       id="reg-password"
                       type="password"
@@ -238,21 +245,20 @@ function RegisterPage() {
                     />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </section>
 
-            {/* 10-Section Matrimonial Biodata Form */}
             <DetailedProfileForm
               initialData={initialData}
               onSave={handleProfileSubmit}
               isSubmitting={submitting}
-              submitButtonText="Register & Create Profile"
+              submitButtonText={isTe ? "నమోదు చేసి ప్రొఫైల్ సృష్టించండి" : "Register and create profile"}
             />
 
-            <div className="text-center text-sm text-muted-foreground pt-2">
-              Already registered?{" "}
-              <Link to="/login" className="font-medium text-primary hover:underline">
-                Sign In to Your Account
+            <div className="border-t border-[#ded5c8] pt-5 text-center text-[12px] text-[#6B6570]">
+              {isTe ? "ఇప్పటికే నమోదు చేసుకున్నారా?" : "Already registered?"}{" "}
+              <Link to="/login" search={{}} className="font-semibold text-[#087333] underline">
+                {isTe ? "మీ ఖాతాలో సైన్ ఇన్ చేయండి" : "Sign in to your account"}
               </Link>
             </div>
           </div>

@@ -9,6 +9,7 @@ import { EmptyState, ErrorState } from "@/components/shared/empty-state";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
+import { MemberPageHeader } from "@/components/dashboard/member-page-header";
 
 export const Route = createFileRoute("/dashboard/notifications")({
   component: DashboardNotificationsPage,
@@ -55,26 +56,23 @@ function DashboardNotificationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#D9A514]/25 pb-4">
-        <div>
-          <h1 className="font-serif text-3xl font-bold text-[#21083F]">Notifications</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Activity updates, match interests, and status alerts for your matrimonial profile.
-          </p>
-        </div>
-
-        {notificationsQuery.data?.some((n) => !n.read_at) ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => markAllRead.mutate()}
-            className="border-[#087A32]/40 text-[#087A32] hover:bg-[#087A32]/10 font-semibold"
-          >
-            <CheckCheck className="mr-1.5 h-4 w-4" />
-            Mark all as read
-          </Button>
-        ) : null}
-      </div>
+      <MemberPageHeader
+        kicker="Activity"
+        title="Notifications"
+        description="Interest updates, profile review notes and account activity in one place."
+        actions={
+          notificationsQuery.data?.some((n) => !n.read_at) ? (
+            <Button
+              variant="outline"
+              onClick={() => markAllRead.mutate()}
+              className="rounded-none border-[#cfc5b8] bg-white text-[#087333] hover:bg-[#f7f3ec]"
+            >
+              <CheckCheck className="mr-1.5 h-4 w-4" />
+              Mark all as read
+            </Button>
+          ) : null
+        }
+      />
 
       {notificationsQuery.isLoading ? (
         <div className="space-y-3">
@@ -99,7 +97,7 @@ function DashboardNotificationsPage() {
               key={item.id}
               className={`rounded-2xl transition-all ${
                 !item.read_at
-                  ? "border-[#D9A514]/40 bg-gradient-to-r from-[#21083F]/[0.03] to-transparent shadow-xs"
+                  ? "border-[#D1A329]/40 bg-gradient-to-r from-[#24103F]/[0.03] to-transparent shadow-xs"
                   : "border-border/60 bg-white"
               }`}
             >
@@ -107,7 +105,7 @@ function DashboardNotificationsPage() {
                 <div
                   className={`mt-0.5 rounded-xl p-2.5 shrink-0 ${
                     !item.read_at
-                      ? "bg-[#21083F] text-[#F4D477] shadow-xs"
+                      ? "bg-[#24103F] text-[#F5E5B2] shadow-xs"
                       : "bg-[#F8F7F4] text-muted-foreground"
                   }`}
                 >
@@ -115,7 +113,7 @@ function DashboardNotificationsPage() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-bold text-[#21083F] text-sm">{item.title}</h3>
+                    <h3 className="font-bold text-[#24103F] text-sm">{item.title}</h3>
                     <span className="text-[11px] text-muted-foreground flex items-center gap-1 shrink-0">
                       <Clock className="h-3 w-3" />
                       {new Date(item.created_at).toLocaleDateString()}

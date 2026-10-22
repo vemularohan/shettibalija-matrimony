@@ -1,9 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Users, Heart, Shield, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { SITE_NAME, SITE_NAME_TE, COMMUNITY_NAME } from "@/lib/site";
+import { ArrowRight, HeartHandshake, Lock, Users } from "lucide-react";
 import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SITE_NAME, SITE_NAME_TE, COMMUNITY_NAME } from "@/lib/site";
 
 export const Route = createFileRoute("/about")({
   component: AboutPage,
@@ -12,125 +10,183 @@ export const Route = createFileRoute("/about")({
       { title: `About Us | ${SITE_NAME}` },
       {
         name: "description",
-        content: `About ${SITE_NAME} - Dedicated matrimonial platform for ${COMMUNITY_NAME} families`,
+        content: `About ${SITE_NAME} — a privacy-first matrimonial space for ${COMMUNITY_NAME} families.`,
       },
     ],
   }),
 });
 
+const PRINCIPLES = [
+  {
+    icon: Users,
+    title: "Family is part of the story",
+    text: "A profile can be created by the candidate or by a parent, sibling or relative. The people who matter can be involved from the beginning.",
+  },
+  {
+    icon: Lock,
+    title: "Privacy is the default",
+    text: "Contact details and horoscope documents are not placed on the open web. Photos and contact information follow each member's settings and the platform's access rules.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Introductions, not a marketplace",
+    text: "There is no compatibility score and no pressure to decide quickly. A shortlist, an interest and a conversation can each move at a family's own pace.",
+  },
+];
+
+const STEPS = [
+  {
+    number: "01",
+    title: "Create a profile",
+    text: "Share the details your family is comfortable with. You can save your progress and return later.",
+  },
+  {
+    number: "02",
+    title: "A human review",
+    text: "Administrators review a profile before it appears in discovery. This is a completeness and community review, not an identity verification.",
+  },
+  {
+    number: "03",
+    title: "Begin an introduction",
+    text: "Shortlist privately, express interest and decide together when contact details are shared.",
+  },
+];
+
 function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#21083F]/[0.02] via-[#F8F7F4] to-[#F8F7F4] py-16">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-14 flex flex-col items-center">
-          <div className="relative mb-6 rounded-3xl bg-white p-3.5 shadow-xl border border-[#D9A514]/30">
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-[#D9A514]/20 to-transparent blur-md -z-10" />
-            <ShettibalijaLogo size="xl" priority />
-          </div>
-
-          <span className="text-xs font-bold uppercase tracking-widest text-[#D9A514]">
-            {SITE_NAME_TE} • HERITAGE &amp; COMMUNITY
-          </span>
-
-          <h1 className="mt-2 font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#21083F]">
-            About {SITE_NAME}
-          </h1>
-
-          <p className="mt-3 text-base sm:text-lg text-muted-foreground leading-relaxed">
-            A premium matrimonial platform founded to unite Telugu-speaking {COMMUNITY_NAME}{" "}
-            families across Andhra Pradesh, Telangana, and the global diaspora.
-          </p>
-        </div>
-
-        <div className="space-y-8">
-          <Card className="rounded-3xl border border-[#D9A514]/25 bg-white p-2 sm:p-4 shadow-sm">
-            <CardContent className="p-6 md:p-8 space-y-4">
-              <h2 className="font-serif text-2xl font-bold text-[#21083F] border-b border-[#D9A514]/20 pb-3">
-                Our Purpose &amp; Heritage
-              </h2>
-              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                Marriage is a sacred union of two families, traditions, and values. {SITE_NAME} was
-                established to provide a dedicated, secure, and respectful matrimonial platform
-                tailored specifically for the {COMMUNITY_NAME} community.
+    <div className="sbm-page bg-[#FAF8F3]">
+      <header className="border-b border-[#e5ddd1] bg-white">
+        <div className="sbm-container py-12 sm:py-16">
+          <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-16">
+            <div>
+              <span className="sbm-kicker">Our story</span>
+              <h1 className="sbm-heading mt-4 max-w-2xl">
+                A considered way to begin a family.
+              </h1>
+              <p className="sbm-body mt-5 max-w-xl">
+                {SITE_NAME} is a matrimonial space for {COMMUNITY_NAME} families — built around
+                shared roots, family involvement and the kind of introduction that is given time to
+                become comfortable.
               </p>
-              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                We understand the unique cultural heritage, customs, and aspirations of our
-                community. Unlike generic mass matrimonial websites where cultural context is
-                diluted, our platform focuses exclusively on verified families, ensuring trust,
-                privacy, and authentic matchmaking.
+            </div>
+
+            <div className="border-l-2 border-[#D1A329] pl-5">
+              <div className="flex items-center gap-3">
+                <ShettibalijaLogo size="md" priority />
+                <div>
+                  <p className="font-serif text-lg text-[#24103F]">{SITE_NAME}</p>
+                  <p className="sbm-telugu mt-1 text-[11px] text-[#087333]">{SITE_NAME_TE}</p>
+                </div>
+              </div>
+              <p className="mt-5 max-w-sm text-[12px] leading-6 text-[#6B6570]">
+                For families in Andhra Pradesh, Telangana and wherever the community has made a
+                home. The platform is in English and Telugu.
               </p>
-            </CardContent>
-          </Card>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card className="rounded-3xl border border-[#D9A514]/20 bg-white shadow-xs hover:border-[#D9A514]/50 transition-all">
-              <CardContent className="p-6 space-y-2.5">
-                <div className="rounded-2xl bg-[#087A32]/10 p-3 w-fit text-[#087A32]">
-                  <Shield className="h-6 w-6" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-[#21083F]">Verified Profiles</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Every member profile is reviewed before publication to protect candidates from
-                  spam and fraudulent listings.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-3xl border border-[#D9A514]/20 bg-white shadow-xs hover:border-[#D9A514]/50 transition-all">
-              <CardContent className="p-6 space-y-2.5">
-                <div className="rounded-2xl bg-rose-50 p-3 w-fit text-rose-600">
-                  <Heart className="h-6 w-6" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-[#21083F]">Privacy First</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Photos and family contact details remain locked until mutual interest or access is
-                  explicitly authorized.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-3xl border border-[#D9A514]/20 bg-white shadow-xs hover:border-[#D9A514]/50 transition-all">
-              <CardContent className="p-6 space-y-2.5">
-                <div className="rounded-2xl bg-[#21083F]/10 p-3 w-fit text-[#21083F]">
-                  <Users className="h-6 w-6" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-[#21083F]">Community Centric</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Connect with prospective brides and grooms within our gothrams, native towns, and
-                  professional spheres with confidence.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="rounded-3xl border border-[#D9A514]/30 bg-gradient-to-br from-[#21083F] via-[#2A0A4E] to-[#351064] p-8 sm:p-10 text-center text-white shadow-xl relative overflow-hidden">
-            <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#D9A514]/15 blur-3xl" />
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-wide">
-              Ready to find someone who belongs with you?
-            </h2>
-            <p className="mx-auto mt-2 max-w-md text-xs sm:text-sm text-white/80">
-              Join verified {COMMUNITY_NAME} families who trust our matrimonial platform.
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold shadow-md border border-[#D9A514]/30"
-              >
-                <Link to="/register">Create Your Profile →</Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/30 bg-white/10 hover:bg-white/20 text-white backdrop-blur-md font-semibold"
-              >
-                <Link to="/search">Explore Matches</Link>
-              </Button>
             </div>
           </div>
         </div>
-      </div>
+      </header>
+
+      <main>
+        <section className="sbm-container grid gap-10 py-14 sm:py-20 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+          <div>
+            <span className="sbm-kicker">Why it exists</span>
+            <h2 className="sbm-heading mt-4 max-w-md">
+              Marriage is a family decision. The search should reflect that.
+            </h2>
+          </div>
+          <div className="max-w-2xl space-y-5 text-[14px] leading-8 text-[#5f5765]">
+            <p>
+              Most matrimonial websites ask families to behave like users of a marketplace:
+              browse quickly, compare, and move on. That is not how a serious introduction usually
+              begins in our community.
+            </p>
+            <p>
+              We built {SITE_NAME} so that the details families actually ask about — family
+              background, education, work, native place and horoscope — have room to be read
+              properly. The interface is intentionally calm. Nothing is designed to rush a
+              decision.
+            </p>
+            <p>
+              The platform does not replace the conversations that families have with one another.
+              It gives those conversations a more private and better organised place to start.
+            </p>
+          </div>
+        </section>
+
+        <section className="bg-[#24103F] text-white">
+          <div className="sbm-container grid gap-10 py-14 sm:py-20 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+            <div>
+              <span className="sbm-kicker sbm-kicker--light">What we hold to</span>
+              <h2 className="sbm-display sbm-display--light sbm-display--member mt-4 max-w-md">
+                Rooted in the community. Open to the conversation.
+              </h2>
+            </div>
+            <div className="divide-y divide-white/15 border-y border-white/15">
+              {PRINCIPLES.map((principle) => {
+                const Icon = principle.icon;
+                return (
+                  <div key={principle.title} className="grid grid-cols-[2rem_1fr] gap-4 py-6">
+                    <Icon className="mt-0.5 h-5 w-5 text-[#D1A329]" aria-hidden />
+                    <div>
+                      <h3 className="font-serif text-2xl text-[#FAF8F3]">{principle.title}</h3>
+                      <p className="mt-2 max-w-xl text-[13px] leading-7 text-white/65">
+                        {principle.text}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="sbm-container py-14 sm:py-20">
+          <div className="grid gap-8 border-b border-[#ded5c8] pb-8 sm:grid-cols-[0.72fr_1.28fr] sm:gap-20">
+            <div>
+              <span className="sbm-kicker">How it works</span>
+              <h2 className="sbm-heading mt-4 max-w-sm">Three unhurried steps.</h2>
+            </div>
+            <p className="sbm-body max-w-xl sm:pt-8">
+              The order is deliberate. You can stop, ask a question, or return to a profile later
+              without losing your place.
+            </p>
+          </div>
+
+          <div className="grid gap-0 md:grid-cols-3">
+            {STEPS.map((step) => (
+              <div
+                key={step.number}
+                className="border-b border-[#ded5c8] py-7 md:border-b-0 md:border-r md:px-7 md:last:border-r-0 md:first:pl-0"
+              >
+                <span className="font-serif text-2xl text-[#D1A329]">{step.number}</span>
+                <h3 className="mt-4 font-serif text-2xl text-[#24103F]">{step.title}</h3>
+                <p className="mt-2 text-[13px] leading-7 text-[#6B6570]">{step.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="sbm-container pb-16 sm:pb-24">
+          <div className="flex flex-col justify-between gap-6 border-t border-[#ded5c8] pt-8 sm:flex-row sm:items-center">
+            <div>
+              <span className="sbm-kicker">Start here</span>
+              <h2 className="sbm-heading mt-3 max-w-xl">
+                If this feels like the right place to begin, we would be glad to have you.
+              </h2>
+            </div>
+            <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row">
+              <Link to="/register" className="sbm-button sbm-button--primary">
+                Create your profile
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+              <Link to="/contact" className="sbm-button sbm-button--outline">
+                Talk to us
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

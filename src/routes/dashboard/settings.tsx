@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
+import { MemberPageHeader } from "@/components/dashboard/member-page-header";
 
 export const Route = createFileRoute("/dashboard/settings")({
   component: DashboardSettingsPage,
@@ -74,20 +75,19 @@ export function DashboardSettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-[#D9A514]/25 pb-4">
-        <h1 className="font-serif text-3xl font-bold text-[#21083F]">Account Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Manage your login credentials, personal contact, and security preferences.
-        </p>
-      </div>
+    <div className="sbm-form space-y-6">
+      <MemberPageHeader
+        kicker="Account"
+        title="Account settings"
+        description="Manage your login, personal contact details and password."
+      />
 
       <div className="space-y-6">
-        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+        <Card className="rounded-3xl border border-[#D1A329]/25 bg-white shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#D1A329]/15 bg-gradient-to-r from-[#24103F]/5 to-transparent pb-4">
             <div className="flex items-center gap-2.5">
-              <User className="h-5 w-5 text-[#D9A514]" />
-              <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+              <User className="h-5 w-5 text-[#D1A329]" />
+              <CardTitle className="font-serif text-xl font-bold text-[#24103F]">
                 Account Information
               </CardTitle>
             </div>
@@ -131,7 +131,7 @@ export function DashboardSettingsPage() {
               <Button
                 type="submit"
                 disabled={savingAccount}
-                className="bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold shadow-md border border-[#D9A514]/30"
+                className="bg-gradient-to-r from-[#087333] to-[#087333] hover:from-[#034B21] hover:to-[#087333] text-white font-bold shadow-md border border-[#D1A329]/30"
               >
                 {savingAccount ? "Saving..." : "Save Account Changes"}
               </Button>
@@ -139,11 +139,11 @@ export function DashboardSettingsPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+        <Card className="rounded-3xl border border-[#D1A329]/25 bg-white shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#D1A329]/15 bg-gradient-to-r from-[#24103F]/5 to-transparent pb-4">
             <div className="flex items-center gap-2.5">
-              <KeyRound className="h-5 w-5 text-[#D9A514]" />
-              <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+              <KeyRound className="h-5 w-5 text-[#D1A329]" />
+              <CardTitle className="font-serif text-xl font-bold text-[#24103F]">
                 Change Password
               </CardTitle>
             </div>
@@ -178,7 +178,7 @@ export function DashboardSettingsPage() {
               <Button
                 type="submit"
                 disabled={savingPassword}
-                className="bg-[#21083F] hover:bg-[#351064] text-white font-bold shadow-md"
+                className="bg-[#24103F] hover:bg-[#351064] text-white font-bold shadow-md"
               >
                 {savingPassword ? "Updating..." : "Update Password"}
               </Button>

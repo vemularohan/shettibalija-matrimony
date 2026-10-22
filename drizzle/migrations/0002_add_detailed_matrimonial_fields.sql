@@ -92,10 +92,50 @@ alter table if exists public.partner_preferences
   add column if not exists preferred_gothram text,
   add column if not exists requirements_text text;
 
--- 5. Refresh view if exists
+-- 5. Refresh the public view without exposing account, contact, or document
+-- fields. The original view's first columns are kept in the same order so
+-- this migration remains compatible with the view created in 0000.
 create or replace view public.approved_matrimonial_profiles as
   select
-    mp.*
+    mp.id,
+    mp.profile_code,
+    mp.display_name,
+    mp.gender,
+    mp.age,
+    mp.height_cm,
+    mp.marital_status,
+    mp.community,
+    mp.mother_tongue,
+    mp.native_place,
+    mp.city,
+    mp.state,
+    mp.education,
+    mp.occupation,
+    mp.family_summary,
+    mp.languages,
+    mp.photo_visibility,
+    mp.created_at,
+    mp.time_of_birth,
+    mp.place_of_birth,
+    mp.designation,
+    mp.job_location,
+    mp.employment_type,
+    mp.complexion,
+    mp.gothram,
+    mp.community_profession,
+    mp.present_location,
+    mp.food_habit,
+    mp.smoking_habit,
+    mp.drinking_habit,
+    mp.star,
+    mp.rashi,
+    mp.horoscope_available,
+    mp.has_profile_photo,
+    mp.about_me,
+    mp.citizenship,
+    mp.verified_at,
+    mp.last_active_at,
+    mp.updated_at
   from public.matrimonial_profiles mp
   where mp.moderation_status = 'approved'
     and mp.visibility = 'visible';

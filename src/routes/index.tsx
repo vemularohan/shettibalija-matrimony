@@ -2,31 +2,25 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { FormEvent, useState } from "react";
 import {
-  Search,
   ArrowRight,
+  BookOpen,
   Check,
-  ShieldCheck,
-  Lock,
-  SlidersHorizontal,
-  Users2,
   ChevronDown,
-  Quote,
-  Heart,
+  HeartHandshake,
+  Lock,
+  Search,
+  ShieldCheck,
   Sparkles,
+  Users2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ProfileCard, type PublicProfileCardData } from "@/components/profiles/profile-card";
-import { ErrorState } from "@/components/shared/empty-state";
-import { useProfileActions } from "@/hooks/use-profile-actions";
-import { supabase } from "@/integrations/supabase/client";
-import { DEMO_PROFILES } from "@/data/demo-profiles";
 import { HeroPhotoGallery } from "@/components/home/hero-photo-gallery";
+import { ProfileCard, type PublicProfileCardData } from "@/components/profiles/profile-card";
+import { useProfileActions } from "@/hooks/use-profile-actions";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/lib/i18n";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
-import { STATES, EDUCATION_OPTIONS, MARITAL_STATUS_OPTIONS } from "@/lib/options";
+import { EDUCATION_OPTIONS, MARITAL_STATUS_OPTIONS, STATES } from "@/lib/options";
 import { formatINRFromPaise } from "@/lib/format";
 import type { Json } from "@/integrations/supabase/types";
 import { ShettibalijaLogo } from "@/components/brand/logo";
@@ -35,105 +29,74 @@ export const Route = createFileRoute("/")({
   component: HomePage,
   head: () => ({
     meta: [
-      { title: `${SITE_NAME} | Find a life partner who shares your values` },
+      { title: `${SITE_NAME} | A life partner. A shared future.` },
       { name: "description", content: SITE_TAGLINE },
     ],
   }),
 });
 
-const SUCCESS_STORIES = [
-  {
-    id: "story-1",
-    couple: "Rajesh & Sravani",
-    coupleTe: "రాజేష్ & శ్రావణి",
-    location: "Hyderabad & Kakinada",
-    locationTe: "హైదరాబాద్ & కాకినాడ",
-    marriageYear: "2024",
-    image: "/profiles/ranjit.jpg",
-    quote:
-      "Our families connected through Shettibalija Matrimony. Both of us valued education, culture, and family harmony, and we found our perfect companion here.",
-    quoteTe:
-      "శెట్టిబలిజ మ్యాట్రిమోనీ ద్వారా మా కుటుంబాలు కలిశాయి. సంప్రదాయాలు మరియు కుటుంబ విలువల పరంగా మాకు ఎంతో సరిపోయే సంబంధం దొరికింది.",
-  },
-  {
-    id: "story-2",
-    couple: "Phani Kumar & Divya",
-    coupleTe: "ఫణి కుమార్ & దివ్య",
-    location: "Visakhapatnam",
-    locationTe: "విశాఖపట్నం",
-    marriageYear: "2023",
-    image: "/profiles/harshita.jpg",
-    quote:
-      "The verified community platform gave our parents complete peace of mind. Finding a partner with matching values made all the difference.",
-    quoteTe:
-      "వెరిఫై చేయబడిన ప్రొఫైల్స్ మా తల్లిదండ్రులకు పూర్తి నమ్మకాన్ని ఇచ్చాయి. అనుకూలమైన జీవిత భాగస్వామిని ఎంచుకోవడం చాలా సులువైంది.",
-  },
-  {
-    id: "story-3",
-    couple: "Suresh & Madhavi",
-    coupleTe: "సురేష్ & మాధవి",
-    location: "Rajahmundry & Vijayawada",
-    locationTe: "రాజమండ్రి & విజయవాడ",
-    marriageYear: "2024",
-    image: "/profiles/sravani.jpg",
-    quote:
-      "From gothram and horoscope compatibility to direct family conversations, everything was smooth, dignified, and authentic.",
-    quoteTe:
-      "గోత్రం మరియు జాతక సరిపోలిక నుండి కుటుంబ సంప్రదింపుల వరకు ప్రతిదీ ఎంతో గౌరవప్రదంగా మరియు నిష్కపటంగా జరిగింది.",
-  },
-];
-
 const FAQ_ITEMS = [
   {
-    q: "How do I register on Shettibalija Matrimony?",
-    qTe: "శెట్టిబలిజ మ్యాట్రిమోనీలో ఎలా రిజిస్టర్ అవ్వాలి?",
-    a: "Registration is 100% free. Simply select who the profile is for, provide basic candidate details, and complete your profile with education, occupation, and family details.",
-    aTe: "రిజిస్ట్రేషన్ పూర్తిగా ఉచితం. ప్రొఫైల్ ఎవరి కోసమో ఎంచుకుని, అభ్యర్థి వివరాలు నమోదు చేసి సులభంగా మీ ఖాతాను ప్రారంభించవచ్చు.",
+    q: "How does registration work?",
+    qTe: "రిజిస్ట్రేషన్ ఎలా పనిచేస్తుంది?",
+    a: "Creating an account is free. Choose who the profile is for, add the details you are comfortable sharing, and complete the sections that matter to your family. You can return and edit your profile at any time.",
+    aTe: "ఖాతా సృష్టించడం ఉచితం. ప్రొఫైల్ ఎవరి కోసమో ఎంచుకుని, మీ కుటుంబానికి ముఖ్యమైన వివరాలను నమోదు చేయండి. తర్వాత ఎప్పుడైనా ప్రొఫైల్‌ను సవరించుకోవచ్చు.",
   },
   {
-    q: "How is personal privacy and contact information protected?",
-    qTe: "వ్యక్తిగత గోప్యత మరియు ఫోన్ నంబర్లు ఎలా రక్షించబడతాయి?",
-    a: "Your phone number and private documents are never displayed publicly. Contact details are only visible to verified community members according to your privacy settings.",
-    aTe: "మీ ఫోన్ నంబర్ మరియు ప్రైవేట్ పత్రాలు పబ్లిక్‌గా ఎప్పుడూ కనిపించవు. మీ అనుమతి మరియు గోప్యతా సెట్టింగ్‌ల ఆధారంగా మాత్రమే ధృవీకరించబడిన సభ్యులకు కనిపిస్తాయి.",
+    q: "Who can see my contact details and horoscope?",
+    qTe: "నా సంప్రదింపు వివరాలు, జాతకం ఎవరు చూడగలరు?",
+    a: "Contact details and horoscope documents are not shown on the public website. They are governed by your privacy settings and by the access rules of the platform. You decide when to take a conversation forward.",
+    aTe: "మీ ఫోన్ నంబర్ మరియు జాతక పత్రాలు పబ్లిక్ వెబ్‌సైట్‌లో కనిపించవు. అవి మీ గోప్యతా సెట్టింగ్‌లు మరియు వేదిక యాక్సెస్ నియమాల ప్రకారం రక్షించబడతాయి.",
   },
   {
     q: "Can parents create a profile for their son or daughter?",
-    qTe: "తల్లిదండ్రులు తమ కుమారుడు లేదా కుమార్తె కోసం ప్రొఫైల్ సృష్టించవచ్చా?",
-    a: "Yes, parents and relatives actively create and manage profiles on behalf of candidates. You can select 'Daughter', 'Son', 'Sister', or 'Brother' during registration.",
-    aTe: "ఖచ్చితంగా. తల్లిదండ్రులు, సోదరులు లేదా బంధువులు కూడా అభ్యర్థి తరపున ప్రొఫైల్ సృష్టించి సంబంధాలను సంప్రదించవచ్చు.",
+    qTe: "తల్లిదండ్రులు కుమారుడు లేదా కుమార్తె కోసం ప్రొఫైల్ సృష్టించవచ్చా?",
+    a: "Yes. Parents, siblings and relatives can create and manage a profile on behalf of the candidate. Registration lets you select who the profile is for, and the candidate can be involved at every step.",
+    aTe: "అవును. తల్లిదండ్రులు, సోదరులు మరియు బంధువులు అభ్యర్థి తరపున ప్రొఫైల్ సృష్టించి నిర్వహించవచ్చు. ప్రొఫైల్ ఎవరి కోసమో ఎంచుకునే సౌలభ్యం రిజిస్ట్రేషన్‌లో ఉంది.",
   },
   {
-    q: "How are community profiles verified?",
-    qTe: "కమ్యూనిటీ ప్రొఫైల్స్ ఎలా ధృవీకరించబడతాయి?",
-    a: "Each profile undergoes review by Shettibalija Sangham administrators to ensure community authenticity and accurate demographic details.",
-    aTe: "శెట్టిబలిజ సమాజ అడ్మిన్‌లు ప్రతి ప్రొఫైల్‌ను సమీక్షించి, సమాజ ప్రామాణికతను నిర్ధారిస్తారు.",
+    q: "How are profiles reviewed?",
+    qTe: "ప్రొఫైల్స్ ఎలా సమీక్షించబడతాయి?",
+    a: "Profiles are reviewed by community administrators before they appear in discovery. This is a review for completeness and community fit, not an identity verification. Please speak with the family and satisfy yourself before making a decision.",
+    aTe: "ప్రొఫైల్స్ అన్వేషణలో కనిపించే ముందు సమాజ నిర్వాహకులు వాటిని సమీక్షిస్తారు. ఇది పూర్తితనం మరియు సమాజ అనుకూలత కోసం చేసే సమీక్ష, గుర్తింపు ధృవీకరణ కాదు. నిర్ణయం తీసుకునే ముందు కుటుంబంతో మాట్లాడండి.",
   },
   {
-    q: "What benefits does a Membership plan provide?",
-    qTe: "సభ్యత్వ ప్రణాళిక (Membership) ద్వారా లభించే ప్రయోజనాలు ఏమిటి?",
-    a: "Paid plans unlock verified direct phone contacts, full photo galleries, horoscope viewing, and priority listing in search results.",
-    aTe: "ప్రీమియం ప్లాన్స్ ద్వారా వెరిఫై చేసిన ఫోన్ నంబర్లు, పూర్తి ఫోటో గ్యాలరీ, జాతక వివరాలు మరియు శోధనలో ప్రాధాన్యత లభిస్తాయి.",
+    q: "What does membership include?",
+    qTe: "సభ్యత్వంలో ఏమి ఉంటుంది?",
+    a: "Membership plans are listed with their current benefits on the membership page. Features differ by plan. You can continue using the free account without choosing a paid plan.",
+    aTe: "సభ్యత్వ ప్రణాళికలు మరియు వాటి ప్రయోజనాలు సభ్యత్వ పేజీలో ఉన్నాయి. ప్రతి ప్లాన్‌లో సౌలభ్యాలు భిన్నంగా ఉంటాయి. చెల్లింపు ప్లాన్ ఎంచుకోకుండా ఉచిత ఖాతాను కొనసాగించవచ్చు.",
   },
 ];
 
 function HomePage() {
   const navigate = useNavigate();
   const { lang } = useLanguage();
+  const { user } = useAuth();
   const actions = useProfileActions();
 
-  // Quick match search state
   const [gender, setGender] = useState("");
   const [minAge, setMinAge] = useState("21");
   const [maxAge, setMaxAge] = useState("35");
   const [state, setState] = useState("");
   const [education, setEducation] = useState("");
   const [maritalStatus, setMaritalStatus] = useState("");
-
-  // FAQ open states
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   function onQuickSearch(event: FormEvent) {
     event.preventDefault();
+    const params = new URLSearchParams();
+    if (gender) params.set("gender", gender);
+    if (minAge) params.set("minAge", minAge);
+    if (maxAge) params.set("maxAge", maxAge);
+    if (state) params.set("state", state);
+    if (education) params.set("education", education);
+    if (maritalStatus) params.set("maritalStatus", maritalStatus);
+
+    if (!user) {
+      window.location.assign(`/login?returnTo=${encodeURIComponent(`/search?${params.toString()}`)}`);
+      return;
+    }
+
     void navigate({
       to: "/search",
       search: {
@@ -149,24 +112,18 @@ function HomePage() {
   }
 
   const recent = useQuery({
-    queryKey: ["recent-profiles"],
+    queryKey: ["recent-profiles", user?.id],
+    enabled: Boolean(user),
     queryFn: async () => {
-      let realProfiles: PublicProfileCardData[] = [];
-      try {
-        const { data, error } = await supabase
-          .from("approved_matrimonial_profiles")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(8);
-        if (!error && data) {
-          realProfiles = data.filter((p): p is typeof p & { id: string } => Boolean(p.id));
-        }
-      } catch {
-        // Fallback to demo profiles
-      }
-      const realIds = new Set(realProfiles.map((p) => p.id));
-      const demoToAdd = DEMO_PROFILES.filter((d) => !realIds.has(d.id));
-      return [...realProfiles, ...demoToAdd].slice(0, 8);
+      const { data, error } = await supabase
+        .from("approved_matrimonial_profiles")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(4);
+      if (error) throw error;
+      return (data ?? []).filter((profile): profile is typeof profile & { id: string } =>
+        Boolean(profile.id),
+      ) as PublicProfileCardData[];
     },
   });
 
@@ -184,291 +141,418 @@ function HomePage() {
   });
 
   return (
-    <div className="flex flex-col w-full">
-      {/* 1. HERO + REGISTRATION INTERACTION */}
+    <div className="flex w-full flex-col bg-[#FAF8F3]">
       <HeroPhotoGallery />
 
-      {/* 2. QUICK MATCH SEARCH — Real Matrimonial Search Tool */}
-      <section className="bg-white border-b border-[#E4DDD3] shadow-[0_2px_8px_rgba(36,16,63,0.02)]">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-          <div
-            className="rounded-xl p-6 sm:p-8 relative"
-            style={{
-              background: "linear-gradient(150deg, #FFFFFF 0%, #FAF8F3 100%)",
-              border: "1px solid rgba(209,163,41,0.30)",
-              boxShadow:
-                "0 1px 0 rgba(255,255,255,0.95), 0 4px 20px rgba(36,16,63,0.05), inset 0 1px 0 rgba(255,255,255,0.85)",
-            }}
-          >
-            {/* Subtle gold corner accents */}
-            <span
-              className="arch-corner arch-corner-tl"
-              style={{ width: 14, height: 14, top: 6, left: 6 }}
-            />
-            <span
-              className="arch-corner arch-corner-tr"
-              style={{ width: 14, height: 14, top: 6, right: 6 }}
-            />
-
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#E4DDD3] pb-4">
-              <div>
-                <span className="text-[11px] font-semibold tracking-[0.1em] uppercase text-[#087333]">
-                  {lang === "te" ? "శోధన సాధనం" : "Matrimonial Search"}
-                </span>
-                <h2 className="mt-0.5 font-serif text-xl sm:text-2xl font-bold text-[#24103F]">
-                  {lang === "te" ? "మీకు సరిపోయే మ్యాచ్‌లను కనుగొనండి" : "Find Your Perfect Match"}
-                </h2>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-[#6B6570]">
-                <span className="text-[#D1A329]">◆</span>
-                <span>{lang === "te" ? "శెట్టిబలిజ కమ్యూనిటీ శోధన" : "Shettibalija Community Search"}</span>
-              </div>
+      {/* BEGIN WITH WHAT MATTERS */}
+      <section id="find-your-match" className="border-b border-[#e5ddd1] bg-[#FAF8F3]">
+        <div className="sbm-container sbm-section--tight">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.5fr] lg:gap-16">
+            <div>
+              <span className="sbm-kicker">
+                {lang === "te" ? "ఇక్కడ ప్రారంభించండి" : "Begin with what matters"}
+              </span>
+              <h2 className="sbm-heading mt-4 max-w-sm">
+                {lang === "te"
+                  ? "కొన్ని వివరాలు చాలు. మిగతాది మీ కుటుంబం చూసుకుంటుంది."
+                  : "A few details are enough to begin."}
+              </h2>
+              <p className="sbm-body mt-4 max-w-sm">
+                {lang === "te"
+                  ? "మీకు ముఖ్యమైన విలువలను ఎంచుకోండి. మిగిలిన ప్రొఫైల్‌ను ప్రశాంతంగా పూర్తి చేయవచ్చు."
+                  : "Search by the things you would actually discuss with your family. Discovery is available to signed-in members."}
+              </p>
             </div>
 
-            <form onSubmit={onQuickSearch} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5 items-end">
-              {/* 1. I'm looking for */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">
-                  {lang === "te" ? "నేను వెతుకుతున్నది" : "I'm looking for"}
-                </Label>
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024] focus:border-[#24103F] focus:outline-none"
-                >
-                  <option value="">{lang === "te" ? "వధువు లేదా వరుడు" : "Bride or Groom"}</option>
-                  <option value="bride">{lang === "te" ? "వధువు (Bride)" : "Bride"}</option>
-                  <option value="groom">{lang === "te" ? "వరుడు (Groom)" : "Groom"}</option>
-                </select>
-              </div>
+            <form onSubmit={onQuickSearch} className="lg:pt-1">
+              <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <label htmlFor="home-looking" className="sbm-label">
+                    {lang === "te" ? "నేను వెతుకుతున్నది" : "I am looking for"}
+                  </label>
+                  <select
+                    id="home-looking"
+                    className="sbm-field"
+                    value={gender}
+                    onChange={(event) => setGender(event.target.value)}
+                  >
+                    <option value="">{lang === "te" ? "వధువు లేదా వరుడు" : "Bride or groom"}</option>
+                    <option value="bride">{lang === "te" ? "వధువు" : "Bride"}</option>
+                    <option value="groom">{lang === "te" ? "వరుడు" : "Groom"}</option>
+                  </select>
+                </div>
 
-              {/* 2. Age Range */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">
-                  {lang === "te" ? "వయస్సు (Age)" : "Age range"}
-                </Label>
-                <div className="flex items-center gap-1.5">
-                  <Input
-                    type="number"
-                    min={18}
-                    max={70}
-                    placeholder="21"
-                    value={minAge}
-                    onChange={(e) => setMinAge(e.target.value)}
-                    className="h-9 rounded-md border-[#E4DDD3] bg-white text-xs px-2 text-center"
-                  />
-                  <span className="text-xs text-[#6B6570] shrink-0">to</span>
-                  <Input
-                    type="number"
-                    min={18}
-                    max={70}
-                    placeholder="35"
-                    value={maxAge}
-                    onChange={(e) => setMaxAge(e.target.value)}
-                    className="h-9 rounded-md border-[#E4DDD3] bg-white text-xs px-2 text-center"
-                  />
+                <div>
+                  <span className="sbm-label">{lang === "te" ? "వయస్సు" : "Age range"}</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      aria-label={lang === "te" ? "కనిష్ఠ వయస్సు" : "Minimum age"}
+                      type="number"
+                      min={18}
+                      max={70}
+                      className="sbm-field text-center"
+                      value={minAge}
+                      onChange={(event) => setMinAge(event.target.value)}
+                    />
+                    <span className="text-xs text-[#6B6570]">to</span>
+                    <input
+                      aria-label={lang === "te" ? "గరిష్ఠ వయస్సు" : "Maximum age"}
+                      type="number"
+                      min={18}
+                      max={70}
+                      className="sbm-field text-center"
+                      value={maxAge}
+                      onChange={(event) => setMaxAge(event.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="home-location" className="sbm-label">
+                    {lang === "te" ? "ప్రాంతం" : "Location"}
+                  </label>
+                  <select
+                    id="home-location"
+                    className="sbm-field"
+                    value={state}
+                    onChange={(event) => setState(event.target.value)}
+                  >
+                    <option value="">{lang === "te" ? "అన్ని ప్రాంతాలు" : "Anywhere"}</option>
+                    {STATES.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="home-education" className="sbm-label">
+                    {lang === "te" ? "విద్య" : "Education"}
+                  </label>
+                  <select
+                    id="home-education"
+                    className="sbm-field"
+                    value={education}
+                    onChange={(event) => setEducation(event.target.value)}
+                  >
+                    <option value="">{lang === "te" ? "ఏదైనా" : "Any education"}</option>
+                    {EDUCATION_OPTIONS.slice(0, 8).map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="home-marital" className="sbm-label">
+                    {lang === "te" ? "వైవాహిక స్థితి" : "Marital status"}
+                  </label>
+                  <select
+                    id="home-marital"
+                    className="sbm-field"
+                    value={maritalStatus}
+                    onChange={(event) => setMaritalStatus(event.target.value)}
+                  >
+                    <option value="">{lang === "te" ? "అన్ని స్థితులు" : "Any status"}</option>
+                    {MARITAL_STATUS_OPTIONS.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {lang === "te" ? item.labelTe : item.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-end">
+                  <button type="submit" className="sbm-button sbm-button--primary w-full">
+                    <Search className="h-4 w-4" />
+                    {lang === "te" ? "అన్వేషించండి" : "Discover profiles"}
+                  </button>
                 </div>
               </div>
 
-              {/* 3. Location */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">
-                  {lang === "te" ? "ప్రాంతం (Location)" : "Location"}
-                </Label>
-                <select
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024] focus:border-[#24103F] focus:outline-none"
-                >
-                  <option value="">{lang === "te" ? "అన్ని ప్రాంతాలు" : "All Locations"}</option>
-                  {STATES.map((st) => (
-                    <option key={st} value={st}>
-                      {st}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 4. Education */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">
-                  {lang === "te" ? "విద్య (Education)" : "Education"}
-                </Label>
-                <select
-                  value={education}
-                  onChange={(e) => setEducation(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024] focus:border-[#24103F] focus:outline-none"
-                >
-                  <option value="">{lang === "te" ? "ఏదైనా చదువు" : "Any Education"}</option>
-                  {EDUCATION_OPTIONS.slice(0, 7).map((ed) => (
-                    <option key={ed} value={ed}>
-                      {ed}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 5. Marital Status */}
-              <div className="space-y-1">
-                <Label className="text-xs font-semibold text-[#24103F]">
-                  {lang === "te" ? "వైవాహిక స్థితి" : "Marital Status"}
-                </Label>
-                <select
-                  value={maritalStatus}
-                  onChange={(e) => setMaritalStatus(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-[#E4DDD3] bg-white px-2.5 text-xs text-[#242024] focus:border-[#24103F] focus:outline-none"
-                >
-                  <option value="">{lang === "te" ? "అన్ని స్థితులు" : "Any Status"}</option>
-                  {MARITAL_STATUS_OPTIONS.map((ms) => (
-                    <option key={ms.value} value={ms.value}>
-                      {lang === "te" ? ms.labelTe : ms.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* 6. Submit Button */}
-              <div>
-                <Button
-                  type="submit"
-                  className="h-9 w-full rounded-md bg-[#24103F] text-xs font-semibold text-white hover:bg-[#311552] transition-all shadow-xs"
-                >
-                  <Search className="mr-1.5 h-3.5 w-3.5 text-[#D1A329]" />
-                  {lang === "te" ? "శోధించండి" : "Search Profiles"}
-                </Button>
+              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-[#ded5c8] pt-4">
+                <Link to="/search" className="sbm-link-arrow">
+                  {lang === "te" ? "అధునాతన శోధన" : "Advanced search"}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                <span className="text-[11px] leading-5 text-[#6B6570]">
+                  {lang === "te"
+                    ? "ప్రొఫైల్స్ మరియు సంప్రదింపు వివరాలు సభ్యులకు మాత్రమే."
+                    : "Profile discovery and contact details are available to signed-in members."}
+                </span>
               </div>
             </form>
-
-            <div className="mt-4 pt-3 border-t border-[#E4DDD3]/60 flex flex-wrap items-center justify-between text-xs text-[#6B6570] gap-2">
-              <Link
-                to="/search"
-                className="text-[#087333] hover:text-[#24103F] transition-colors inline-flex items-center gap-1 font-semibold"
-              >
-                <SlidersHorizontal className="h-3.5 w-3.5" />
-                {lang === "te"
-                  ? "అదనపు శోధన ఎంపికలు (గోత్రం, నక్షత్రం, ఉద్యోగం, జీతం) →"
-                  : "More Search Options (Gothram, Star, Occupation, Salary) →"}
-              </Link>
-              <span className="text-[11px] text-[#B0A8B8]">
-                Search by Matrimony ID &amp; Keyword available in Advanced Search
-              </span>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. TRUST SECTION — Why Shettibalija Matrimony? (4 Pillars) */}
-      <section className="bg-[#FAF8F3] border-b border-[#E4DDD3] py-14 sm:py-18">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#087333]">
-              {lang === "te" ? "విశ్వసనీయత" : "Trust & Authenticity"}
-            </span>
-            <h2 className="mt-1.5 font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
-              {lang === "te" ? "ఎందుకు శెట్టిబలిజ మ్యాట్రిమోనీ?" : "Why Shettibalija Matrimony?"}
-            </h2>
-            <p className="mt-2 text-xs sm:text-sm text-[#6B6570]">
-              {lang === "te"
-                ? "శెట్టిబలిజ కుటుంబాలు విశ్వసించే నిబద్ధత మరియు విలువలతో కూడిన వేదిక."
-                : "Created exclusively to help Shettibalija families find meaningful alliances with trust, security, and cultural harmony."}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Pillar 1: Community Focused */}
-            <div className="rounded-xl border border-[#E4DDD3] bg-white p-5 shadow-xs transition-shadow hover:shadow-sm">
-              <div className="h-10 w-10 rounded-lg bg-[#24103F]/5 border border-[#D1A329]/30 flex items-center justify-center mb-4">
-                <Users2 className="h-5 w-5 text-[#24103F]" />
+      {/* FAMILY-IN-THE-ROOM PRINCIPLES */}
+      <section className="border-b border-[#e5ddd1] bg-white">
+        <div className="sbm-container sbm-section">
+          <div className="grid items-start gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+            <div className="relative overflow-hidden rounded-sm bg-[#24103F] px-8 py-12 text-white sm:px-12 sm:py-16">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full border border-[#D1A329]/20" />
+              <div className="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full border border-[#D1A329]/10" />
+              <div className="relative">
+                <p className="sbm-kicker sbm-kicker--light">
+                  {lang === "te" ? "మన సమాజం" : "The Shettibalija way"}
+                </p>
+                <p className="sbm-telugu mt-8 text-3xl leading-[1.35] text-[#F5E5B2] sm:text-4xl">
+                  మన మూలాలు.
+                  <br />
+                  మన భవిష్యత్తు.
+                </p>
+                <p className="mt-8 max-w-sm text-sm leading-7 text-white/70">
+                  {lang === "te"
+                    ? "పెద్దల ఆశీర్వాదం, కుటుంబాల సమ్మతి, మరియు పరస్పర గౌరవంతో మొదలయ్యే బంధం."
+                    : "A marriage is rarely only two people. It is a conversation between families, held with care, patience and respect."}
+                </p>
+                <div className="mt-10 h-px w-16 bg-[#D1A329]" />
+                <p className="mt-5 text-[11px] uppercase tracking-[0.16em] text-white/45">
+                  {SITE_NAME}
+                </p>
               </div>
-              <h3 className="font-semibold text-sm text-[#24103F] mb-1.5">
-                {lang === "te" ? "కమ్యూనిటీ కేంద్రీకృతం" : "Community Focused"}
-              </h3>
-              <p className="text-xs text-[#6B6570] leading-relaxed">
-                {lang === "te"
-                  ? "శెట్టిబలిజ సమాజం కోసం ప్రత్యేకంగా నిర్మించబడింది. గోత్రాలు మరియు సంప్రదాయాలకు ప్రాధాన్యత."
-                  : "Created specifically for the Shettibalija community, honoring shared heritage, gothrams, and family traditions."}
-              </p>
             </div>
 
-            {/* Pillar 2: Privacy Protected */}
-            <div className="rounded-xl border border-[#E4DDD3] bg-white p-5 shadow-xs transition-shadow hover:shadow-sm">
-              <div className="h-10 w-10 rounded-lg bg-[#087333]/10 border border-[#087333]/30 flex items-center justify-center mb-4">
-                <Lock className="h-5 w-5 text-[#087333]" />
-              </div>
-              <h3 className="font-semibold text-sm text-[#24103F] mb-1.5">
-                {lang === "te" ? "పూర్తి గోప్యతా రక్షణ" : "Privacy Protected"}
-              </h3>
-              <p className="text-xs text-[#6B6570] leading-relaxed">
-                {lang === "te"
-                  ? "మీ వ్యక్తిగత ఫోన్ నంబర్లు మరియు ఫోటోలు సురక్షితంగా ఉంటాయి. అనుమతి లేకుండా బహిర్గతం కావు."
-                  : "Your phone number and sensitive details are never publicly revealed. Full control over who views your contacts."}
-              </p>
-            </div>
-
-            {/* Pillar 3: Meaningful Search */}
-            <div className="rounded-xl border border-[#E4DDD3] bg-white p-5 shadow-xs transition-shadow hover:shadow-sm">
-              <div className="h-10 w-10 rounded-lg bg-[#D1A329]/15 border border-[#D1A329]/40 flex items-center justify-center mb-4">
-                <SlidersHorizontal className="h-5 w-5 text-[#916E14]" />
-              </div>
-              <h3 className="font-semibold text-sm text-[#24103F] mb-1.5">
-                {lang === "te" ? "అర్థవంతమైన శోధన" : "Meaningful Search"}
-              </h3>
-              <p className="text-xs text-[#6B6570] leading-relaxed">
-                {lang === "te"
-                  ? "విద్య, ఉద్యోగం, జాతకం, నక్షత్రం మరియు జీవనశైలి ప్రాధాన్యతల ఆధారంగా ఖచ్చితమైన సరిపోలిక."
-                  : "Find matches using granular filters including education, job location, star, rashi, and family background."}
-              </p>
-            </div>
-
-            {/* Pillar 4: Family Friendly */}
-            <div className="rounded-xl border border-[#E4DDD3] bg-white p-5 shadow-xs transition-shadow hover:shadow-sm">
-              <div className="h-10 w-10 rounded-lg bg-[#24103F]/5 border border-[#24103F]/20 flex items-center justify-center mb-4">
-                <ShieldCheck className="h-5 w-5 text-[#24103F]" />
-              </div>
-              <h3 className="font-semibold text-sm text-[#24103F] mb-1.5">
-                {lang === "te" ? "కుటుంబ అనుకూల వేదిక" : "Family Friendly"}
-              </h3>
-              <p className="text-xs text-[#6B6570] leading-relaxed">
-                {lang === "te"
-                  ? "తల్లిదండ్రులు మరియు కుటుంబాలు నమ్మకంగా ప్రొఫైల్స్ పరిశీలించి సంప్రదించడానికి అనుకూలం."
-                  : "Designed for individuals and families searching for suitable matches together in a respectful environment."}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. FEATURED / RECOMMENDED PROFILES */}
-      <section className="bg-white border-b border-[#E4DDD3] py-14 sm:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8 pb-4 border-b border-[#E4DDD3]">
             <div>
-              <span className="text-[11px] font-semibold tracking-[0.1em] uppercase text-[#087333]">
-                {lang === "te" ? "తాజా ప్రొఫైల్స్" : "Verified Matches"}
+              <span className="sbm-kicker">
+                {lang === "te" ? "మా విధానం" : "Why families stay"}
               </span>
-              <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
-                {lang === "te" ? "శెట్టిబలిజ కమ్యూనిటీ మ్యాచ్‌లు" : "Recommended Community Profiles"}
+              <h2 className="sbm-heading mt-4 max-w-lg">
+                {lang === "te"
+                  ? "ఒక ప్రశాంతమైన పరిచయం. ఒక బాధ్యతాయుతమైన నిర్ణయం."
+                  : "Matrimony, with the family in the room."}
               </h2>
+              <p className="sbm-body mt-5 max-w-xl">
+                {lang === "te"
+                  ? "మ్యాట్రిమోనీ అనేది ఫోటోలు మరియు ఫిల్టర్ల చుట్టూ తిరగకూడదు. అది కుటుంబం, విలువలు మరియు భవిష్యత్తు గురించిన సంభాషణ."
+                  : "This is not a place for hurried swipes. It is a considered space for the questions families actually ask: values, education, work, roots and the life you hope to build."}
+              </p>
+
+              <dl className="mt-10 divide-y divide-[#e5ddd1] border-t border-[#e5ddd1]">
+                {[
+                  {
+                    number: "01",
+                    title: lang === "te" ? "సమాజం మొదట" : "Community first",
+                    text:
+                      lang === "te"
+                        ? "శెట్టిబలిజ కుటుంబాలు, గోత్రాలు మరియు సంప్రదాయాలను గౌరవించే వేదిక."
+                        : "Built for Shettibalija families, with room for gothram, native place and the traditions that shape a family.",
+                  },
+                  {
+                    number: "02",
+                    title: lang === "te" ? "గోప్యత రూపకల్పనలోనే" : "Privacy by design",
+                    text:
+                      lang === "te"
+                        ? "సంప్రదింపు వివరాలు, జాతక పత్రాలు మరియు ఫోటోలు యాక్సెస్ నియమాలతో రక్షించబడతాయి."
+                        : "Contact details, horoscope documents and private photos sit behind access rules, not just hidden interface elements.",
+                  },
+                  {
+                    number: "03",
+                    title: lang === "te" ? "అర్థవంతమైన శోధన" : "Search with substance",
+                    text:
+                      lang === "te"
+                        ? "విద్య, ఉద్యోగం, ప్రాంతం, నక్షత్రం మరియు కుటుంబ నేపథ్యం ఆధారంగా వెతకండి."
+                        : "Filter by education, work, location, star, rashi and family background, not by appearance alone.",
+                  },
+                  {
+                    number: "04",
+                    title: lang === "te" ? "కుటుంబ భాగస్వామ్యం" : "Family participation",
+                    text:
+                      lang === "te"
+                        ? "తల్లిదండ్రులు మరియు బంధువులు ప్రొఫైల్‌ను సృష్టించి, పరిచయాలను కలిసి చూడవచ్చు."
+                        : "Parents and relatives can create and manage a profile, because the decision is rarely made alone.",
+                  },
+                ].map((item) => (
+                  <div key={item.number} className="grid grid-cols-[2.5rem_1fr] gap-4 py-5 sm:grid-cols-[3.5rem_1fr] sm:gap-6">
+                    <span className="font-serif text-xl text-[#D1A329]">{item.number}</span>
+                    <div>
+                      <dt className="text-sm font-bold text-[#24103F]">{item.title}</dt>
+                      <dd className="mt-1.5 text-[13px] leading-6 text-[#6B6570]">{item.text}</dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
             </div>
-            <Button asChild variant="outline" size="sm" className="h-8 border-[#E4DDD3] text-xs">
-              <Link to="/search" className="flex items-center gap-1.5">
-                {lang === "te" ? "అన్ని ప్రొఫైల్స్ చూడండి" : "View All Profiles"}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section id="how-it-works" className="border-b border-[#e5ddd1] bg-[#FAF8F3]">
+        <div className="sbm-container sbm-section">
+          <div className="grid gap-10 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
+            <div>
+              <span className="sbm-kicker">{lang === "te" ? "ప్రయాణం" : "The journey"}</span>
+              <h2 className="sbm-heading mt-4 max-w-xs">
+                {lang === "te" ? "మూడు ప్రశాంతమైన అడుగులు." : "Three unhurried steps."}
+              </h2>
+              <p className="sbm-body mt-4 max-w-xs">
+                {lang === "te"
+                  ? "మీ వేగంతో ప్రారంభించండి. ఏ దశలోనైనా ఆగి, ఆలోచించి, కుటుంబంతో చర్చించవచ్చు."
+                  : "Start at your own pace. You can pause, talk things over, and return whenever you are ready."}
+              </p>
+            </div>
+
+            <ol className="grid gap-0 divide-y divide-[#ded5c8] border-t border-[#ded5c8] sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:border-t-0">
+              {[
+                {
+                  n: "01",
+                  title: lang === "te" ? "మీ ప్రొఫైల్" : "Tell your story",
+                  text:
+                    lang === "te"
+                      ? "పేరు, కుటుంబం, చదువు, ఉద్యోగం మరియు జాతక వివరాలను మీ సౌకర్యంగా జోడించండి."
+                      : "Add the details your family would want to understand: background, education, work, family and horoscope.",
+                  link: "/register",
+                  cta: lang === "te" ? "ప్రారంభించండి" : "Begin",
+                },
+                {
+                  n: "02",
+                  title: lang === "te" ? "జాగ్రత్తగా అన్వేషించండి" : "Look with care",
+                  text:
+                    lang === "te"
+                      ? "మీకు ముఖ్యమైన అంశాలతో వెతకండి, షార్ట్‌లిస్ట్ చేయండి మరియు కుటుంబంతో చర్చించండి."
+                      : "Use filters that reflect your priorities. Keep a shortlist, compare notes and involve your family.",
+                  link: "/search",
+                  cta: lang === "te" ? "అన్వేషించండి" : "Discover",
+                },
+                {
+                  n: "03",
+                  title: lang === "te" ? "గౌరవంగా కనెక్ట్ అవ్వండి" : "Make contact",
+                  text:
+                    lang === "te"
+                      ? "ఆసక్తిని తెలియజేయండి. పరస్పర సమ్మతితో సంభాషణను కుటుంబాలకు విస్తరించండి."
+                      : "Express interest, wait for a response, and take the conversation forward with consent on both sides.",
+                  link: "/membership",
+                  cta: lang === "te" ? "సభ్యత్వం" : "Membership",
+                },
+              ].map((step) => (
+                <li key={step.n} className="flex flex-col justify-between py-8 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
+                  <div>
+                    <span className="font-serif text-4xl font-medium text-[#D1A329]">{step.n}</span>
+                    <h3 className="mt-6 text-lg font-semibold tracking-tight text-[#24103F]">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-[13px] leading-6 text-[#6B6570]">{step.text}</p>
+                  </div>
+                  <Link to={step.link} className="sbm-link-arrow mt-7">
+                    {step.cta}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      {/* INSIDE A PROFILE */}
+      <section className="border-b border-[#e5ddd1] bg-white">
+        <div className="sbm-container sbm-section">
+          <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+            <div>
+              <span className="sbm-kicker">{lang === "te" ? "ప్రొఫైల్ లోపల" : "Inside a profile"}</span>
+              <h2 className="sbm-heading mt-4 max-w-md">
+                {lang === "te" ? "ఒక ఫోటో కంటే ఎక్కువ." : "More than a photograph."}
+              </h2>
+              <p className="sbm-body mt-5 max-w-md">
+                {lang === "te"
+                  ? "ఒక కుటుంబం అడిగే ప్రశ్నలకు స్థలం ఇవ్వండి: మీరు ఎక్కడ నుండి వచ్చారు, ఏమి చదివారు, ఎలా జీవిస్తారు, ఏమి ఆశిస్తున్నారు."
+                  : "A matrimonial profile should answer the questions a family actually asks. These are the sections that make a profile useful, not just attractive."}
+              </p>
+              <div className="mt-8 flex items-start gap-3 border-l-2 border-[#D1A329] pl-4">
+                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-[#087333]" />
+                <p className="text-[12px] leading-6 text-[#6B6570]">
+                  {lang === "te"
+                    ? "సంప్రదింపు వివరాలు మరియు జాతక పత్రాలు మీ అనుమతి లేకుండా బహిరంగంగా కనిపించవు."
+                    : "Contact details and horoscope documents are never placed on the open web. They are shared according to the member's privacy settings."}
+                </p>
+              </div>
+            </div>
+
+            <dl className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
+              {[
+                {
+                  icon: Users2,
+                  title: lang === "te" ? "కుటుంబం & మూలాలు" : "Family & roots",
+                  text:
+                    lang === "te"
+                      ? "తల్లిదండ్రులు, సోదరులు, సొంత ఊరు, గోత్రం మరియు కుటుంబ విలువలు."
+                      : "Parents, siblings, native place, gothram and the values a family is rooted in.",
+                },
+                {
+                  icon: BookOpen,
+                  title: lang === "te" ? "విద్య & ఉద్యోగం" : "Education & work",
+                  text:
+                    lang === "te"
+                      ? "చదువు, ఉద్యోగం, కార్యాలయ స్థలం మరియు వృత్తిపరమైన ఆశయాలు."
+                      : "Qualification, profession, work location and the shape of a working life.",
+                },
+                {
+                  icon: Sparkles,
+                  title: lang === "te" ? "జాతకం" : "Horoscope",
+                  text:
+                    lang === "te"
+                      ? "నక్షత్రం, రాశి మరియు జాతక వివరాలు, కుటుంబం కోరినప్పుడు మాత్రమే."
+                      : "Star, rashi and horoscope details, available when both families wish to consider them.",
+                },
+                {
+                  icon: HeartHandshake,
+                  title: lang === "te" ? "ఆశలు" : "What they hope for",
+                  text:
+                    lang === "te"
+                      ? "భాగస్వామి వయస్సు, విద్య, ప్రాంతం మరియు కుటుంబ అంచనాలు."
+                      : "The age, education, location and family expectations a candidate is looking for.",
+                },
+                {
+                  icon: ShieldCheck,
+                  title: lang === "te" ? "జీవనశైలి" : "Everyday life",
+                  text:
+                    lang === "te"
+                      ? "ఆహారం, అలవాట్లు మరియు రోజువారీ జీవితంలో ముఖ్యమైన విషయాలు."
+                      : "Food, habits and the small, practical details that make daily life together easier.",
+                },
+                {
+                  icon: Lock,
+                  title: lang === "te" ? "సంప్రదింపు" : "Contact, with consent",
+                  text:
+                    lang === "te"
+                      ? "మీరు మరియు మీ కుటుంబం సిద్ధమైనప్పుడు మాత్రమే సంభాషణ ప్రారంభమవుతుంది."
+                      : "A conversation begins only when you and your family are ready to take it forward.",
+                },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.title} className="border-t border-[#e5ddd1] pt-4">
+                    <Icon className="h-4 w-4 text-[#D1A329]" aria-hidden />
+                    <dt className="mt-3 text-sm font-bold text-[#24103F]">{item.title}</dt>
+                    <dd className="mt-1.5 text-[13px] leading-6 text-[#6B6570]">{item.text}</dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      {/* RECENT PROFILES FOR MEMBERS ONLY */}
+      {user && recent.data && recent.data.length > 0 ? (
+        <section className="border-b border-[#e5ddd1] bg-[#FAF8F3]">
+          <div className="sbm-container sbm-section--tight">
+            <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <span className="sbm-kicker">{lang === "te" ? "కొత్తగా చేరినవారు" : "Recently joined"}</span>
+                <h2 className="sbm-heading mt-3">{lang === "te" ? "సమాజం నుండి కొత్త ప్రొఫైల్స్." : "New profiles from the community."}</h2>
+              </div>
+              <Link to="/search" className="sbm-link-arrow shrink-0">
+                {lang === "te" ? "అందరినీ చూడండి" : "See everyone"}
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-            </Button>
-          </div>
-
-          {recent.isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-[3/4] rounded-lg" />
-              ))}
             </div>
-          ) : recent.isError ? (
-            <ErrorState onRetry={() => void recent.refetch()} />
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-              {recent.data?.map((profile) => (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {recent.data.map((profile) => (
                 <ProfileCard
                   key={profile.id}
                   profile={profile}
@@ -479,398 +563,162 @@ function HomePage() {
                 />
               ))}
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* 5. HOW IT WORKS — 3 Clear Matrimonial Steps */}
-      <section id="how-it-works" className="bg-[#FAF8F3] border-b border-[#E4DDD3] py-14 sm:py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#087333]">
-              {lang === "te" ? "విధానం" : "Process"}
-            </span>
-            <h2 className="mt-1.5 font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
-              {lang === "te" ? "మూడు సరళమైన దశలలో మీ సంబంధం" : "How It Works"}
-            </h2>
-            <p className="mt-2 text-xs sm:text-sm text-[#6B6570]">
-              {lang === "te"
-                ? "సరళమైన విధానంతో మీ సంప్రదాయాలకు తగిన సంబంధాన్ని ఎంచుకోండి."
-                : "Simple, transparent, and respectful process to find your life partner."}
-            </p>
           </div>
+        </section>
+      ) : null}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                num: "01",
-                title: lang === "te" ? "ప్రొఫైల్ సృష్టించండి" : "Create Your Profile",
-                desc:
-                  lang === "te"
-                    ? "ఉచితంగా రిజిస్టర్ అవ్వండి. చదువు, ఉద్యోగం, కుటుంబం మరియు జాతక వివరాలను నమోదు చేయండి."
-                    : "Register free in minutes. Add candidate's education, career, family details, and horoscope preferences.",
-              },
-              {
-                num: "02",
-                title:
-                  lang === "te" ? "అనుకూలమైన మ్యాచ్‌లు చూడండి" : "Discover Meaningful Matches",
-                desc:
-                  lang === "te"
-                    ? "గోత్రం, నక్షత్రం, విద్య మరియు నివాసం ఆధారంగా ధృవీకరించబడిన శెట్టిబలిజ సంబంధాలను శోధించండి."
-                    : "Filter verified Shettibalija profiles by gothram, star, education, occupation, and location.",
-              },
-              {
-                num: "03",
-                title: lang === "te" ? "కుటుంబాలతో కనెక్ట్ అవ్వండి" : "Begin Your Journey",
-                desc:
-                  lang === "te"
-                    ? "ఆసక్తిని పంపండి. పరస్పర సమ్మతితో నేరుగా కుటుంబాలతో సంప్రదించి వివాహ ప్రయాణాన్ని ప్రారంభించండి."
-                    : "Express interest, connect directly with family consent, and take the first step towards a blessed union.",
-              },
-            ].map((step) => (
-              <div
-                key={step.num}
-                className="relative rounded-xl border border-[#E4DDD3] bg-white p-6 shadow-xs"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-serif text-2xl font-bold text-[#D1A329]">{step.num}</span>
-                  <div className="h-2 w-2 rounded-full bg-[#087333]" />
-                </div>
-                <h3 className="text-base font-semibold text-[#24103F] mb-2">{step.title}</h3>
-                <p className="text-xs text-[#6B6570] leading-relaxed">{step.desc}</p>
+      {/* MEMBERSHIP */}
+      {plans.data && plans.data.length > 0 ? (
+        <section className="border-b border-[#e5ddd1] bg-white">
+          <div className="sbm-container sbm-section">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+              <div>
+                <span className="sbm-kicker">{lang === "te" ? "సభ్యత్వం" : "Membership"}</span>
+                <h2 className="sbm-heading mt-4 max-w-sm">
+                  {lang === "te" ? "మీ అన్వేషణకు సహాయపడే ఎంపిక." : "Support for the search, never pressure."}
+                </h2>
+                <p className="sbm-body mt-5 max-w-sm">
+                  {lang === "te"
+                    ? "ఉచిత ఖాతాతో ప్రారంభించండి. మీకు ఉపయోగపడితే మాత్రమే చెల్లింపు ప్లాన్ ఎంచుకోండి."
+                    : "Start with a free account. Choose a paid plan only if its current benefits are useful to you."}
+                </p>
+                <Link to="/membership" className="sbm-link-arrow mt-7">
+                  {lang === "te" ? "పూర్తి వివరాలు" : "Compare every plan"}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
-            ))}
+
+              <div className="divide-y divide-[#e5ddd1] border-y border-[#e5ddd1]">
+                {plans.data.slice(0, 3).map((plan) => {
+                  const benefits = asStringArray(plan.benefits);
+                  const price = (plan.price_paise ?? 0) <= 0 ? "Free" : formatINRFromPaise(plan.price_paise);
+                  return (
+                    <div key={plan.id} className="grid gap-4 py-6 sm:grid-cols-[1fr_auto] sm:items-start">
+                      <div>
+                        <h3 className="font-serif text-xl text-[#24103F]">{plan.name}</h3>
+                        {plan.description ? (
+                          <p className="mt-1 text-[12px] leading-6 text-[#6B6570]">{plan.description}</p>
+                        ) : null}
+                        {benefits.length > 0 ? (
+                          <ul className="mt-3 space-y-1.5">
+                            {benefits.slice(0, 3).map((benefit) => (
+                              <li key={benefit} className="flex items-start gap-2 text-[12px] leading-5 text-[#5f5765]">
+                                <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#087333]" />
+                                {benefit}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                      </div>
+                      <div className="sm:text-right">
+                        <p className="font-serif text-2xl text-[#24103F]">{price}</p>
+                        {plan.duration_days ? (
+                          <p className="mt-0.5 text-[11px] text-[#6B6570]">for {plan.duration_days} days</p>
+                        ) : null}
+                        <Link to="/membership" className="sbm-link-arrow mt-3 justify-start sm:justify-end">
+                          {lang === "te" ? "వివరాలు" : "Details"}
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* COMMUNITY BAND */}
+      <section className="sbm-dark-band">
+        <div className="sbm-container sbm-section">
+          <div className="relative grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+            <div>
+              <div className="flex items-center gap-3">
+                <ShettibalijaLogo size="sm" theme="dark" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#D1A329]">
+                  {SITE_NAME}
+                </span>
+              </div>
+              <p className="sbm-telugu mt-8 text-4xl leading-[1.3] text-[#F5E5B2] sm:text-5xl">
+                మనం కలిసి
+                <br />
+                మంచి భవిష్యత్తును నిర్మిద్దాం.
+              </p>
+              <p className="mt-7 max-w-lg text-sm leading-7 text-white/65">
+                {lang === "te"
+                  ? "శెట్టిబలిజ కుటుంబాల మధ్య గౌరవప్రదమైన పరిచయాలకు ఒక ప్రశాంతమైన స్థలం."
+                  : "A considered place for Shettibalija families to meet, talk and begin something lasting."}
+              </p>
+            </div>
+            <div className="lg:pb-2">
+              <p className="border-t border-white/15 pt-5 text-[11px] uppercase tracking-[0.16em] text-white/45">
+                {lang === "te" ? "మీ ప్రయాణం ఇక్కడ ప్రారంభమవుతుంది" : "Your journey can begin here"}
+              </p>
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                <Link to="/register" className="sbm-button sbm-button--gold">
+                  {lang === "te" ? "ప్రొఫైల్ సృష్టించండి" : "Create your profile"}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/about"
+                  className="sbm-button border border-white/25 bg-transparent text-white hover:border-white/50 hover:bg-white/5"
+                >
+                  {lang === "te" ? "సంఘం గురించి" : "About the Sangham"}
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 6. MEMBERSHIP SECTION — Transparent Plans */}
-      <section className="bg-white border-b border-[#E4DDD3] py-14 sm:py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#087333]">
-              {lang === "te" ? "సభ్యత్వ ప్రణాళికలు" : "Membership"}
-            </span>
-            <h2 className="mt-1.5 font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
-              {lang === "te" ? "పారదర్శక సభ్యత్వ ప్రణాళికలు" : "Simple, Transparent Plans"}
-            </h2>
-            <p className="mt-2 text-xs sm:text-sm text-[#6B6570]">
-              {lang === "te"
-                ? "వెరిఫై చేసిన సంప్రదింపు వివరాలు అన్‌లాక్ చేయండి మరియు నేరుగా కుటుంబాలతో మాట్లాడండి."
-                : "Unlock verified phone contacts, view horoscopes, and connect directly with candidate families."}
-            </p>
-          </div>
-
-          {plans.isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-64 rounded-xl" />
-              ))}
+      {/* FAQ */}
+      <section id="faq" className="bg-[#FAF8F3]">
+        <div className="sbm-container sbm-section">
+          <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+            <div>
+              <span className="sbm-kicker">{lang === "te" ? "ప్రశ్నలు" : "Questions"}</span>
+              <h2 className="sbm-heading mt-4 max-w-xs">
+                {lang === "te" ? "మీకు తెలుసుకోవాల్సినవి." : "The things worth knowing."}
+              </h2>
+              <p className="sbm-body mt-4 max-w-xs">
+                {lang === "te"
+                  ? "మరింత సహాయం కావాలా? మా సహాయ కేంద్రం చూడండి."
+                  : "If something is still unclear, the help centre has more detail, or write to us directly."}
+              </p>
+              <Link to="/help" className="sbm-link-arrow mt-6">
+                {lang === "te" ? "సహాయ కేంద్రం" : "Visit the help centre"}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
-          ) : plans.isError ? (
-            <ErrorState onRetry={() => void plans.refetch()} />
-          ) : plans.data && plans.data.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {plans.data.map((plan, idx) => {
-                const isFree = (plan.price_paise ?? 0) <= 0;
-                const isFeatured =
-                  idx === 1 ||
-                  plan.name.toLowerCase().includes("premium") ||
-                  plan.name.toLowerCase().includes("vip");
-                const benefits = asStringArray(plan.benefits);
 
+            <div className="border-t border-[#ded5c8]">
+              {FAQ_ITEMS.map((item, index) => {
+                const open = openFaq === index;
                 return (
-                  <div
-                    key={plan.id}
-                    className={`relative flex flex-col rounded-xl p-6 transition-all duration-200 ${
-                      isFeatured
-                        ? "bg-[#FAF8F3] border-2 border-[#D1A329] shadow-md"
-                        : "bg-white border border-[#E4DDD3] shadow-xs"
-                    }`}
-                  >
-                    {isFeatured && (
-                      <div className="absolute -top-3 left-6">
-                        <span className="text-[10px] font-semibold tracking-wider uppercase bg-[#087333] text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                          {lang === "te" ? "సిఫార్సు చేసినది" : "Recommended"}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="mb-4">
-                      <h3 className="font-bold text-[#24103F] text-base">{plan.name}</h3>
-                      {plan.description && (
-                        <p className="mt-1 text-xs text-[#6B6570]">{plan.description}</p>
-                      )}
-                    </div>
-
-                    <div className="mb-5 pb-5 border-b border-[#E4DDD3]">
-                      <span className="font-serif text-3xl font-bold text-[#24103F]">
-                        {isFree ? "Free" : formatINRFromPaise(plan.price_paise)}
-                      </span>
-                      {plan.duration_days && !isFree && (
-                        <span className="ml-2 text-xs text-[#6B6570]">
-                          / {plan.duration_days} days
-                        </span>
-                      )}
-                    </div>
-
-                    <ul className="flex-1 space-y-2.5 text-xs mb-6">
-                      {benefits.map((benefit) => (
-                        <li key={benefit} className="flex items-start gap-2">
-                          <Check className="h-4 w-4 text-[#087333] mt-0.5 shrink-0" />
-                          <span className="text-[#4A4550]">{benefit}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button
-                      asChild
-                      className={`w-full h-10 rounded-md text-xs sm:text-sm font-semibold transition-colors ${
-                        isFeatured
-                          ? "bg-[#24103F] text-white hover:bg-[#311552]"
-                          : "bg-white border border-[#E4DDD3] text-[#24103F] hover:bg-[#FAF8F3]"
-                      }`}
+                  <div key={item.q} className="border-b border-[#ded5c8]">
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(open ? null : index)}
+                      className="flex w-full items-start justify-between gap-6 py-5 text-left"
+                      aria-expanded={open}
                     >
-                      <Link to="/membership">
-                        {isFree
-                          ? lang === "te"
-                            ? "ఉచితంగా చేరండి"
-                            : "Join Free"
-                          : lang === "te"
-                            ? "ఈ ప్లాన్ ఎంచుకోండి"
-                            : `Choose ${plan.name}`}
-                      </Link>
-                    </Button>
+                      <span className="text-sm font-semibold leading-6 text-[#24103F]">
+                        {lang === "te" ? item.qTe : item.q}
+                      </span>
+                      <ChevronDown
+                        className={`mt-1 h-4 w-4 shrink-0 text-[#6B6570] transition-transform ${open ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                    {open ? (
+                      <p className="max-w-2xl pb-5 text-[13px] leading-7 text-[#6B6570]">
+                        {lang === "te" ? item.aTe : item.a}
+                      </p>
+                    ) : null}
                   </div>
                 );
               })}
             </div>
-          ) : (
-            /* Fallback default plans */
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-xl mx-auto">
-              <div className="rounded-xl border border-[#E4DDD3] bg-white p-6 shadow-xs">
-                <h3 className="font-bold text-[#24103F]">Basic Free</h3>
-                <div className="my-3 pb-3 border-b border-[#E4DDD3]">
-                  <span className="font-serif text-3xl font-bold text-[#24103F]">Free</span>
-                </div>
-                <ul className="space-y-2 text-xs text-[#6B6570] mb-5">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#087333]" /> Browse all verified profiles
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#087333]" /> Create matrimonial profile
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#087333]" /> Send express interest
-                  </li>
-                </ul>
-                <Button asChild variant="outline" className="w-full text-xs">
-                  <Link to="/register">Join Free</Link>
-                </Button>
-              </div>
-
-              <div className="rounded-xl border-2 border-[#D1A329] bg-[#FAF8F3] p-6 shadow-md relative">
-                <span className="absolute -top-3 left-6 text-[10px] font-semibold uppercase bg-[#087333] text-white px-2.5 py-0.5 rounded-full">
-                  Recommended
-                </span>
-                <h3 className="font-bold text-[#24103F]">Premium Assisted</h3>
-                <div className="my-3 pb-3 border-b border-[#E4DDD3]">
-                  <span className="font-serif text-3xl font-bold text-[#24103F]">₹1,999</span>
-                  <span className="text-xs text-[#6B6570] ml-2">/ 90 days</span>
-                </div>
-                <ul className="space-y-2 text-xs text-[#6B6570] mb-5">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#087333]" /> 25 Verified Contact Numbers
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#087333]" /> Full Protected Photo Access
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#087333]" /> Complete Horoscope Viewing
-                  </li>
-                </ul>
-                <Button asChild className="w-full bg-[#24103F] text-white text-xs">
-                  <Link to="/membership">Choose Premium</Link>
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* 7. SUCCESS STORIES — Happy Couples (Matrimonial Editorial Style) */}
-      <section id="success-stories" className="bg-[#FAF8F3] border-b border-[#E4DDD3] py-14 sm:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#087333]">
-              {lang === "te" ? "విజయ గాథలు" : "Success Stories"}
-            </span>
-            <h2 className="mt-1.5 font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
-              {lang === "te" ? "సంతోషకరమైన జంటలు" : "Happy Couples"}
-            </h2>
-            <p className="mt-2 text-xs sm:text-sm text-[#6B6570]">
-              {lang === "te"
-                ? "శెట్టిబలిజ మ్యాట్రిమోనీ ద్వారా పరిచయమై ఒక్కటైన కుటుంబాల అనుభవాలు."
-                : "Real stories from Shettibalija families who found their perfect match through our platform."}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {SUCCESS_STORIES.map((story) => (
-              <div
-                key={story.id}
-                className="rounded-xl border border-[#E4DDD3] bg-white overflow-hidden shadow-xs hover:shadow-sm transition-shadow flex flex-col"
-              >
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#E4DDD3]">
-                  <img
-                    src={story.image}
-                    alt={story.couple}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                  <div className="absolute bottom-2.5 right-2.5 rounded bg-black/60 px-2 py-0.5 text-[10px] text-white backdrop-blur-xs font-medium">
-                    Married {story.marriageYear}
-                  </div>
-                </div>
-
-                <div className="p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-serif text-base font-bold text-[#24103F]">
-                      {lang === "te" ? story.coupleTe : story.couple}
-                    </h3>
-                    <p className="text-xs text-[#087333] font-medium mt-0.5">
-                      {lang === "te" ? story.locationTe : story.location}
-                    </p>
-                    <p className="mt-3 text-xs text-[#6B6570] italic leading-relaxed">
-                      "{lang === "te" ? story.quoteTe : story.quote}"
-                    </p>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-[#E4DDD3]/60 flex items-center gap-1.5 text-[11px] text-[#B0A8B8]">
-                    <Heart className="h-3 w-3 fill-rose-500 text-rose-500" />
-                    <span>Shettibalija Community Union</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center text-xs text-[#6B6570]">
-            <span>Are you a Shettibalija couple who met here? </span>
-            <Link to="/contact" className="text-[#24103F] font-semibold underline">
-              Share your story with us
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. COMMUNITY SECTION — Distinctive Shettibalija Identity */}
-      <section className="bg-[#24103F] text-white py-16 sm:py-24 relative overflow-hidden">
-        {/* Subtle background ornamentation */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-5"
-          style={{
-            backgroundImage: "radial-gradient(#D1A329 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
-
-        <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center text-center">
-            {/* Logo Crest */}
-            <div className="p-2.5 rounded-2xl bg-white/5 border border-[#D1A329]/30 mb-5 shadow-sm">
-              <ShettibalijaLogo size="md" theme="dark" linkToHome />
-            </div>
-
-            <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-[#D1A329]">
-              {SITE_NAME}
-            </span>
-
-            <h2 className="mt-3 font-serif text-2xl sm:text-4xl font-bold text-white max-w-xl leading-tight">
-              {lang === "te"
-                ? "శెట్టిబలిజ కమ్యూనిటీ కోసం ప్రత్యేకంగా నిర్మించబడింది"
-                : "Built for the Shettibalija Community."}
-            </h2>
-
-            <p className="mt-4 text-sm sm:text-base text-white/75 max-w-xl leading-relaxed">
-              {lang === "te"
-                ? "అర్థవంతమైన సంబంధాలు భాగస్వామ్య విలువలు, కుటుంబం, సంస్కృతి మరియు సంప్రదాయాల నుండి ప్రారంభమవుతాయి."
-                : "Meaningful relationships begin with shared values, family, culture and tradition. Rooted in community trust across Andhra Pradesh, Telangana, and worldwide."}
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button
-                asChild
-                className="h-10 rounded-md bg-[#087333] px-6 text-xs sm:text-sm font-semibold text-white hover:bg-[#065b28] shadow-sm"
-              >
-                <Link to="/register">
-                  {lang === "te" ? "ఉచితంగా ప్రొఫైల్ సృష్టించండి" : "Register Your Profile"}
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="h-10 rounded-md border-white/30 bg-transparent px-6 text-xs sm:text-sm font-medium text-white hover:bg-white/10 hover:border-white/50"
-              >
-                <Link to="/about">{lang === "te" ? "సంఘం గురించి" : "About Shettibalija Sangham"}</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 9. FAQ / HELP SECTION */}
-      <section id="faq" className="bg-white border-b border-[#E4DDD3] py-14 sm:py-20">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#087333]">
-              {lang === "te" ? "సహాయం & మద్దతు" : "Help & Information"}
-            </span>
-            <h2 className="mt-1.5 font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
-              {lang === "te" ? "తరచూ అడిగే ప్రశ్నలు (FAQ)" : "Frequently Asked Questions"}
-            </h2>
-            <p className="mt-2 text-xs sm:text-sm text-[#6B6570]">
-              {lang === "te"
-                ? "శెట్టిబలిజ మ్యాట్రిమోనీ సేవలకు సంబంధించిన ముఖ్యమైన వివరాలు."
-                : "Common questions about registration, profile privacy, and matchmaking."}
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {FAQ_ITEMS.map((item, idx) => {
-              const isOpen = openFaq === idx;
-              return (
-                <div
-                  key={idx}
-                  className="rounded-lg border border-[#E4DDD3] bg-[#FAF8F3] overflow-hidden transition-all"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full flex items-center justify-between p-4 text-left font-medium text-xs sm:text-sm text-[#24103F] hover:bg-[#F2EDE4] transition-colors"
-                  >
-                    <span>{lang === "te" ? item.qTe : item.q}</span>
-                    <ChevronDown
-                      className={`h-4 w-4 text-[#6B6570] transition-transform duration-200 shrink-0 ml-2 ${
-                        isOpen ? "rotate-180 text-[#24103F]" : ""
-                      }`}
-                    />
-                  </button>
-                  {isOpen && (
-                    <div className="px-4 pb-4 pt-1 text-xs text-[#6B6570] leading-relaxed border-t border-[#E4DDD3]/50">
-                      {lang === "te" ? item.aTe : item.a}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-8 text-center text-xs text-[#6B6570]">
-            <span>Have additional questions? </span>
-            <Link to="/contact" className="text-[#24103F] font-semibold underline">
-              Contact our Support Team
-            </Link>
           </div>
         </div>
       </section>

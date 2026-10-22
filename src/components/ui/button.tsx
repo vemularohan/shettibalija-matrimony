@@ -10,18 +10,18 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[#087A32] text-white shadow-sm hover:bg-[#045522] active:bg-[#03441b] font-medium",
+          "bg-[#087333] text-white shadow-sm hover:bg-[#045522] active:bg-[#03441b] font-medium",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-[#32105F]/35 text-[#32105F] bg-white hover:bg-[#32105F]/5 dark:border-purple-300/40 dark:text-purple-300 dark:bg-transparent",
+          "border border-[#24103F]/35 text-[#24103F] bg-white hover:bg-[#24103F]/5 dark:border-purple-300/40 dark:text-purple-300 dark:bg-transparent",
         secondary:
-          "border border-[#32105F] text-[#32105F] bg-transparent hover:bg-[#32105F]/10 dark:border-purple-300 dark:text-purple-300 font-medium",
+          "border border-[#24103F] text-[#24103F] bg-transparent hover:bg-[#24103F]/10 dark:border-purple-300 dark:text-purple-300 font-medium",
         premium:
-          "bg-[#32105F] text-[#F3D36A] border border-[#D9A514]/60 hover:bg-[#21083F] shadow-sm font-semibold",
-        purple: "bg-[#32105F] text-white shadow-sm hover:bg-[#21083F] font-medium",
+          "bg-[#24103F] text-[#F3D36A] border border-[#D1A329]/60 hover:bg-[#24103F] shadow-sm font-semibold",
+        purple: "bg-[#24103F] text-white shadow-sm hover:bg-[#24103F] font-medium",
         ghost:
-          "hover:bg-[#32105F]/10 hover:text-[#32105F] dark:hover:bg-purple-950/40 dark:hover:text-purple-300",
-        link: "text-[#087A32] underline-offset-4 hover:underline font-medium",
+          "hover:bg-[#24103F]/10 hover:text-[#24103F] dark:hover:bg-purple-950/40 dark:hover:text-purple-300",
+        link: "text-[#087333] underline-offset-4 hover:underline font-medium",
       },
       size: {
         default: "h-9 px-4 py-2",

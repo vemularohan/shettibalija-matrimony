@@ -1,46 +1,75 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Check, Crown, Shield, Sparkles } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowRight, Check, CreditCard, Lock, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { EmptyState, ErrorState } from "@/components/shared/empty-state";
+import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { useActiveMembership } from "@/hooks/use-member-data";
+import { createPaidOrder, verifyPaidOrder } from "@/functions/payments";
 import { supabase } from "@/integrations/supabase/client";
 import { formatINRFromPaise } from "@/lib/format";
 import { getErrorMessage } from "@/lib/errors";
 import { SITE_NAME } from "@/lib/site";
+import { useLanguage } from "@/lib/i18n";
 import type { Json } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/membership")({
   component: MembershipPage,
   head: () => ({
     meta: [
-      { title: `Membership Plans | ${SITE_NAME}` },
+      { title: `Membership | ${SITE_NAME}` },
       {
         name: "description",
-        content: "Choose a membership plan to unlock contact details and full photos",
+        content:
+          "Current Shettibalija Matrimony membership plans, their benefits and payment options.",
       },
     ],
   }),
 });
 
+type RazorpayResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayInstance = { open: () => void };
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => RazorpayInstance;
+  }
+}
+
+function loadRazorpay(): Promise<boolean> {
+  if (typeof window === "undefined") return Promise.resolve(false);
+  if (window.Razorpay) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const existing = document.querySelector<HTMLScriptElement>('script[data-razorpay="true"]');
+    if (existing) {
+      existing.addEventListener("load", () => resolve(Boolean(window.Razorpay)));
+      existing.addEventListener("error", () => resolve(false));
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.dataset["razorpay"] = "true";
+    script.onload = () => resolve(Boolean(window.Razorpay));
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
 function MembershipPage() {
+  const { lang } = useLanguage();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const activeMembershipQuery = useActiveMembership();
   const [activatingId, setActivatingId] = useState<string | null>(null);
+  const createOrder = useServerFn(createPaidOrder);
+  const verifyOrder = useServerFn(verifyPaidOrder);
 
   const plansQuery = useQuery({
     queryKey: ["membership-plans"],
@@ -66,291 +95,386 @@ function MembershipPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Membership plan activated successfully!");
+      toast.success("Free membership activated.");
       void queryClient.invalidateQueries({ queryKey: ["active-membership"] });
       setActivatingId(null);
     },
-    onError: (err) => {
-      toast.error(getErrorMessage(err, "Could not activate membership plan."));
+    onError: (error) => {
+      toast.error(getErrorMessage(error, "Could not activate the free plan."));
       setActivatingId(null);
     },
   });
 
+  async function startPaidCheckout(planId: string, planName: string) {
+    if (!user) {
+      window.location.assign(`/login?returnTo=${encodeURIComponent("/membership")}`);
+      return;
+    }
+
+    setActivatingId(planId);
+    try {
+      const order = await createOrder({ data: { planId } });
+      if (!order.ok) {
+        toast.error(order.message);
+        setActivatingId(null);
+        return;
+      }
+
+      const loaded = await loadRazorpay();
+      if (!loaded || !window.Razorpay) {
+        toast.error("The payment window could not be loaded. Please try again or contact support.");
+        setActivatingId(null);
+        return;
+      }
+
+      const checkout = new window.Razorpay({
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: SITE_NAME,
+        description: planName,
+        order_id: order.orderId,
+        prefill: {
+          name: user.user_metadata?.["full_name"] ?? "",
+          email: user.email ?? "",
+        },
+        theme: { color: "#24103F" },
+        modal: {
+          ondismiss: () => setActivatingId(null),
+        },
+        handler: async (response: RazorpayResponse) => {
+          try {
+            const verified = await verifyOrder({
+              data: {
+                planId,
+                orderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+              },
+            });
+            if (!verified.ok) {
+              toast.error(verified.message);
+              return;
+            }
+            toast.success("Payment confirmed. Your membership is now active.");
+            await queryClient.invalidateQueries({ queryKey: ["active-membership"] });
+            await queryClient.invalidateQueries({ queryKey: ["payments-history"] });
+          } catch (error) {
+            toast.error(getErrorMessage(error, "We could not confirm the payment."));
+          } finally {
+            setActivatingId(null);
+          }
+        },
+      });
+      checkout.open();
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Could not start checkout."));
+      setActivatingId(null);
+    }
+  }
+
+  const currentPlanId = activeMembershipQuery.data?.plan_id;
   const currentPlan = activeMembershipQuery.data?.membership_plans;
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3]">
-      {/* Editorial Plaque Banner */}
-      <div
-        className="relative overflow-hidden text-white pt-24 pb-16 px-4 border-b border-[#E4DDD3]"
-        style={{ background: "linear-gradient(160deg, #1e0c35 0%, #24103F 50%, #1a0b30 100%)" }}
-      >
-        <div className="mx-auto max-w-4xl text-center">
-          {/* Subtle gold ornamental rule */}
-          <div className="mb-4 flex items-center justify-center gap-3">
-            <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#D1A329]/50" />
-            <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#D1A329]">
-              Shettibalija Sangham
-            </span>
-            <div className="w-16 h-px bg-gradient-to-l from-transparent to-[#D1A329]/50" />
-          </div>
-
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-white">
-            Membership Plans
-          </h1>
-          <p className="mt-3 text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed">
-            Honest, verified matrimonial connections for the Shettibalija community. Unlock contact
-            numbers and full family details once both sides express mutual interest.
-          </p>
+    <div className="sbm-page bg-[#FAF8F3]">
+      <header className="relative overflow-hidden bg-[#24103F] text-white">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full border border-[#D1A329]/20" />
+          <div className="absolute -bottom-32 -left-20 h-96 w-96 rounded-full border border-[#D1A329]/10" />
         </div>
-      </div>
+        <div className="sbm-container relative py-14 sm:py-20">
+          <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+            <div>
+              <span className="sbm-kicker sbm-kicker--light">
+                {lang === "te" ? "సభ్యత్వం" : "Membership"}
+              </span>
+              <h1 className="sbm-display sbm-display--light sbm-display--member mt-5 max-w-2xl">
+                {lang === "te" ? (
+                  <>
+                    మీ అన్వేషణకు
+                    <br />
+                    <em>సహాయం, ఒత్తిడి కాదు.</em>
+                  </>
+                ) : (
+                  <>
+                    Support for the search,
+                    <br />
+                    <em>never pressure.</em>
+                  </>
+                )}
+              </h1>
+              <p className="mt-6 max-w-xl text-sm leading-7 text-white/70">
+                {lang === "te"
+                  ? "ఉచిత ఖాతాతో ప్రారంభించండి. చెల్లింపు ప్రణాళికలు అందుబాటులో ఉంటే, వాటి ప్రయోజనాలు మరియు ధర ఇక్కడ కనిపిస్తాయి. మీ అన్వేషణకు నిజంగా సహాయపడితే మాత్రమే ఎంచుకోండి."
+                  : "Start with a free account. If paid plans are available, they will appear here with their benefits and price. Choose one only if it genuinely helps your search."}
+              </p>
+            </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        {/* Current Active Plan Status */}
-        {user && activeMembershipQuery.data ? (
-          <div className="mb-10 rounded-2xl border bg-primary/5 p-6 border-primary/20">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-gold-foreground" />
-                  <h2 className="font-serif text-xl font-semibold">Your Active Membership</h2>
-                  <Badge className="bg-emerald-600">Active</Badge>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Plan:{" "}
-                  <span className="font-medium text-foreground">
-                    {currentPlan?.name ?? "Standard"}
-                  </span>
-                  {activeMembershipQuery.data.expires_at ? (
-                    <>
-                      {" "}
-                      • Valid until{" "}
-                      {new Date(activeMembershipQuery.data.expires_at).toLocaleDateString()}
-                    </>
-                  ) : (
-                    <> • Ongoing plan</>
-                  )}
+            <div className="border-t border-white/15 pt-5">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#D1A329]" aria-hidden />
+                <p className="text-[12px] leading-6 text-white/65">
+                  {lang === "te"
+                    ? "చెల్లింపులు Razorpay ద్వారా సురక్షితంగా నిర్వహించబడతాయి. చెల్లింపు నిర్ధారణ తర్వాత మాత్రమే సభ్యత్వం యాక్టివ్ అవుతుంది."
+                    : "Payments are processed securely by Razorpay. Membership activates only after the payment is confirmed by the server."}
                 </p>
               </div>
-              <Button asChild variant="outline">
-                <Link to="/dashboard">Go to Dashboard</Link>
-              </Button>
+              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-white/50">
+                <span className="flex items-center gap-1.5">
+                  <Lock className="h-3 w-3" aria-hidden />
+                  {lang === "te" ? "సురక్షిత చెల్లింపు" : "Secure checkout"}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CreditCard className="h-3 w-3" aria-hidden />
+                  {lang === "te" ? "భారతీయ రూపాయలు" : "INR payments"}
+                </span>
+              </div>
             </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="sbm-container pb-20 pt-10 sm:pt-14">
+        {user && activeMembershipQuery.data ? (
+          <div className="mb-10 flex flex-col justify-between gap-4 border border-[#087333]/25 bg-[#eef5f0] px-5 py-4 sm:flex-row sm:items-center sm:px-6">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#087333]">
+                {lang === "te" ? "ప్రస్తుత సభ్యత్వం" : "Current membership"}
+              </p>
+              <p className="mt-1 font-serif text-2xl text-[#24103F]">
+                {currentPlan?.name ?? "Active plan"}
+              </p>
+              <p className="mt-1 text-[12px] text-[#6B6570]">
+                {activeMembershipQuery.data.expires_at
+                  ? `${lang === "te" ? "వరకు చెల్లుబాటు" : "Valid until"} ${new Date(
+                      activeMembershipQuery.data.expires_at,
+                    ).toLocaleDateString()}`
+                  : lang === "te"
+                    ? "కొనసాగుతున్న ప్లాన్"
+                    : "Ongoing plan"}
+              </p>
+            </div>
+            <Link to="/dashboard" className="sbm-button sbm-button--outline shrink-0">
+              {lang === "te" ? "డ్యాష్‌బోర్డ్" : "Go to dashboard"}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         ) : null}
 
-        {/* Plans List */}
-        <div>
-          {plansQuery.isLoading ? (
-            <div className="grid gap-6 md:grid-cols-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-96 rounded-2xl" />
-              ))}
+        {plansQuery.isLoading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="sbm-skeleton h-52 w-full" />
+            ))}
+          </div>
+        ) : plansQuery.isError ? (
+          <div className="border border-[#ded5c8] bg-white px-6 py-16 text-center">
+            <h2 className="font-serif text-3xl text-[#24103F]">
+              {lang === "te" ? "ప్రణాళికలు లోడ్ కాలేదు." : "Plans could not be loaded."}
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#6B6570]">
+              {lang === "te"
+                ? "దయచేసి కొద్ది సేపటి తర్వాత మళ్లీ ప్రయత్నించండి."
+                : "Please try again in a moment. Your free account is unaffected."}
+            </p>
+            <button
+              type="button"
+              onClick={() => void plansQuery.refetch()}
+              className="sbm-button sbm-button--primary mt-6"
+            >
+              {lang === "te" ? "మళ్లీ ప్రయత్నించండి" : "Try again"}
+            </button>
+          </div>
+        ) : !plansQuery.data?.length ? (
+          <div className="grid gap-6 border-y border-[#ded5c8] py-10 sm:grid-cols-[1fr_auto] sm:items-center">
+            <div>
+              <h2 className="font-serif text-3xl text-[#24103F]">
+                {lang === "te" ? "సభ్యత్వం ఇంకా తెరవలేదు." : "Membership is not open yet."}
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-7 text-[#6B6570]">
+                {lang === "te"
+                  ? "ప్రస్తుతం చురుకైన చెల్లింపు ప్రణాళికలు లేవు. మీ ఉచిత ఖాతా యథావిధిగా పనిచేస్తుంది. ప్రణాళికలు తెరిచినప్పుడు తెలియజేయమని కోరుకుంటే మాకు రాయండి."
+                  : "There are no active paid plans at the moment. Your free account continues to work as normal. Write to us if you would like to be told when plans open."}
+              </p>
             </div>
-          ) : plansQuery.isError ? (
-            <ErrorState
-              title="Could not load membership plans"
-              description="There was an issue fetching the membership options from the database."
-              onRetry={() => void plansQuery.refetch()}
-            />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-              {(plansQuery.data && plansQuery.data.length > 0
-                ? plansQuery.data
-                : [
-                    {
-                      id: "plan-free",
-                      name: "Basic Member",
-                      price_paise: 0,
-                      duration_days: null,
-                      description: "Ideal for registering your profile and browsing verified community matches.",
-                      benefits: [
-                        "Create & manage matrimonial profile",
-                        "Browse verified community profiles",
-                        "Send up to 10 interests per month",
-                        "Shortlist prospective matches",
-                        "Photo protection controls",
-                      ],
-                    },
-                    {
-                      id: "plan-gold",
-                      name: "Sangham Premium",
-                      price_paise: 249900,
-                      duration_days: 90,
-                      description: "Complete access with verified contact numbers and direct family introductions.",
-                      benefits: [
-                        "All Basic Member features",
-                        "Direct phone & WhatsApp contact unlock",
-                        "Unlimited express interest requests",
-                        "Full family background & horoscope access",
-                        "Sangham coordinator assistance",
-                      ],
-                    },
-                    {
-                      id: "plan-vip",
-                      name: "Sangham Elite",
-                      price_paise: 499900,
-                      duration_days: 180,
-                      description: "Priority matchmaking with senior community elders & verified distinction badge.",
-                      benefits: [
-                        "All Premium features included",
-                        "Priority profile placement in search",
-                        "Personalized horoscope matching review",
-                        "Elder introduction assistance",
-                        "6 months active validity & dedicated support",
-                      ],
-                    },
-                  ]
-              ).map((plan, idx) => {
-                const isFree = (plan.price_paise ?? 0) <= 0;
-                const isCurrent = activeMembershipQuery.data?.plan_id === plan.id;
-                const isRecommended =
-                  plan.name.toLowerCase().includes("vip") ||
-                  plan.name.toLowerCase().includes("gold") ||
-                  (!isFree && idx === 1);
-                const benefits = asStringList(plan.benefits);
+            <div className="flex flex-wrap gap-2.5">
+              <Link to="/search" className="sbm-button sbm-button--primary">
+                {lang === "te" ? "ప్రొఫైల్స్ చూడండి" : "Discover profiles"}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link to="/contact" className="sbm-button sbm-button--outline">
+                {lang === "te" ? "సంప్రదించండి" : "Ask about membership"}
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="border-y border-[#ded5c8]">
+            {plansQuery.data.map((plan) => {
+              const isFree = (plan.price_paise ?? 0) <= 0;
+              const isCurrent = currentPlanId === plan.id;
+              const benefits = asStringList(plan.benefits);
+              const price = isFree
+                ? lang === "te"
+                  ? "ఉచితం"
+                  : "Free"
+                : formatINRFromPaise(plan.price_paise ?? 0);
+              const busy = activatingId === plan.id;
 
-                return (
-                  <div
-                    key={plan.id}
-                    className="relative flex flex-col rounded-xl p-6 sm:p-7 transition-all duration-300"
-                    style={
-                      isRecommended
-                        ? {
-                            background: "linear-gradient(145deg, #fdfcf9 0%, #f5f0e8 100%)",
-                            border: "1px solid rgba(209,163,41,0.38)",
-                            boxShadow:
-                              "0 1px 0 rgba(255,255,255,0.95), 0 8px 24px rgba(36,16,63,0.09), 0 0 0 1px rgba(209,163,41,0.15), inset 0 1px 0 rgba(255,255,255,0.7)",
-                          }
-                        : {
-                            background: "#ffffff",
-                            border: "1px solid rgba(228,221,211,1)",
-                            boxShadow:
-                              "0 1px 2px rgba(36,16,63,0.04), 0 4px 12px rgba(36,16,63,0.05)",
-                          }
-                    }
-                  >
-                    {/* Inner gold plaque rule for recommended */}
-                    {isRecommended && (
-                      <div
-                        className="absolute inset-3 rounded-lg pointer-events-none"
-                        style={{ border: "1px solid rgba(209,163,41,0.20)" }}
-                      />
-                    )}
-
-                    {isRecommended && (
-                      <div className="absolute -top-3 left-6">
-                        <span className="text-[10px] font-semibold tracking-wider uppercase bg-[#087333] text-white px-2.5 py-1 rounded-sm shadow-xs">
-                          Sangham Recommended
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="pt-2">
+              return (
+                <article
+                  key={plan.id}
+                  className="grid gap-6 border-b border-[#ded5c8] py-8 last:border-b-0 lg:grid-cols-[1.35fr_1fr] lg:gap-12 lg:py-10"
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h2 className="font-serif text-3xl text-[#24103F]">{plan.name}</h2>
                       {isCurrent ? (
-                        <span className="inline-block mb-2 text-[10px] font-semibold tracking-wider uppercase bg-[#087333]/10 text-[#087333] px-2 py-0.5 rounded-sm">
-                          Current Active Plan
+                        <span className="border border-[#087333]/25 bg-[#087333]/8 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[#087333]">
+                          {lang === "te" ? "ప్రస్తుతం" : "Current"}
                         </span>
-                      ) : null}
-                      <h3 className="font-serif text-2xl text-[#24103F] font-medium">
-                        {plan.name}
-                      </h3>
-                      <div className="mt-2 flex items-baseline gap-1.5">
-                        <span className="text-3xl sm:text-4xl font-semibold text-[#24103F]">
-                          {isFree ? "Free" : formatINRFromPaise(plan.price_paise)}
-                        </span>
-                        {plan.duration_days ? (
-                          <span className="text-xs text-[#6B6570] font-medium">
-                            / {plan.duration_days} days
-                          </span>
-                        ) : null}
-                      </div>
-                      {plan.description ? (
-                        <p className="mt-2 text-xs sm:text-sm text-[#6B6570]">
-                          {plan.description}
-                        </p>
                       ) : null}
                     </div>
+                    {plan.description ? (
+                      <p className="mt-2 max-w-xl text-[13px] leading-7 text-[#6B6570]">
+                        {plan.description}
+                      </p>
+                    ) : null}
 
-                    <div className="my-6 h-px bg-[#E4DDD3]" />
-
-                    <div className="flex-1">
-                      <ul className="space-y-3 text-xs sm:text-sm">
-                        {benefits.map((b) => (
-                          <li key={b} className="flex items-start gap-2.5">
-                            <div className="mt-0.5 rounded-full bg-[#087333]/10 p-1 text-[#087333] shrink-0">
-                              <Check className="h-3.5 w-3.5" />
-                            </div>
-                            <span className="text-[#242024]">{b}</span>
+                    {benefits.length > 0 ? (
+                      <ul className="mt-5 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                        {benefits.map((benefit) => (
+                          <li
+                            key={benefit}
+                            className="flex items-start gap-2 text-[12px] leading-6 text-[#514a57]"
+                          >
+                            <Check
+                              className="mt-1 h-3.5 w-3.5 shrink-0 text-[#087333]"
+                              aria-hidden
+                            />
+                            {benefit}
                           </li>
                         ))}
                       </ul>
+                    ) : (
+                      <p className="mt-5 text-[12px] text-[#6B6570]">
+                        {lang === "te"
+                          ? "ప్రయోజనాల వివరాలు త్వరలో."
+                          : "Benefit details are being finalised for this plan."}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col justify-between border-t border-[#e5ddd1] pt-5 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
+                    <div>
+                      <p className="font-serif text-4xl leading-none text-[#24103F]">{price}</p>
+                      <p className="mt-2 text-[11px] text-[#6B6570]">
+                        {isFree
+                          ? lang === "te"
+                            ? "చెల్లింపు అవసరం లేదు"
+                            : "No payment required"
+                          : plan.duration_days
+                            ? `${lang === "te" ? "వ్యవధి" : "For"} ${plan.duration_days} ${lang === "te" ? "రోజులు" : "days"}`
+                            : lang === "te"
+                              ? "ఒకసారి చెల్లింపు"
+                              : "One-time plan"}
+                      </p>
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-[#E4DDD3]">
+                    <div className="mt-6">
                       {!user ? (
-                        <Button
-                          asChild
-                          className="w-full min-h-[44px] rounded-md text-xs font-semibold bg-[#24103F] hover:bg-[#311552] text-white shadow-[0_2px_8px_rgba(36,16,63,0.18)] active:translate-y-px transition-all"
+                        <Link
+                          to="/login"
+                          search={{ returnTo: "/membership" }}
+                          className="sbm-button sbm-button--primary w-full"
                         >
-                          <Link to="/login">Sign In to Choose</Link>
-                        </Button>
+                          {lang === "te" ? "లాగిన్ చేసి ఎంచుకోండి" : "Sign in to choose"}
+                        </Link>
                       ) : isCurrent ? (
-                        <Button
-                          className="w-full min-h-[44px] rounded-md text-xs font-semibold"
-                          variant="outline"
+                        <button
+                          type="button"
                           disabled
+                          className="sbm-button w-full cursor-not-allowed border border-[#ded5c8] bg-[#f4f0e9] text-[#6B6570]"
                         >
-                          Currently Active
-                        </Button>
+                          {lang === "te" ? "ప్రస్తుతం యాక్టివ్" : "Currently active"}
+                        </button>
                       ) : isFree ? (
-                        <Button
-                          className="w-full min-h-[44px] rounded-md text-xs font-semibold bg-[#24103F] hover:bg-[#311552] text-white shadow-[0_2px_8px_rgba(36,16,63,0.18)] active:translate-y-px transition-all"
-                          disabled={activatingId === plan.id}
+                        <button
+                          type="button"
+                          disabled={busy}
                           onClick={() => activateFreePlan.mutate(plan.id)}
+                          className="sbm-button sbm-button--outline w-full"
                         >
-                          {activatingId === plan.id ? "Activating..." : "Activate Free Plan"}
-                        </Button>
+                          {busy
+                            ? lang === "te"
+                              ? "యాక్టివేట్ అవుతోంది..."
+                              : "Activating..."
+                            : lang === "te"
+                              ? "ఉచిత ప్లాన్ యాక్టివేట్ చేయండి"
+                              : "Activate free plan"}
+                        </button>
                       ) : (
-                        <Button
-                          className={`w-full min-h-[44px] rounded-md text-xs font-semibold active:translate-y-px transition-all ${
-                            isRecommended
-                              ? "bg-[#24103F] hover:bg-[#311552] text-white shadow-[0_2px_8px_rgba(36,16,63,0.22)]"
-                              : "bg-[#24103F] hover:bg-[#311552] text-white shadow-xs"
-                          }`}
-                          onClick={() => {
-                            toast.info(
-                              "Online payment gateway integration is currently being enabled. Please contact our community coordinators to activate this plan directly.",
-                            );
-                          }}
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => void startPaidCheckout(plan.id, plan.name)}
+                          className="sbm-button sbm-button--primary w-full"
                         >
-                          Choose {plan.name}
-                        </Button>
+                          {busy
+                            ? lang === "te"
+                              ? "తయారవుతోంది..."
+                              : "Preparing checkout..."
+                            : lang === "te"
+                              ? "ప్లాన్ ఎంచుకోండి"
+                              : "Choose this plan"}
+                          {!busy ? <ArrowRight className="h-4 w-4" /> : null}
+                        </button>
                       )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
 
-        {/* Trust & Safe Guarantee */}
-        <div className="mt-16 rounded-3xl border bg-card p-8 text-center max-w-3xl mx-auto shadow-sm">
-          <Shield className="h-8 w-8 text-primary mx-auto mb-3" />
-          <h3 className="font-serif text-xl font-semibold">100% Verified Community Network</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            All memberships directly support the maintenance and verification of profiles within the
-            Shettibalija community. Photo access and contact information requests respect each
-            member's privacy choices.
-          </p>
+        <div className="mt-14 grid gap-8 border-t border-[#ded5c8] pt-8 md:grid-cols-2">
+          <div className="flex items-start gap-3">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#087333]" aria-hidden />
+            <div>
+              <h2 className="text-sm font-bold text-[#24103F]">
+                {lang === "te" ? "మీ గోప్యత మీ చేతుల్లో" : "Your privacy stays in your hands"}
+              </h2>
+              <p className="mt-1 text-[12px] leading-6 text-[#6B6570]">
+                {lang === "te"
+                  ? "సభ్యత్వం మీ ప్రొఫైల్‌ను బహిరంగంగా ప్రచురించదు. ఫోటోలు మరియు సంప్రదింపు వివరాలు మీ సెట్టింగ్‌ల ప్రకారం ఉంటాయి."
+                  : "Membership does not make your contact details public. Photos and contact information continue to follow your privacy settings and the platform's access rules."}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <Lock className="mt-0.5 h-4 w-4 shrink-0 text-[#D1A329]" aria-hidden />
+            <div>
+              <h2 className="text-sm font-bold text-[#24103F]">
+                {lang === "te" ? "చెల్లింపు సహాయం" : "Payment help"}
+              </h2>
+              <p className="mt-1 text-[12px] leading-6 text-[#6B6570]">
+                {lang === "te"
+                  ? "చెల్లింపు సమస్య ఉంటే, మీ నమోదిత ఇమెయిల్ నుండి సంప్రదించండి. మా రీఫండ్ విధానం కూడా చూడండి."
+                  : "If a payment needs attention, write from your registered email. Our refund policy explains how payment issues are handled."}{" "}
+                <Link to="/refund" className="font-semibold text-[#087333] underline">
+                  {lang === "te" ? "రీఫండ్ విధానం" : "Refund policy"}
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
 
-function asStringList(value: Json): string[] {
+function asStringList(value: Json | null): string[] {
   if (!Array.isArray(value)) return [];
   return value.filter((item): item is string => typeof item === "string");
 }

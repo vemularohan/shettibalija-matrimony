@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useOwnMatrimonialProfile } from "@/hooks/use-member-data";
 import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
+import { MemberPageHeader } from "@/components/dashboard/member-page-header";
 
 export const Route = createFileRoute("/dashboard/privacy")({
   component: DashboardPrivacyPage,
@@ -66,21 +67,18 @@ function DashboardPrivacyPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-[#D9A514]/25 pb-4">
-        <h1 className="font-serif text-3xl font-bold text-[#21083F]">
-          Privacy &amp; Security Controls
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Manage how your matrimonial biodata, contact access, and photos are displayed to members.
-        </p>
-      </div>
+      <MemberPageHeader
+        kicker="Privacy"
+        title="Privacy controls"
+        description="Choose how your profile, photographs and contact access appear to other signed-in members."
+      />
 
       <div className="space-y-6">
-        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+        <Card className="rounded-3xl border border-[#D1A329]/25 bg-white shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#D1A329]/15 bg-gradient-to-r from-[#24103F]/5 to-transparent pb-4">
             <div className="flex items-center gap-2.5">
-              <Lock className="h-5 w-5 text-[#D9A514]" />
-              <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+              <Lock className="h-5 w-5 text-[#D1A329]" />
+              <CardTitle className="font-serif text-xl font-bold text-[#24103F]">
                 Photo Visibility
               </CardTitle>
             </div>
@@ -88,20 +86,20 @@ function DashboardPrivacyPage() {
           </CardHeader>
           <CardContent className="p-6 space-y-4">
             <RadioGroup value={photoVisibility} onValueChange={setPhotoVisibility}>
-              <div className="flex items-start space-x-3 rounded-2xl border border-border/60 p-4 hover:border-[#D9A514]/40 hover:bg-[#F8F7F4]/50 transition-all">
+              <div className="flex items-start space-x-3 rounded-2xl border border-border/60 p-4 hover:border-[#D1A329]/40 hover:bg-[#F8F7F4]/50 transition-all">
                 <RadioGroupItem value="members" id="pv-members" className="mt-1" />
                 <Label htmlFor="pv-members" className="cursor-pointer">
-                  <p className="font-semibold text-[#21083F]">Visible to Logged-in Members</p>
+                  <p className="font-semibold text-[#24103F]">Visible to Logged-in Members</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Registered, verified community members can view your photos.
+                    Signed-in members can view your photos, subject to the platform's access rules.
                   </p>
                 </Label>
               </div>
 
-              <div className="flex items-start space-x-3 rounded-2xl border border-border/60 p-4 hover:border-[#D9A514]/40 hover:bg-[#F8F7F4]/50 transition-all">
+              <div className="flex items-start space-x-3 rounded-2xl border border-border/60 p-4 hover:border-[#D1A329]/40 hover:bg-[#F8F7F4]/50 transition-all">
                 <RadioGroupItem value="hidden" id="pv-hidden" className="mt-1" />
                 <Label htmlFor="pv-hidden" className="cursor-pointer">
-                  <p className="font-semibold text-[#21083F]">Protected / Locked</p>
+                  <p className="font-semibold text-[#24103F]">Protected / Locked</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Photos stay blurred and locked until you accept their interest or authorize
                     access.
@@ -112,11 +110,11 @@ function DashboardPrivacyPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border border-[#D9A514]/25 bg-white shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-[#D9A514]/15 bg-gradient-to-r from-[#21083F]/5 to-transparent pb-4">
+        <Card className="rounded-3xl border border-[#D1A329]/25 bg-white shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#D1A329]/15 bg-gradient-to-r from-[#24103F]/5 to-transparent pb-4">
             <div className="flex items-center gap-2.5">
-              <Eye className="h-5 w-5 text-[#D9A514]" />
-              <CardTitle className="font-serif text-xl font-bold text-[#21083F]">
+              <Eye className="h-5 w-5 text-[#D1A329]" />
+              <CardTitle className="font-serif text-xl font-bold text-[#24103F]">
                 Search Visibility
               </CardTitle>
             </div>
@@ -124,20 +122,20 @@ function DashboardPrivacyPage() {
           </CardHeader>
           <CardContent className="p-6 space-y-4">
             <RadioGroup value={profileVisibility} onValueChange={setProfileVisibility}>
-              <div className="flex items-start space-x-3 rounded-2xl border border-border/60 p-4 hover:border-[#D9A514]/40 hover:bg-[#F8F7F4]/50 transition-all">
+              <div className="flex items-start space-x-3 rounded-2xl border border-border/60 p-4 hover:border-[#D1A329]/40 hover:bg-[#F8F7F4]/50 transition-all">
                 <RadioGroupItem value="visible" id="sv-visible" className="mt-1" />
                 <Label htmlFor="sv-visible" className="cursor-pointer">
-                  <p className="font-semibold text-[#21083F]">Visible in Search</p>
+                  <p className="font-semibold text-[#24103F]">Visible in Search</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Your approved profile will be listed in searches and recommendation feeds.
                   </p>
                 </Label>
               </div>
 
-              <div className="flex items-start space-x-3 rounded-2xl border border-border/60 p-4 hover:border-[#D9A514]/40 hover:bg-[#F8F7F4]/50 transition-all">
+              <div className="flex items-start space-x-3 rounded-2xl border border-border/60 p-4 hover:border-[#D1A329]/40 hover:bg-[#F8F7F4]/50 transition-all">
                 <RadioGroupItem value="hidden" id="sv-hidden" className="mt-1" />
                 <Label htmlFor="sv-hidden" className="cursor-pointer">
-                  <p className="font-semibold text-[#21083F]">Temporarily Hidden</p>
+                  <p className="font-semibold text-[#24103F]">Temporarily Hidden</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Pause inquiries. Your profile will not appear in search results.
                   </p>
@@ -151,7 +149,7 @@ function DashboardPrivacyPage() {
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-gradient-to-r from-[#087A32] to-[#0A963E] hover:from-[#034B21] hover:to-[#087A32] text-white font-bold px-7 shadow-md border border-[#D9A514]/30"
+            className="bg-gradient-to-r from-[#087333] to-[#087333] hover:from-[#034B21] hover:to-[#087333] text-white font-bold px-7 shadow-md border border-[#D1A329]/30"
           >
             {saving ? "Saving..." : "Save Privacy Settings"}
           </Button>

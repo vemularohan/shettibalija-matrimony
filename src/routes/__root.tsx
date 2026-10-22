@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
@@ -104,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap",
       },
     ],
   }),
@@ -130,19 +131,35 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { isLoginRoute, showMobileNav } = useRouterState({
+    select: (state) => {
+      const isLoginRoute = state.location.pathname === "/login";
+      const isRegisterRoute = state.location.pathname === "/register";
+      return {
+        isLoginRoute,
+        showMobileNav: !isLoginRoute && !isRegisterRoute,
+      };
+    },
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <div className="flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1 pb-24 lg:pb-0">
+          <a href="#main-content" className="sbm-skip-link">
+            Skip to content
+          </a>
+          {!isLoginRoute ? <SiteHeader /> : null}
+          <main
+            id="main-content"
+            className={showMobileNav ? "flex-1 pb-24 lg:pb-0" : "flex-1"}
+          >
             <ErrorBoundary>
               <Outlet />
             </ErrorBoundary>
           </main>
-          <SiteFooter />
-          <MobileBottomNav />
+          {!isLoginRoute ? <SiteFooter /> : null}
+          {showMobileNav ? <MobileBottomNav /> : null}
         </div>
         <Toaster />
       </AuthProvider>
