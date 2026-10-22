@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { RequireAuth } from "@/components/shared/require-auth";
+import { AdminGuard } from "@/components/shared/require-auth";
 import { ShettibalijaLogo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +32,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
 
-type AdminSection =
+export type AdminSection =
   | "dashboard"
   | "members"
   | "profiles"
@@ -58,12 +58,15 @@ const NAV_ITEMS: { section: AdminSection; label: string; icon: typeof LayoutDash
 ];
 
 export const Route = createFileRoute("/admin")({
-  validateSearch: (search: Record<string, unknown>): { section?: AdminSection } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { section?: AdminSection; preview?: boolean } => {
     const value = search["section"];
+    const preview = search["preview"] === true || search["preview"] === "1";
     if (typeof value === "string" && NAV_ITEMS.some((item) => item.section === value)) {
-      return { section: value as AdminSection };
+      return { section: value as AdminSection, ...(preview ? { preview: true } : {}) };
     }
-    return {};
+    return preview ? { preview: true } : {};
   },
   component: AdminPortal,
   head: () => ({
@@ -89,49 +92,56 @@ type ProfileRow = {
 };
 
 function AdminPortal() {
-  const { section = "dashboard" } = Route.useSearch();
+  const { section = "dashboard", preview = false } = Route.useSearch();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const isLocalPreview = preview && import.meta.env.DEV;
 
-  return (
-    <RequireAuth admin>
-      <div className="admin-portal">
-        <AdminSidebar open={mobileOpen} onClose={() => setMobileOpen(false)} />
-        <div className="admin-portal__content">
-          <header className="admin-portal__topbar">
-            <button
-              type="button"
-              className="admin-portal__menu"
-              onClick={() => setMobileOpen(true)}
-              aria-label="Open administration navigation"
-            >
-              <Menu size={19} />
-            </button>
-            <div className="admin-portal__title">
-              <span className="admin-portal__kicker">Operations console</span>
-              <h1>{NAV_ITEMS.find((item) => item.section === section)?.label ?? "Overview"}</h1>
-            </div>
-            <div className="admin-portal__topbar-search">
-              <Search size={16} aria-hidden />
-              <Input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search this view"
-                aria-label="Search this view"
-              />
-            </div>
-          </header>
-          <main className="admin-portal__main">
-            <AdminSection section={section} search={search} />
-          </main>
+  const portal = (
+    <div className="admin-portal">
+      {isLocalPreview ? (
+        <div className="admin-preview-banner" role="status">
+          Local preview only. Authentication and admin authorization are bypassed in this
+          development build; no production access is granted.
         </div>
+      ) : null}
+      <AdminSidebar open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <div className="admin-portal__content">
+        <header className="admin-portal__topbar">
+          <button
+            type="button"
+            className="admin-portal__menu"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open administration navigation"
+          >
+            <Menu size={19} />
+          </button>
+          <div className="admin-portal__title">
+            <span className="admin-portal__kicker">Operations console</span>
+            <h1>{NAV_ITEMS.find((item) => item.section === section)?.label ?? "Overview"}</h1>
+          </div>
+          <div className="admin-portal__topbar-search">
+            <Search size={16} aria-hidden />
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search this view"
+              aria-label="Search this view"
+            />
+          </div>
+        </header>
+        <main className="admin-portal__main">
+          <AdminSection section={section} search={search} preview={isLocalPreview} />
+        </main>
       </div>
-    </RequireAuth>
+    </div>
   );
+
+  return isLocalPreview ? portal : <AdminGuard>{portal}</AdminGuard>;
 }
 
 function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { section = "dashboard" } = Route.useSearch();
+  const { section = "dashboard", preview = false } = Route.useSearch();
 
   return (
     <>
@@ -159,7 +169,7 @@ function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void })
               <Link
                 key={item.section}
                 to="/admin"
-                search={{ section: item.section }}
+                search={{ section: item.section, ...(preview ? { preview: true } : {}) }}
                 onClick={onClose}
                 className={section === item.section ? "is-active" : undefined}
               >
@@ -178,7 +188,17 @@ function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void })
   );
 }
 
-function AdminSection({ section, search }: { section: AdminSection; search: string }) {
+function AdminSection({
+  section,
+  search,
+  preview = false,
+}: {
+  section: AdminSection;
+  search: string;
+  preview?: boolean;
+}) {
+  if (preview) return <AdminPreviewSection section={section} search={search} />;
+
   switch (section) {
     case "members":
       return (
@@ -214,6 +234,178 @@ function AdminSection({ section, search }: { section: AdminSection; search: stri
     default:
       return <AdminOverview />;
   }
+}
+
+const PREVIEW_PROFILES = [
+  { name: "Anusha Shetty", code: "SBM-1042", age: 27, location: "Hyderabad", status: "pending" },
+  { name: "Ravi Balija", code: "SBM-1038", age: 30, location: "Vijayawada", status: "approved" },
+  { name: "Keerthana Rao", code: "SBM-1031", age: 26, location: "Warangal", status: "pending" },
+];
+
+function AdminPreviewSection({ section, search }: { section: AdminSection; search: string }) {
+  const profiles = PREVIEW_PROFILES.filter(
+    (profile) =>
+      !search ||
+      `${profile.name} ${profile.code} ${profile.location}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+  );
+  const title = NAV_ITEMS.find((item) => item.section === section)?.label ?? "Overview";
+
+  if (section === "dashboard") {
+    return (
+      <div className="admin-preview-content">
+        <div className="admin-page-heading">
+          <div>
+            <span className="admin-portal__kicker">Today</span>
+            <h2>Good morning, Admin.</h2>
+            <p>Here is what needs your attention across Shettibalija Matrimony.</p>
+          </div>
+          <Button variant="outline">Refresh</Button>
+        </div>
+        <div className="admin-metric-grid">
+          {[
+            ["Members", "1,248"],
+            ["Active members", "986"],
+            ["Profiles", "1,106"],
+            ["Verified", "842"],
+            ["Memberships", "214"],
+            ["Connections", "376"],
+          ].map(([label, value]) => (
+            <div className="admin-metric" key={label}>
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ))}
+        </div>
+        <div className="admin-preview-grid">
+          <AdminPanel
+            title="Needs your attention"
+            description="Queues that need an administrator's review."
+            count={4}
+          >
+            <div className="admin-preview-list">
+              <span>12 profiles waiting for review</span>
+              <span>4 verification requests</span>
+              <span>2 reports requiring attention</span>
+              <span>7 incomplete profiles</span>
+            </div>
+          </AdminPanel>
+          <AdminPanel
+            title="Platform health"
+            description="A compact view of member activity."
+            count={4}
+          >
+            <div className="admin-preview-list">
+              <span>38 new registrations this week</span>
+              <span>24 interests sent today</span>
+              <span>8 interests accepted this week</span>
+              <span>14 memberships activated this month</span>
+            </div>
+          </AdminPanel>
+        </div>
+      </div>
+    );
+  }
+
+  const rows =
+    section === "verifications"
+      ? profiles.filter((profile) => profile.status === "pending")
+      : profiles;
+  const isTableSection = ["members", "profiles", "verifications"].includes(section);
+
+  if (isTableSection) {
+    return (
+      <AdminPanel
+        title={title}
+        description="Local preview data. Production uses live Supabase records."
+        count={rows.length}
+      >
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Profile</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Verification</th>
+                {section === "profiles" ? <th>Actions</th> : null}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((profile) => (
+                <tr key={profile.code}>
+                  <td>
+                    <strong>{profile.name}</strong>
+                    <span>{profile.code}</span>
+                  </td>
+                  <td>{profile.age} years</td>
+                  <td>{profile.location}</td>
+                  <td>
+                    <StatusBadge value={profile.status} />
+                  </td>
+                  <td>
+                    <StatusBadge value={profile.status === "approved" ? "verified" : "pending"} />
+                  </td>
+                  {section === "profiles" ? (
+                    <td>
+                      <Button size="sm">Approve</Button>
+                    </td>
+                  ) : null}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </AdminPanel>
+    );
+  }
+
+  const descriptions: Record<AdminSection, string> = {
+    dashboard: "",
+    members: "",
+    profiles: "",
+    verifications: "",
+    interests: "24 interests sent today · 8 accepted this week",
+    matches: "18 accepted connections from real member introductions",
+    memberships: "214 active memberships · 14 activated this month",
+    payments: "₹1,28,400 in successful payments this month",
+    reports: "2 open safety reports require attention",
+    "audit-log": "Profile approved · Verification completed · Report resolved",
+  };
+
+  return (
+    <AdminPanel
+      title={title}
+      description={descriptions[section]}
+      count={section === "reports" ? 2 : 8}
+    >
+      <div className="admin-preview-list">
+        {section === "reports" ? (
+          <>
+            <span>
+              <StatusBadge value="open" /> Profile photo concern · SBM-1042
+            </span>
+            <span>
+              <StatusBadge value="under_review" /> Inappropriate message · SBM-0988
+            </span>
+          </>
+        ) : section === "audit-log" ? (
+          <>
+            <span>Today, 09:42 · Profile approved · Anusha Shetty</span>
+            <span>Yesterday, 16:18 · Verification completed · SBM-1038</span>
+          </>
+        ) : (
+          <>
+            <span>{descriptions[section]}</span>
+            <span>Recent activity and operational records appear here.</span>
+            <span>Use the search field above to filter this view.</span>
+          </>
+        )}
+      </div>
+    </AdminPanel>
+  );
 }
 
 function useAdminProfiles(search: string) {

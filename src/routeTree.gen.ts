@@ -24,6 +24,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SuccessStoriesRouteImport } from './routes/success-stories'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AdminSectionRouteImport } from './routes/admin.$section'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardContactsRouteImport } from './routes/dashboard/contacts'
 import { Route as DashboardInterestsRouteImport } from './routes/dashboard/interests'
@@ -113,6 +114,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSectionRoute = AdminSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => AdminRoute,
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -182,7 +188,7 @@ const ProfilesCodeRoute = ProfilesCodeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/help': typeof HelpRoute
@@ -195,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
+  '/admin/$section': typeof AdminSectionRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
   '/dashboard/matches': typeof DashboardMatchesRoute
@@ -212,7 +219,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
@@ -224,6 +231,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
+  '/admin/$section': typeof AdminSectionRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
   '/dashboard/matches': typeof DashboardMatchesRoute
@@ -242,7 +250,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/help': typeof HelpRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
+  '/admin/$section': typeof AdminSectionRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
   '/dashboard/matches': typeof DashboardMatchesRoute
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/success-stories'
     | '/terms'
+    | '/admin/$section'
     | '/dashboard/contacts'
     | '/dashboard/interests'
     | '/dashboard/matches'
@@ -316,6 +326,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/success-stories'
     | '/terms'
+    | '/admin/$section'
     | '/dashboard/contacts'
     | '/dashboard/interests'
     | '/dashboard/matches'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/success-stories'
     | '/terms'
+    | '/admin/$section'
     | '/dashboard/contacts'
     | '/dashboard/interests'
     | '/dashboard/matches'
@@ -364,7 +376,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   HelpRoute: typeof HelpRoute
@@ -488,6 +500,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/$section': {
+      id: '/admin/$section'
+      path: '/$section'
+      fullPath: '/admin/$section'
+      preLoaderRoute: typeof AdminSectionRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/'
@@ -582,6 +601,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminSectionRoute: typeof AdminSectionRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminSectionRoute: AdminSectionRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface DashboardRouteChildren {
   DashboardContactsRoute: typeof DashboardContactsRoute
   DashboardInterestsRoute: typeof DashboardInterestsRoute
@@ -617,7 +646,7 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
   HelpRoute: HelpRoute,

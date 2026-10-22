@@ -135,7 +135,8 @@ function RootComponent() {
     select: (state) => {
       const isLoginRoute = state.location.pathname === "/login";
       const isRegisterRoute = state.location.pathname === "/register";
-      const isAdminRoute = state.location.pathname === "/admin";
+      const isAdminRoute =
+        state.location.pathname === "/admin" || state.location.pathname.startsWith("/admin/");
       return {
         isLoginRoute,
         isAdminRoute,

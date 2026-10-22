@@ -1,12 +1,23 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { ArrowRight, Lock, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { ShettibalijaLogo } from "@/components/brand/logo";
 import { useLanguage } from "@/lib/i18n";
 import { SITE_NAME } from "@/lib/site";
+import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-export function RequireAuth({ children, admin }: { children: ReactNode; admin?: boolean }) {
+export function RequireAuth({ children }: { children: ReactNode }) {
+  return <AuthGate>{children}</AuthGate>;
+}
+
+export function AdminGuard({ children }: { children: ReactNode }) {
+  return <AuthGate admin>{children}</AuthGate>;
+}
+
+function AuthGate({ children, admin }: { children: ReactNode; admin?: boolean }) {
   const { user, loading, isAdmin, isModerator } = useAuth();
   const { lang } = useLanguage();
   const location = useRouterState({
@@ -29,6 +40,10 @@ export function RequireAuth({ children, admin }: { children: ReactNode; admin?: 
         </div>
       </div>
     );
+  }
+
+  if (!user && admin) {
+    return <AdminLogin />;
   }
 
   if (!user) {
@@ -130,4 +145,97 @@ export function RequireAuth({ children, admin }: { children: ReactNode; admin?: 
   }
 
   return children;
+}
+
+function AdminLogin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setErrorMessage(null);
+    setSubmitting(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (error) throw error;
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message.toLowerCase().includes("network")
+          ? "We could not connect to the administration service. Please try again."
+          : "Those administrator credentials were not accepted.";
+      setErrorMessage(message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="sbm-page flex min-h-[70vh] items-center bg-[#FAF8F3]">
+      <div className="sbm-container w-full max-w-lg py-14 sm:py-20">
+        <div className="border border-[#ded5c8] bg-white p-6 shadow-sm sm:p-9">
+          <ShettibalijaLogo size="md" linkToHome />
+          <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-[#a37d1c]">
+            {SITE_NAME} · Administration
+          </p>
+          <h1 className="sbm-heading mt-3">Administrator sign in</h1>
+          <p className="sbm-body mt-3">
+            Sign in with an account that has an administrator or moderator role.
+          </p>
+
+          <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+            <div>
+              <Label htmlFor="admin-email">Email</Label>
+              <Input
+                id="admin-email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <Label htmlFor="admin-password">Password</Label>
+              <Input
+                id="admin-password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                className="mt-2"
+              />
+            </div>
+            {errorMessage ? (
+              <p role="alert" className="text-sm text-red-700">
+                {errorMessage}
+              </p>
+            ) : null}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="sbm-button sbm-button--primary w-full disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {submitting ? "Signing in..." : "Sign in to administration"}
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </form>
+
+          <Link
+            to="/"
+            className="mt-6 inline-flex text-sm font-semibold text-[#087333] hover:underline"
+          >
+            Return to member website
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 }
