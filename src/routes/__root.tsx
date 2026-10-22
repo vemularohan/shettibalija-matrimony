@@ -131,13 +131,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const { isLoginRoute, showMobileNav } = useRouterState({
+  const { isLoginRoute, isAdminRoute, showMobileNav } = useRouterState({
     select: (state) => {
       const isLoginRoute = state.location.pathname === "/login";
       const isRegisterRoute = state.location.pathname === "/register";
+      const isAdminRoute = state.location.pathname === "/admin";
       return {
         isLoginRoute,
-        showMobileNav: !isLoginRoute && !isRegisterRoute,
+        isAdminRoute,
+        showMobileNav: !isLoginRoute && !isRegisterRoute && !isAdminRoute,
       };
     },
   });
@@ -149,16 +151,13 @@ function RootComponent() {
           <a href="#main-content" className="sbm-skip-link">
             Skip to content
           </a>
-          {!isLoginRoute ? <SiteHeader /> : null}
-          <main
-            id="main-content"
-            className={showMobileNav ? "flex-1 pb-24 lg:pb-0" : "flex-1"}
-          >
+          {!isLoginRoute && !isAdminRoute ? <SiteHeader /> : null}
+          <main id="main-content" className={showMobileNav ? "flex-1 pb-24 lg:pb-0" : "flex-1"}>
             <ErrorBoundary>
               <Outlet />
             </ErrorBoundary>
           </main>
-          {!isLoginRoute ? <SiteFooter /> : null}
+          {!isLoginRoute && !isAdminRoute ? <SiteFooter /> : null}
           {showMobileNav ? <MobileBottomNav /> : null}
         </div>
         <Toaster />

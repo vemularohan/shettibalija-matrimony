@@ -8,6 +8,44 @@ export type Database = {
   };
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string;
+          actor_id: string;
+          created_at: string;
+          entity_id: string | null;
+          entity_type: string;
+          id: string;
+          metadata: Json;
+        };
+        Insert: {
+          action: string;
+          actor_id: string;
+          created_at?: string;
+          entity_id?: string | null;
+          entity_type: string;
+          id?: string;
+          metadata?: Json;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string;
+          created_at?: string;
+          entity_id?: string | null;
+          entity_type?: string;
+          id?: string;
+          metadata?: Json;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_actor_id_fkey";
+            columns: ["actor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       blocked_profiles: {
         Row: {
           created_at: string;
@@ -161,6 +199,8 @@ export type Database = {
           city: string | null;
           community: string;
           created_at: string;
+          verified_at: string | null;
+          last_active_at: string | null;
           display_name: string;
           education: string | null;
           family_summary: string | null;
@@ -185,6 +225,8 @@ export type Database = {
           city?: string | null;
           community?: string;
           created_at?: string;
+          verified_at?: string | null;
+          last_active_at?: string | null;
           display_name: string;
           education?: string | null;
           family_summary?: string | null;
@@ -209,6 +251,8 @@ export type Database = {
           city?: string | null;
           community?: string;
           created_at?: string;
+          verified_at?: string | null;
+          last_active_at?: string | null;
           display_name?: string;
           education?: string | null;
           family_summary?: string | null;
