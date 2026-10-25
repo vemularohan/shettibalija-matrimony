@@ -62,13 +62,22 @@ function DashboardInterestsPage() {
   });
 
   const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: "accepted" | "declined" }) => {
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: "accepted" | "declined" | "withdrawn";
+    }) => {
       const { error } = await supabase.from("interests").update({ status }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: (_, vars) => {
-      toast.success(vars.status === "accepted" ? "Interest accepted!" : "Interest declined.");
+      if (vars.status === "accepted") toast.success("Interest accepted!");
+      else if (vars.status === "declined") toast.success("Interest declined.");
+      else toast.success("Interest withdrawn.");
       void queryClient.invalidateQueries({ queryKey: ["received-interests-list"] });
+      void queryClient.invalidateQueries({ queryKey: ["sent-interests-list"] });
     },
     onError: (err) => toast.error(getErrorMessage(err, "Failed to update interest status.")),
   });
@@ -210,18 +219,35 @@ function DashboardInterestsPage() {
                         </p>
                       </div>
 
-                      {target?.id ? (
-                        <Button
-                          asChild
-                          size="sm"
-                          variant="outline"
-                          className="min-h-[42px] rounded-xl border-[#D1A329]/40 touch-press"
-                        >
-                          <Link to="/profile/$id" params={{ id: target.id }}>
-                            View Profile
-                          </Link>
-                        </Button>
-                      ) : null}
+                      <div className="flex items-center gap-2">
+                        {item.status === "pending" ? (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="min-h-[42px] text-xs text-muted-foreground hover:text-rose-600"
+                            onClick={() => {
+                              if (window.confirm("Withdraw this expression of interest?")) {
+                                updateStatus.mutate({ id: item.id, status: "withdrawn" });
+                              }
+                            }}
+                          >
+                            Withdraw
+                          </Button>
+                        ) : null}
+
+                        {target?.id ? (
+                          <Button
+                            asChild
+                            size="sm"
+                            variant="outline"
+                            className="min-h-[42px] rounded-xl border-[#D1A329]/40 touch-press"
+                          >
+                            <Link to="/profile/$id" params={{ id: target.id }}>
+                              View Profile
+                            </Link>
+                          </Button>
+                        ) : null}
+                      </div>
                     </CardContent>
                   </Card>
                 );
@@ -234,12 +260,19 @@ function DashboardInterestsPage() {
 
 function StatusBadge({ status }: { status: string }) {
   if (status === "accepted") {
-    return <Badge className="bg-emerald-600 text-xs">Accepted</Badge>;
+    return <Badge className="bg-emerald-600 text-xs text-white">Accepted</Badge>;
   }
   if (status === "declined") {
     return (
       <Badge variant="destructive" className="text-xs">
         Declined
+      </Badge>
+    );
+  }
+  if (status === "withdrawn") {
+    return (
+      <Badge variant="outline" className="text-xs text-muted-foreground border-muted">
+        Withdrawn
       </Badge>
     );
   }

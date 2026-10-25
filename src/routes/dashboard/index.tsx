@@ -60,7 +60,11 @@ function DashboardOverviewPage() {
     enabled: Boolean(profile?.id),
     queryFn: async () => {
       const targetGender =
-        profile?.gender === "male" ? "female" : profile?.gender === "female" ? "male" : undefined;
+        profile?.gender === "groom" || profile?.gender === "male"
+          ? "bride"
+          : profile?.gender === "bride" || profile?.gender === "female"
+            ? "groom"
+            : undefined;
       let query = supabase
         .from("approved_matrimonial_profiles")
         .select("*")
@@ -85,7 +89,9 @@ function DashboardOverviewPage() {
     <div className="space-y-9">
       <header className="flex flex-col justify-between gap-5 border-b border-[#ded5c8] pb-7 sm:flex-row sm:items-end">
         <div>
-          <span className="sbm-kicker">{lang === "te" ? "సభ్యుల పని ప్రదేశం" : "Member workspace"}</span>
+          <span className="sbm-kicker">
+            {lang === "te" ? "సభ్యుల పని ప్రదేశం" : "Member workspace"}
+          </span>
           <h1 className="sbm-heading mt-3">
             {lang === "te" ? `స్వాగతం, ${displayName}.` : `Welcome back, ${displayName}.`}
           </h1>
@@ -330,7 +336,9 @@ function DashboardOverviewPage() {
       <section>
         <div className="mb-5 flex flex-col justify-between gap-3 border-b border-[#ded5c8] pb-4 sm:flex-row sm:items-end">
           <div>
-            <span className="sbm-kicker">{lang === "te" ? "సమాజం నుండి" : "From the community"}</span>
+            <span className="sbm-kicker">
+              {lang === "te" ? "సమాజం నుండి" : "From the community"}
+            </span>
             <h2 className="mt-2 font-serif text-2xl text-[#24103F]">
               {lang === "te" ? "మీకు సరిపోయే ప్రొఫైల్స్" : "Profiles you may wish to look at"}
             </h2>

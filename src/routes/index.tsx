@@ -24,6 +24,8 @@ import { EDUCATION_OPTIONS, MARITAL_STATUS_OPTIONS, STATES } from "@/lib/options
 import { formatINRFromPaise } from "@/lib/format";
 import type { Json } from "@/integrations/supabase/types";
 import { ShettibalijaLogo } from "@/components/brand/logo";
+import { CoupleDestinationSection } from "@/components/home/couple-destination-section";
+import { SuccessStoriesSpotlight } from "@/components/home/success-stories-spotlight";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -93,7 +95,9 @@ function HomePage() {
     if (maritalStatus) params.set("maritalStatus", maritalStatus);
 
     if (!user) {
-      window.location.assign(`/login?returnTo=${encodeURIComponent(`/search?${params.toString()}`)}`);
+      window.location.assign(
+        `/login?returnTo=${encodeURIComponent(`/search?${params.toString()}`)}`,
+      );
       return;
     }
 
@@ -176,7 +180,9 @@ function HomePage() {
                     value={gender}
                     onChange={(event) => setGender(event.target.value)}
                   >
-                    <option value="">{lang === "te" ? "వధువు లేదా వరుడు" : "Bride or groom"}</option>
+                    <option value="">
+                      {lang === "te" ? "వధువు లేదా వరుడు" : "Bride or groom"}
+                    </option>
                     <option value="bride">{lang === "te" ? "వధువు" : "Bride"}</option>
                     <option value="groom">{lang === "te" ? "వరుడు" : "Groom"}</option>
                   </select>
@@ -366,7 +372,10 @@ function HomePage() {
                         : "Parents and relatives can create and manage a profile, because the decision is rarely made alone.",
                   },
                 ].map((item) => (
-                  <div key={item.number} className="grid grid-cols-[2.5rem_1fr] gap-4 py-5 sm:grid-cols-[3.5rem_1fr] sm:gap-6">
+                  <div
+                    key={item.number}
+                    className="grid grid-cols-[2.5rem_1fr] gap-4 py-5 sm:grid-cols-[3.5rem_1fr] sm:gap-6"
+                  >
                     <span className="font-serif text-xl text-[#D1A329]">{item.number}</span>
                     <div>
                       <dt className="text-sm font-bold text-[#24103F]">{item.title}</dt>
@@ -429,7 +438,10 @@ function HomePage() {
                   cta: lang === "te" ? "సభ్యత్వం" : "Membership",
                 },
               ].map((step) => (
-                <li key={step.n} className="flex flex-col justify-between py-8 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
+                <li
+                  key={step.n}
+                  className="flex flex-col justify-between py-8 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0"
+                >
                   <div>
                     <span className="font-serif text-4xl font-medium text-[#D1A329]">{step.n}</span>
                     <h3 className="mt-6 text-lg font-semibold tracking-tight text-[#24103F]">
@@ -448,12 +460,17 @@ function HomePage() {
         </div>
       </section>
 
+      {/* FROM FINDING A MATCH TO BUILDING A LIFE TOGETHER */}
+      <CoupleDestinationSection />
+
       {/* INSIDE A PROFILE */}
       <section className="border-b border-[#e5ddd1] bg-white">
         <div className="sbm-container sbm-section">
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
             <div>
-              <span className="sbm-kicker">{lang === "te" ? "ప్రొఫైల్ లోపల" : "Inside a profile"}</span>
+              <span className="sbm-kicker">
+                {lang === "te" ? "ప్రొఫైల్ లోపల" : "Inside a profile"}
+              </span>
               <h2 className="sbm-heading mt-4 max-w-md">
                 {lang === "te" ? "ఒక ఫోటో కంటే ఎక్కువ." : "More than a photograph."}
               </h2>
@@ -537,14 +554,23 @@ function HomePage() {
         </div>
       </section>
 
+      {/* SUCCESS STORIES SPOTLIGHT */}
+      <SuccessStoriesSpotlight />
+
       {/* RECENT PROFILES FOR MEMBERS ONLY */}
       {user && recent.data && recent.data.length > 0 ? (
         <section className="border-b border-[#e5ddd1] bg-[#FAF8F3]">
           <div className="sbm-container sbm-section--tight">
             <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <span className="sbm-kicker">{lang === "te" ? "కొత్తగా చేరినవారు" : "Recently joined"}</span>
-                <h2 className="sbm-heading mt-3">{lang === "te" ? "సమాజం నుండి కొత్త ప్రొఫైల్స్." : "New profiles from the community."}</h2>
+                <span className="sbm-kicker">
+                  {lang === "te" ? "కొత్తగా చేరినవారు" : "Recently joined"}
+                </span>
+                <h2 className="sbm-heading mt-3">
+                  {lang === "te"
+                    ? "సమాజం నుండి కొత్త ప్రొఫైల్స్."
+                    : "New profiles from the community."}
+                </h2>
               </div>
               <Link to="/search" className="sbm-link-arrow shrink-0">
                 {lang === "te" ? "అందరినీ చూడండి" : "See everyone"}
@@ -575,7 +601,9 @@ function HomePage() {
               <div>
                 <span className="sbm-kicker">{lang === "te" ? "సభ్యత్వం" : "Membership"}</span>
                 <h2 className="sbm-heading mt-4 max-w-sm">
-                  {lang === "te" ? "మీ అన్వేషణకు సహాయపడే ఎంపిక." : "Support for the search, never pressure."}
+                  {lang === "te"
+                    ? "మీ అన్వేషణకు సహాయపడే ఎంపిక."
+                    : "Support for the search, never pressure."}
                 </h2>
                 <p className="sbm-body mt-5 max-w-sm">
                   {lang === "te"
@@ -591,18 +619,27 @@ function HomePage() {
               <div className="divide-y divide-[#e5ddd1] border-y border-[#e5ddd1]">
                 {plans.data.slice(0, 3).map((plan) => {
                   const benefits = asStringArray(plan.benefits);
-                  const price = (plan.price_paise ?? 0) <= 0 ? "Free" : formatINRFromPaise(plan.price_paise);
+                  const price =
+                    (plan.price_paise ?? 0) <= 0 ? "Free" : formatINRFromPaise(plan.price_paise);
                   return (
-                    <div key={plan.id} className="grid gap-4 py-6 sm:grid-cols-[1fr_auto] sm:items-start">
+                    <div
+                      key={plan.id}
+                      className="grid gap-4 py-6 sm:grid-cols-[1fr_auto] sm:items-start"
+                    >
                       <div>
                         <h3 className="font-serif text-xl text-[#24103F]">{plan.name}</h3>
                         {plan.description ? (
-                          <p className="mt-1 text-[12px] leading-6 text-[#6B6570]">{plan.description}</p>
+                          <p className="mt-1 text-[12px] leading-6 text-[#6B6570]">
+                            {plan.description}
+                          </p>
                         ) : null}
                         {benefits.length > 0 ? (
                           <ul className="mt-3 space-y-1.5">
                             {benefits.slice(0, 3).map((benefit) => (
-                              <li key={benefit} className="flex items-start gap-2 text-[12px] leading-5 text-[#5f5765]">
+                              <li
+                                key={benefit}
+                                className="flex items-start gap-2 text-[12px] leading-5 text-[#5f5765]"
+                              >
                                 <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#087333]" />
                                 {benefit}
                               </li>
@@ -613,9 +650,14 @@ function HomePage() {
                       <div className="sm:text-right">
                         <p className="font-serif text-2xl text-[#24103F]">{price}</p>
                         {plan.duration_days ? (
-                          <p className="mt-0.5 text-[11px] text-[#6B6570]">for {plan.duration_days} days</p>
+                          <p className="mt-0.5 text-[11px] text-[#6B6570]">
+                            for {plan.duration_days} days
+                          </p>
                         ) : null}
-                        <Link to="/membership" className="sbm-link-arrow mt-3 justify-start sm:justify-end">
+                        <Link
+                          to="/membership"
+                          className="sbm-link-arrow mt-3 justify-start sm:justify-end"
+                        >
                           {lang === "te" ? "వివరాలు" : "Details"}
                           <ArrowRight className="h-3.5 w-3.5" />
                         </Link>

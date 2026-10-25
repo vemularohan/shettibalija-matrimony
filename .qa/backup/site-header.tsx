@@ -33,7 +33,11 @@ export function SiteHeader() {
     if (!user?.id || !ownProfile?.id) return;
     const updateActivity = () => {
       if (document.visibilityState !== "visible") return;
-      if (ownProfile.last_active_at && Date.now() - Date.parse(ownProfile.last_active_at) < 5 * 60 * 1000) return;
+      if (
+        ownProfile.last_active_at &&
+        Date.now() - Date.parse(ownProfile.last_active_at) < 5 * 60 * 1000
+      )
+        return;
       void productSupabase
         .from("matrimonial_profiles")
         .update({ last_active_at: new Date().toISOString() })
@@ -79,20 +83,34 @@ export function SiteHeader() {
     <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
       <div className="site-header-note">
         <div className="public-shell">
-          <p>{lang === "te" ? "శెట్టిబలిజ కుటుంబాల కోసం సురక్షితమైన వివాహ పరిచయ వేదిక" : "A considered matrimonial space for Shettibalija individuals and families"}</p>
+          <p>
+            {lang === "te"
+              ? "శెట్టిబలిజ కుటుంబాల కోసం సురక్షితమైన వివాహ పరిచయ వేదిక"
+              : "A considered matrimonial space for Shettibalija individuals and families"}
+          </p>
           <LanguageSwitcher size="sm" variant="text" />
         </div>
       </div>
 
       <div className="public-shell site-header-main">
         <Link to="/" className="site-brand" aria-label={`${SITE_NAME} home`}>
-          <span className="site-brand-mark"><ShettibalijaLogo size="sm" priority /></span>
-          <span className="site-brand-copy"><strong>{SITE_NAME}</strong><small lang="te">శెట్టిబలిజ సంఘం</small></span>
+          <span className="site-brand-mark">
+            <ShettibalijaLogo size="sm" priority />
+          </span>
+          <span className="site-brand-copy">
+            <strong>{SITE_NAME}</strong>
+            <small lang="te">శెట్టిబలిజ సంఘం</small>
+          </span>
         </Link>
 
         <nav className="site-header-nav" aria-label="Primary navigation">
           {navLinks.map((item) => (
-            <Link key={item.to} to={item.to} className="site-header-link" activeProps={{ className: "site-header-link is-active" }}>
+            <Link
+              key={item.to}
+              to={item.to}
+              className="site-header-link"
+              activeProps={{ className: "site-header-link is-active" }}
+            >
               {item.label}
             </Link>
           ))}
@@ -101,42 +119,124 @@ export function SiteHeader() {
         <div className="site-header-actions">
           {!loading && user ? (
             <>
-              {isAdmin || isModerator ? <Link to="/admin" className="site-header-text-action">Admin</Link> : null}
-              <Link to="/dashboard/notifications" className="site-header-bell" aria-label="Notifications"><Bell className="h-4 w-4" />{(unread ?? 0) > 0 ? <span>{unread}</span> : null}</Link>
-              <Link to="/dashboard/profile" className="site-header-text-action">{lang === "te" ? "ప్రొఫైల్" : "Profile"}</Link>
-              <button type="button" onClick={() => void handleLogout()} className="site-header-text-action"><LogOut className="h-3.5 w-3.5" />{lang === "te" ? "నిష్క్రమించు" : "Sign out"}</button>
+              {isAdmin || isModerator ? (
+                <Link to="/admin" className="site-header-text-action">
+                  Admin
+                </Link>
+              ) : null}
+              <Link
+                to="/dashboard/notifications"
+                className="site-header-bell"
+                aria-label="Notifications"
+              >
+                <Bell className="h-4 w-4" />
+                {(unread ?? 0) > 0 ? <span>{unread}</span> : null}
+              </Link>
+              <Link to="/dashboard/profile" className="site-header-text-action">
+                {lang === "te" ? "ప్రొఫైల్" : "Profile"}
+              </Link>
+              <button
+                type="button"
+                onClick={() => void handleLogout()}
+                className="site-header-text-action"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                {lang === "te" ? "నిష్క్రమించు" : "Sign out"}
+              </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="site-header-text-action">{lang === "te" ? "లాగిన్" : "Sign in"}</Link>
-              <Button asChild className="site-header-join"><Link to="/register">{lang === "te" ? "ప్రొఫైల్ ప్రారంభించండి" : "Start a profile"}<ArrowUpRight className="h-3.5 w-3.5" /></Link></Button>
+              <Link to="/login" className="site-header-text-action">
+                {lang === "te" ? "లాగిన్" : "Sign in"}
+              </Link>
+              <Button asChild className="site-header-join">
+                <Link to="/register">
+                  {lang === "te" ? "ప్రొఫైల్ ప్రారంభించండి" : "Start a profile"}
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
             </>
           )}
         </div>
 
         <div className="site-header-mobile-actions">
-          {!user && !loading ? <Link to="/login" className="site-mobile-sign-in">{lang === "te" ? "లాగిన్" : "Sign in"}</Link> : null}
+          {!user && !loading ? (
+            <Link to="/login" className="site-mobile-sign-in">
+              {lang === "te" ? "లాగిన్" : "Sign in"}
+            </Link>
+          ) : null}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild><button className="site-menu-trigger" aria-label="Open menu"><Menu className="h-5 w-5" /></button></SheetTrigger>
+            <SheetTrigger asChild>
+              <button className="site-menu-trigger" aria-label="Open menu">
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
             <SheetContent side="right" className="site-mobile-drawer">
-              <SheetHeader className="sr-only"><SheetTitle>{SITE_NAME}</SheetTitle></SheetHeader>
+              <SheetHeader className="sr-only">
+                <SheetTitle>{SITE_NAME}</SheetTitle>
+              </SheetHeader>
               <div className="site-mobile-drawer-top">
-                <Link to="/" className="site-brand" onClick={() => setOpen(false)}><span className="site-brand-mark"><ShettibalijaLogo size="sm" priority /></span><span className="site-brand-copy"><strong>{SITE_NAME}</strong><small lang="te">శెట్టిబలిజ సంఘం</small></span></Link>
-                <button type="button" onClick={() => setOpen(false)} className="site-menu-trigger" aria-label="Close menu"><X className="h-5 w-5" /></button>
+                <Link to="/" className="site-brand" onClick={() => setOpen(false)}>
+                  <span className="site-brand-mark">
+                    <ShettibalijaLogo size="sm" priority />
+                  </span>
+                  <span className="site-brand-copy">
+                    <strong>{SITE_NAME}</strong>
+                    <small lang="te">శెట్టిబలిజ సంఘం</small>
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="site-menu-trigger"
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
               <nav className="site-mobile-nav" aria-label="Mobile navigation">
-                {navLinks.map((item, index) => <Link key={item.to} to={item.to} onClick={() => setOpen(false)} className="site-mobile-nav-link" activeProps={{ className: "site-mobile-nav-link is-active" }}><span>0{index + 1}</span>{item.label}</Link>)}
+                {navLinks.map((item, index) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setOpen(false)}
+                    className="site-mobile-nav-link"
+                    activeProps={{ className: "site-mobile-nav-link is-active" }}
+                  >
+                    <span>0{index + 1}</span>
+                    {item.label}
+                  </Link>
+                ))}
               </nav>
               <div className="site-mobile-drawer-foot">
-                <div className="site-mobile-language"><span>{lang === "te" ? "భాష" : "Language"}</span><LanguageSwitcher size="sm" variant="text" /></div>
+                <div className="site-mobile-language">
+                  <span>{lang === "te" ? "భాష" : "Language"}</span>
+                  <LanguageSwitcher size="sm" variant="text" />
+                </div>
                 {!loading && user ? (
                   <div className="site-mobile-member-actions">
-                    <Link to="/dashboard/profile" onClick={() => setOpen(false)}>{lang === "te" ? "నా ప్రొఫైల్" : "My profile"}</Link>
-                    <Link to="/dashboard/notifications" onClick={() => setOpen(false)}>Notifications{(unread ?? 0) > 0 ? ` (${unread})` : ""}</Link>
-                    <button type="button" onClick={() => void handleLogout()}><LogOut className="h-4 w-4" />{lang === "te" ? "నిష్క్రమించు" : "Sign out"}</button>
+                    <Link to="/dashboard/profile" onClick={() => setOpen(false)}>
+                      {lang === "te" ? "నా ప్రొఫైల్" : "My profile"}
+                    </Link>
+                    <Link to="/dashboard/notifications" onClick={() => setOpen(false)}>
+                      Notifications{(unread ?? 0) > 0 ? ` (${unread})` : ""}
+                    </Link>
+                    <button type="button" onClick={() => void handleLogout()}>
+                      <LogOut className="h-4 w-4" />
+                      {lang === "te" ? "నిష్క్రమించు" : "Sign out"}
+                    </button>
                   </div>
                 ) : (
-                  <div className="site-mobile-guest-actions"><Button asChild className="site-header-join"><Link to="/register" onClick={() => setOpen(false)}>{lang === "te" ? "ఉచితంగా ప్రారంభించండి" : "Start your profile"}</Link></Button><Link to="/login" onClick={() => setOpen(false)}>{lang === "te" ? "లాగిన్" : "Sign in"}</Link></div>
+                  <div className="site-mobile-guest-actions">
+                    <Button asChild className="site-header-join">
+                      <Link to="/register" onClick={() => setOpen(false)}>
+                        {lang === "te" ? "ఉచితంగా ప్రారంభించండి" : "Start your profile"}
+                      </Link>
+                    </Button>
+                    <Link to="/login" onClick={() => setOpen(false)}>
+                      {lang === "te" ? "లాగిన్" : "Sign in"}
+                    </Link>
+                  </div>
                 )}
               </div>
             </SheetContent>

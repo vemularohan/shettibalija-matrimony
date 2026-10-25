@@ -158,7 +158,11 @@ function RegisterPage() {
             <span>{SITE_NAME_TE}</span>
           </div>
           <div className="register-frontdoor__copy">
-            <p>{isTe ? "మీ సమాజం. మీ కథ. మీ తదుపరి అధ్యాయం." : "Your community. Your story. Your next chapter."}</p>
+            <p>
+              {isTe
+                ? "మీ సమాజం. మీ కథ. మీ తదుపరి అధ్యాయం."
+                : "Your community. Your story. Your next chapter."}
+            </p>
             <h1>
               {isTe ? "మీ మ్యాట్రిమోనీ ప్రొఫైల్ సృష్టించండి" : "Create your matrimonial profile"}
             </h1>
@@ -196,8 +200,13 @@ function RegisterPage() {
                 : "Please verify your email address to log in and manage your matrimony profile."}
             </p>
             <div className="mt-6">
-              <Button asChild className="rounded-none bg-[#087333] px-6 text-white hover:bg-[#065c29]">
-                <Link to="/login" search={{}}>{isTe ? "లాగిన్‌కు కొనసాగండి" : "Proceed to login"}</Link>
+              <Button
+                asChild
+                className="rounded-none bg-[#087333] px-6 text-white hover:bg-[#065c29]"
+              >
+                <Link to="/login" search={{}}>
+                  {isTe ? "లాగిన్‌కు కొనసాగండి" : "Proceed to login"}
+                </Link>
               </Button>
             </div>
           </div>
@@ -218,7 +227,9 @@ function RegisterPage() {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="reg-email">{isTe ? "ఇమెయిల్ చిరునామా *" : "Email address *"}</Label>
+                    <Label htmlFor="reg-email">
+                      {isTe ? "ఇమెయిల్ చిరునామా *" : "Email address *"}
+                    </Label>
                     <Input
                       id="reg-email"
                       type="email"
@@ -232,7 +243,11 @@ function RegisterPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="reg-password">{isTe ? "పాస్‌వర్డ్ (కనీసం 6 అక్షరాలు) *" : "Password (at least 6 characters) *"}</Label>
+                    <Label htmlFor="reg-password">
+                      {isTe
+                        ? "పాస్‌వర్డ్ (కనీసం 6 అక్షరాలు) *"
+                        : "Password (at least 6 characters) *"}
+                    </Label>
                     <Input
                       id="reg-password"
                       type="password"
@@ -252,7 +267,9 @@ function RegisterPage() {
               initialData={initialData}
               onSave={handleProfileSubmit}
               isSubmitting={submitting}
-              submitButtonText={isTe ? "నమోదు చేసి ప్రొఫైల్ సృష్టించండి" : "Register and create profile"}
+              submitButtonText={
+                isTe ? "నమోదు చేసి ప్రొఫైల్ సృష్టించండి" : "Register and create profile"
+              }
             />
 
             <div className="border-t border-[#ded5c8] pt-5 text-center text-[12px] text-[#6B6570]">

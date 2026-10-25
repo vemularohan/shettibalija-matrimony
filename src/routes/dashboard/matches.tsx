@@ -51,8 +51,7 @@ function DashboardMatchesPage() {
   });
 
   const isLoading = acceptedSent.isLoading || acceptedReceived.isLoading;
-  const hasMatches =
-    Boolean(acceptedSent.data?.length) || Boolean(acceptedReceived.data?.length);
+  const hasMatches = Boolean(acceptedSent.data?.length) || Boolean(acceptedReceived.data?.length);
 
   return (
     <div className="space-y-8">
@@ -68,7 +67,10 @@ function DashboardMatchesPage() {
       {isLoading ? (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="overflow-hidden rounded-sm border border-[#ded5c8] bg-white">
+            <div
+              key={index}
+              className="overflow-hidden rounded-sm border border-[#ded5c8] bg-white"
+            >
               <div className="sbm-skeleton aspect-[4/5] rounded-none" />
               <div className="space-y-2 p-4">
                 <div className="sbm-skeleton h-3 w-3/4" />
@@ -84,8 +86,8 @@ function DashboardMatchesPage() {
           </div>
           <h2 className="mt-5 font-serif text-3xl text-[#24103F]">No matches yet.</h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-[#6B6570]">
-            When you send an interest and the member accepts, the introduction will appear here.
-            You can also review the interests you have received.
+            When you send an interest and the member accepts, the introduction will appear here. You
+            can also review the interests you have received.
           </p>
           <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
             <Link to="/search" className="sbm-button sbm-button--primary">

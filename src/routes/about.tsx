@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, HeartHandshake, Lock, Users } from "lucide-react";
+import { ArrowRight, HeartHandshake, Lock, Sparkles, Users } from "lucide-react";
 import { ShettibalijaLogo } from "@/components/brand/logo";
 import { SITE_NAME, SITE_NAME_TE, COMMUNITY_NAME } from "@/lib/site";
+import { useLanguage } from "@/lib/i18n";
+import { MARKETING_COUPLE_IMAGES } from "@/data/marketing-couples";
 
 export const Route = createFileRoute("/about")({
   component: AboutPage,
@@ -53,6 +55,10 @@ const STEPS = [
 ];
 
 function AboutPage() {
+  const { lang } = useLanguage();
+  const isTe = lang === "te";
+  const matureCouple = MARKETING_COUPLE_IMAGES["matureCompanionship"]!;
+
   return (
     <div className="sbm-page bg-[#FAF8F3]">
       <header className="border-b border-[#e5ddd1] bg-white">
@@ -60,9 +66,7 @@ function AboutPage() {
           <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-16">
             <div>
               <span className="sbm-kicker">Our story</span>
-              <h1 className="sbm-heading mt-4 max-w-2xl">
-                A considered way to begin a family.
-              </h1>
+              <h1 className="sbm-heading mt-4 max-w-2xl">A considered way to begin a family.</h1>
               <p className="sbm-body mt-5 max-w-xl">
                 {SITE_NAME} is a matrimonial space for {COMMUNITY_NAME} families — built around
                 shared roots, family involvement and the kind of introduction that is given time to
@@ -97,15 +101,14 @@ function AboutPage() {
           </div>
           <div className="max-w-2xl space-y-5 text-[14px] leading-8 text-[#5f5765]">
             <p>
-              Most matrimonial websites ask families to behave like users of a marketplace:
-              browse quickly, compare, and move on. That is not how a serious introduction usually
-              begins in our community.
+              Most matrimonial websites ask families to behave like users of a marketplace: browse
+              quickly, compare, and move on. That is not how a serious introduction usually begins
+              in our community.
             </p>
             <p>
               We built {SITE_NAME} so that the details families actually ask about — family
               background, education, work, native place and horoscope — have room to be read
-              properly. The interface is intentionally calm. Nothing is designed to rush a
-              decision.
+              properly. The interface is intentionally calm. Nothing is designed to rush a decision.
             </p>
             <p>
               The platform does not replace the conversations that families have with one another.
@@ -137,6 +140,60 @@ function AboutPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        {/* LIFELONG COMPANIONSHIP & MATURE MARRIAGE VALUES */}
+        <section className="border-b border-[#e5ddd1] bg-[#FAF8F3] py-14 sm:py-20">
+          <div className="sbm-container">
+            <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+              <div className="relative">
+                <div className="pointer-events-none absolute -left-2 -top-2 h-8 w-8 border-l-2 border-t-2 border-[#D1A329]" />
+                <div className="pointer-events-none absolute -bottom-2 -right-2 h-8 w-8 border-b-2 border-r-2 border-[#D1A329]" />
+                <div className="overflow-hidden rounded-xs border border-[#ded5c8] bg-white shadow-[0_12px_32px_rgba(36,16,63,0.06)]">
+                  <div className="aspect-[4/3] overflow-hidden bg-[#efe9df]">
+                    <img
+                      src={matureCouple.src}
+                      alt={isTe ? matureCouple.altTe : matureCouple.alt}
+                      className="h-full w-full object-cover object-[center_20%] transition-transform duration-700 hover:scale-[1.02]"
+                      decoding="async"
+                    />
+                  </div>
+                  <div className="border-t border-[#ded5c8] px-5 py-4 text-[12px] italic text-[#5f5765]">
+                    {isTe ? matureCouple.captionTe : matureCouple.captionEn}
+                  </div>
+                </div>
+                <p className="mt-2 text-right text-[10px] text-[#8e8594]">
+                  {isTe
+                    ? "కల్పిత నిదర్శన చిత్రం • దాంపత్య స్థిరత్వ భావన"
+                    : "Illustrative brand visual • Lasting companionship & family values"}
+                </p>
+              </div>
+
+              <div>
+                <span className="sbm-kicker">
+                  {isTe ? "జీవితకాల విలువలు" : "Enduring companionship"}
+                </span>
+                <h2 className="sbm-heading mt-4 text-3xl sm:text-4xl">
+                  {isTe
+                    ? "తరతరాల సంప్రదాయం, కలకాలం నిలిచే దాంపత్య బంధం."
+                    : "A lifetime of quiet companionship and family roots."}
+                </h2>
+                <p className="sbm-body mt-5 text-[14px] leading-7">
+                  {isTe
+                    ? "వివాహం అనేది కేవలం ఒక వేడుక కాదు; అది రెండు కుటుంబాల కలయిక మరియు దశాబ్దాల పాటు పరస్పర ఆదరణతో సాగే పవిత్రమైన ప్రయాణం. శెట్టిబలిజ సంప్రదాయంలో పెద్దల గౌరవం, గోత్రం మరియు కుటుంబ బాధ్యతలు ఈ బంధానికి బలమైన పునాదులు. మా ప్రతి సేవ ఈ శాశ్వతమైన బంధాన్ని దృష్టిలో ఉంచుకునే రూపొందించబడింది."
+                    : "Matrimony in our community is not merely about a wedding ceremony; it is about building a home where two families grow together with enduring trust, dignity, and shared traditions over decades. We design every feature to support this lifelong commitment."}
+                </p>
+                <div className="mt-6 flex items-center gap-2 text-[12px] font-semibold text-[#087333]">
+                  <Sparkles className="h-4 w-4 text-[#D1A329]" />
+                  <span>
+                    {isTe
+                      ? "గౌరవప్రదమైన పరిచయాలు • శాశ్వతమైన అనుబంధాలు"
+                      : "Considered introductions • Enduring family happiness"}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </section>

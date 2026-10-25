@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, Check, CreditCard, Lock, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, CreditCard, Lock, ShieldCheck, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
@@ -12,6 +12,7 @@ import { formatINRFromPaise } from "@/lib/format";
 import { getErrorMessage } from "@/lib/errors";
 import { SITE_NAME } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n";
+import { MARKETING_COUPLE_IMAGES } from "@/data/marketing-couples";
 import type { Json } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/membership")({
@@ -466,6 +467,49 @@ function MembershipPage() {
                   {lang === "te" ? "రీఫండ్ విధానం" : "Refund policy"}
                 </Link>
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* EMOTIONAL OUTCOME BANNER */}
+        <div className="mt-14 overflow-hidden rounded-xs border border-[#ded5c8] bg-[#FAF8F3]">
+          <div className="grid items-center md:grid-cols-[0.8fr_1.2fr]">
+            <div className="relative aspect-[16/10] md:aspect-auto md:h-full overflow-hidden bg-[#efe9df]">
+              <img
+                src={MARKETING_COUPLE_IMAGES["celebrationJourney"]!.src}
+                alt={
+                  lang === "te"
+                    ? MARKETING_COUPLE_IMAGES["celebrationJourney"]!.altTe
+                    : MARKETING_COUPLE_IMAGES["celebrationJourney"]!.alt
+                }
+                className="h-full w-full object-cover object-[center_20%]"
+                decoding="async"
+              />
+              <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-2.5 py-0.5 text-[10px] font-semibold text-[#F5E5B2] backdrop-blur-xs">
+                <Sparkles className="h-3 w-3 text-[#D1A329]" />
+                <span>{lang === "te" ? "నిదర్శన చిత్రం" : "Illustrative Visual"}</span>
+              </div>
+            </div>
+            <div className="p-6 sm:p-8">
+              <span className="sbm-kicker">
+                {lang === "te" ? "దాంపత్య లక్ష్యం" : "The Journey's Promise"}
+              </span>
+              <h3 className="sbm-heading mt-3 text-2xl">
+                {lang === "te"
+                  ? "గౌరవప్రదమైన అన్వేషణ. ఆనందకరమైన దాంపత్యం."
+                  : "A considered search. A joyful lifelong companionship."}
+              </h3>
+              <p className="sbm-body mt-3 text-[13px] leading-6">
+                {lang === "te"
+                  ? "సభ్యత్వం అనేది సంభాషణను గౌరవంగా ముందుకు తీసుకెళ్లడానికి ఒక సహాయక సాధనం మాత్రమే. మీ జీవిత భాగస్వామి అన్వేషణలో ప్రతి అడుగు మన సమాజ విలువల ఆధారంగా సాగుతుంది."
+                  : "Membership is designed to support families in having thoughtful, unhurried conversations. Every feature protects your dignity while helping you find your partner within the Shettibalija community."}
+              </p>
+              <div className="mt-5">
+                <Link to="/register" className="sbm-link-arrow">
+                  {lang === "te" ? "ఉచిత ప్రొఫైల్‌తో ప్రారంభించండి" : "Begin with a free profile"}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

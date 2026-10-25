@@ -74,10 +74,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav
-          className="hidden items-center gap-5 lg:flex xl:gap-7"
-          aria-label="Primary navigation"
-        >
+        <nav className="hidden items-center gap-5 lg:flex xl:gap-7" aria-label="Primary navigation">
           {navLinks.map((item) => (
             <Link
               key={item.to}

@@ -147,7 +147,9 @@ function ApplicationFrame() {
   const isAccountFlow = pathname === "/login" || pathname === "/register";
 
   return (
-    <div className={`app-frame flex min-h-screen flex-col ${isAccountFlow ? "is-account-flow" : ""}`}>
+    <div
+      className={`app-frame flex min-h-screen flex-col ${isAccountFlow ? "is-account-flow" : ""}`}
+    >
       {!isAccountFlow ? <SiteHeader /> : null}
       <main className={`app-main flex-1 ${isAccountFlow ? "" : "pb-24 lg:pb-0"}`}>
         <ErrorBoundary>

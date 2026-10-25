@@ -471,6 +471,25 @@ function ProfilesTable({
     onError: (error) => toast.error(getErrorMessage(error, "The profile could not be updated.")),
   });
 
+  const verifyMutation = useMutation({
+    mutationFn: async ({ id, verified }: { id: string; verified: boolean }) => {
+      const { error } = await supabase
+        .from("matrimonial_profiles")
+        .update({
+          verified_at: verified ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: (_, vars) => {
+      toast.success(vars.verified ? "Profile verified." : "Verification removed.");
+      void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+    },
+    onError: (error) => toast.error(getErrorMessage(error, "Could not update verification.")),
+  });
+
   const rows = moderation
     ? (profilesQuery.data?.filter((profile) => profile.moderation_status !== "approved") ?? [])
     : (profilesQuery.data ?? []);
@@ -496,7 +515,7 @@ function ProfilesTable({
                 <th>Status</th>
                 <th>Verification</th>
                 <th>Joined</th>
-                {moderation ? <th>Actions</th> : null}
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -522,33 +541,89 @@ function ProfilesTable({
                     <StatusBadge value={profile.verified_at ? "verified" : "pending"} />
                   </td>
                   <td>{formatDate(profile.created_at)}</td>
-                  {moderation ? (
-                    <td>
-                      <div className="admin-table__actions">
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            if (window.confirm(`Approve ${profile.display_name}'s profile?`)) {
-                              moderationMutation.mutate({ id: profile.id, status: "approved" });
-                            }
-                          }}
-                        >
-                          <Check size={14} /> Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            if (window.confirm(`Reject ${profile.display_name}'s profile?`)) {
-                              moderationMutation.mutate({ id: profile.id, status: "rejected" });
-                            }
-                          }}
-                        >
-                          <X size={14} /> Reject
-                        </Button>
-                      </div>
-                    </td>
-                  ) : null}
+                  <td>
+                    <div className="admin-table__actions">
+                      {moderation ? (
+                        <>
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              if (window.confirm(`Approve ${profile.display_name}'s profile?`)) {
+                                moderationMutation.mutate({ id: profile.id, status: "approved" });
+                              }
+                            }}
+                          >
+                            <Check size={14} /> Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              if (window.confirm(`Reject ${profile.display_name}'s profile?`)) {
+                                moderationMutation.mutate({ id: profile.id, status: "rejected" });
+                              }
+                            }}
+                          >
+                            <X size={14} /> Reject
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          {!profile.verified_at ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-[#087333] border-[#087333]/30 hover:bg-[#087333]/10"
+                              onClick={() => {
+                                if (window.confirm(`Verify ${profile.display_name}?`)) {
+                                  verifyMutation.mutate({ id: profile.id, verified: true });
+                                }
+                              }}
+                            >
+                              <BadgeCheck size={14} className="mr-1" /> Verify
+                            </Button>
+                          ) : null}
+                          {profile.moderation_status === "suspended" ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                if (window.confirm(`Restore ${profile.display_name}'s profile?`)) {
+                                  moderationMutation.mutate({ id: profile.id, status: "approved" });
+                                }
+                              }}
+                            >
+                              Restore
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-rose-700 border-rose-200 hover:bg-rose-50"
+                              onClick={() => {
+                                if (window.confirm(`Suspend ${profile.display_name}'s profile?`)) {
+                                  moderationMutation.mutate({
+                                    id: profile.id,
+                                    status: "suspended",
+                                  });
+                                }
+                              }}
+                            >
+                              Suspend
+                            </Button>
+                          )}
+                          <Link
+                            to="/profile/$id"
+                            params={{ id: profile.id }}
+                            target="_blank"
+                            className="inline-flex items-center text-xs text-[#24103F] hover:underline px-2 py-1"
+                          >
+                            View
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -695,7 +770,27 @@ function AdminOverview() {
 }
 
 function VerificationSection({ search }: { search: string }) {
+  const queryClient = useQueryClient();
   const query = useAdminProfiles(search);
+  const verifyMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("matrimonial_profiles")
+        .update({
+          verified_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Profile verified successfully.");
+      void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+    },
+    onError: (err) => toast.error(getErrorMessage(err, "Verification failed.")),
+  });
+
   const rows =
     query.data?.filter(
       (profile) => !profile.verified_at && profile.moderation_status === "approved",
@@ -711,7 +806,49 @@ function VerificationSection({ search }: { search: string }) {
       {!query.isLoading && !query.isError && rows.length === 0 ? (
         <EmptyAdminState message="No approved profiles are waiting for verification." />
       ) : null}
-      {rows.length ? <SimpleProfileRows rows={rows} /> : null}
+      {rows.length ? (
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Profile</th>
+                <th>Location</th>
+                <th>Joined</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    <strong>{row.display_name}</strong>
+                    <span>{row.profile_code}</span>
+                  </td>
+                  <td>{[row.city, row.state].filter(Boolean).join(", ") || "—"}</td>
+                  <td>{formatDate(row.created_at)}</td>
+                  <td>
+                    <StatusBadge value={row.moderation_status} />
+                  </td>
+                  <td>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        if (window.confirm(`Verify ${row.display_name}?`)) {
+                          verifyMutation.mutate(row.id);
+                        }
+                      }}
+                      className="bg-[#087333] hover:bg-[#034B21] text-white"
+                    >
+                      <BadgeCheck size={14} className="mr-1" /> Verify Member
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
     </AdminPanel>
   );
 }

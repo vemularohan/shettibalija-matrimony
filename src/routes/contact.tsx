@@ -78,9 +78,7 @@ function ContactPage() {
       setMessage("");
       setSent(true);
     } catch (err) {
-      setFormError(
-        getErrorMessage(err, "The message could not be sent. Please email us instead."),
-      );
+      setFormError(getErrorMessage(err, "The message could not be sent. Please email us instead."));
     } finally {
       setSubmitting(false);
     }

@@ -139,9 +139,17 @@ function SearchPage() {
         profileId: next.profileId !== undefined ? next.profileId : filters.profileId || undefined,
         gender: next.gender !== undefined ? next.gender : filters.gender || undefined,
         minAge:
-          next.minAge !== undefined ? next.minAge : filters.minAge ? Number(filters.minAge) : undefined,
+          next.minAge !== undefined
+            ? next.minAge
+            : filters.minAge
+              ? Number(filters.minAge)
+              : undefined,
         maxAge:
-          next.maxAge !== undefined ? next.maxAge : filters.maxAge ? Number(filters.maxAge) : undefined,
+          next.maxAge !== undefined
+            ? next.maxAge
+            : filters.maxAge
+              ? Number(filters.maxAge)
+              : undefined,
         minHeight:
           next.minHeight !== undefined
             ? next.minHeight
@@ -156,7 +164,8 @@ function SearchPage() {
               : undefined,
         state: next.state !== undefined ? next.state : filters.state || undefined,
         education: next.education !== undefined ? next.education : filters.education || undefined,
-        occupation: next.occupation !== undefined ? next.occupation : filters.occupation || undefined,
+        occupation:
+          next.occupation !== undefined ? next.occupation : filters.occupation || undefined,
         maritalStatus:
           next.maritalStatus !== undefined
             ? next.maritalStatus
@@ -218,7 +227,8 @@ function SearchPage() {
       if (searchParams.maxAge != null) query = query.lte("age", searchParams.maxAge);
       if (searchParams.minHeight != null) query = query.gte("height_cm", searchParams.minHeight);
       if (searchParams.maxHeight != null) query = query.lte("height_cm", searchParams.maxHeight);
-      if (searchParams.maritalStatus) query = query.eq("marital_status", searchParams.maritalStatus);
+      if (searchParams.maritalStatus)
+        query = query.eq("marital_status", searchParams.maritalStatus);
       if (searchParams.state) query = query.eq("state", searchParams.state);
       if (searchParams.education) query = query.eq("education", searchParams.education);
       if (searchParams.occupation) query = query.eq("occupation", searchParams.occupation);
@@ -227,7 +237,9 @@ function SearchPage() {
       if (searchParams.rashi) query = query.eq("rashi", searchParams.rashi);
       if (searchParams.foodHabit) query = query.eq("food_habit", searchParams.foodHabit);
       if (searchParams.profileId) {
-        query = query.or(`profile_code.eq.${searchParams.profileId},id.eq.${searchParams.profileId}`);
+        query = query.or(
+          `profile_code.eq.${searchParams.profileId},id.eq.${searchParams.profileId}`,
+        );
       }
       if (searchParams.query) {
         const value = searchParams.query.replace(/[%_]/g, "");
@@ -381,23 +393,51 @@ function SearchPage() {
 
             {activeFilterCount > 0 ? (
               <div className="mb-5 flex flex-wrap items-center gap-2">
-                {searchParams.gender ? <Chip label={searchParams.gender === "bride" ? "Bride" : "Groom"} onClear={() => clearFilter("gender")} /> : null}
-                {searchParams.state ? <Chip label={searchParams.state} onClear={() => clearFilter("state")} /> : null}
-                {searchParams.minAge || searchParams.maxAge ? (
-                  <Chip label={`Age ${searchParams.minAge ?? 18}–${searchParams.maxAge ?? 70}`} onClear={() => clearFilter("minAge")} />
+                {searchParams.gender ? (
+                  <Chip
+                    label={searchParams.gender === "bride" ? "Bride" : "Groom"}
+                    onClear={() => clearFilter("gender")}
+                  />
                 ) : null}
-                {searchParams.education ? <Chip label={searchParams.education} onClear={() => clearFilter("education")} /> : null}
-                {searchParams.occupation ? <Chip label={searchParams.occupation} onClear={() => clearFilter("occupation")} /> : null}
+                {searchParams.state ? (
+                  <Chip label={searchParams.state} onClear={() => clearFilter("state")} />
+                ) : null}
+                {searchParams.minAge || searchParams.maxAge ? (
+                  <Chip
+                    label={`Age ${searchParams.minAge ?? 18}–${searchParams.maxAge ?? 70}`}
+                    onClear={() => clearFilter("minAge")}
+                  />
+                ) : null}
+                {searchParams.education ? (
+                  <Chip label={searchParams.education} onClear={() => clearFilter("education")} />
+                ) : null}
+                {searchParams.occupation ? (
+                  <Chip label={searchParams.occupation} onClear={() => clearFilter("occupation")} />
+                ) : null}
                 {searchParams.maritalStatus ? (
                   <Chip
-                    label={MARITAL_STATUS_OPTIONS.find((item) => item.value === searchParams.maritalStatus)?.label ?? searchParams.maritalStatus}
+                    label={
+                      MARITAL_STATUS_OPTIONS.find(
+                        (item) => item.value === searchParams.maritalStatus,
+                      )?.label ?? searchParams.maritalStatus
+                    }
                     onClear={() => clearFilter("maritalStatus")}
                   />
                 ) : null}
-                {searchParams.star ? <Chip label={searchParams.star} onClear={() => clearFilter("star")} /> : null}
-                {searchParams.gothram ? <Chip label={searchParams.gothram} onClear={() => clearFilter("gothram")} /> : null}
-                {searchParams.query ? <Chip label={`“${searchParams.query}”`} onClear={() => clearFilter("keyword")} /> : null}
-                <button type="button" onClick={resetFilters} className="ml-1 text-[11px] font-bold text-[#087333] hover:underline">
+                {searchParams.star ? (
+                  <Chip label={searchParams.star} onClear={() => clearFilter("star")} />
+                ) : null}
+                {searchParams.gothram ? (
+                  <Chip label={searchParams.gothram} onClear={() => clearFilter("gothram")} />
+                ) : null}
+                {searchParams.query ? (
+                  <Chip label={`“${searchParams.query}”`} onClear={() => clearFilter("keyword")} />
+                ) : null}
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="ml-1 text-[11px] font-bold text-[#087333] hover:underline"
+                >
                   Clear all
                 </button>
               </div>
@@ -406,7 +446,10 @@ function SearchPage() {
             {profilesQuery.isLoading ? (
               <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="overflow-hidden rounded-sm border border-[#ded5c8] bg-white">
+                  <div
+                    key={index}
+                    className="overflow-hidden rounded-sm border border-[#ded5c8] bg-white"
+                  >
                     <div className="sbm-skeleton aspect-[4/5] rounded-none" />
                     <div className="space-y-2 p-4">
                       <div className="sbm-skeleton h-3 w-4/5" />
@@ -436,14 +479,20 @@ function SearchPage() {
                   <Search className="h-5 w-5 text-[#D1A329]" aria-hidden />
                 </div>
                 <h3 className="mt-5 font-serif text-2xl text-[#24103F]">
-                  {lang === "te" ? "ఇంకా సరిపోయే ప్రొఫైల్ కనిపించలేదు." : "We couldn't find a close match yet."}
+                  {lang === "te"
+                    ? "ఇంకా సరిపోయే ప్రొఫైల్ కనిపించలేదు."
+                    : "We couldn't find a close match yet."}
                 </h3>
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#6B6570]">
                   {lang === "te"
                     ? "వయస్సు పరిధిని విస్తరించండి లేదా ఒక ఫిల్టర్ తొలగించి మళ్లీ ప్రయత్నించండి."
                     : "Try widening the age range or removing one filter. New profiles appear as members complete their review."}
                 </p>
-                <button type="button" onClick={resetFilters} className="sbm-button sbm-button--outline mt-6">
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="sbm-button sbm-button--outline mt-6"
+                >
                   <RotateCcw className="h-3.5 w-3.5" aria-hidden />
                   {lang === "te" ? "ఫిల్టర్లను రీసెట్ చేయండి" : "Reset all filters"}
                 </button>
@@ -530,7 +579,12 @@ function FilterPanel({
         <label htmlFor="filter-gender" className="sbm-label">
           {lang === "te" ? "వెతుకుతున్నది" : "Looking for"}
         </label>
-        <select id="filter-gender" className="sbm-field" value={filters.gender} onChange={(event) => update("gender", event.target.value)}>
+        <select
+          id="filter-gender"
+          className="sbm-field"
+          value={filters.gender}
+          onChange={(event) => update("gender", event.target.value)}
+        >
           <option value="">{lang === "te" ? "వధువు లేదా వరుడు" : "Bride or groom"}</option>
           <option value="bride">{lang === "te" ? "వధువు" : "Bride"}</option>
           <option value="groom">{lang === "te" ? "వరుడు" : "Groom"}</option>
@@ -568,7 +622,12 @@ function FilterPanel({
         <label htmlFor="filter-state" className="sbm-label">
           {lang === "te" ? "ప్రాంతం" : "Location"}
         </label>
-        <select id="filter-state" className="sbm-field" value={filters.state} onChange={(event) => update("state", event.target.value)}>
+        <select
+          id="filter-state"
+          className="sbm-field"
+          value={filters.state}
+          onChange={(event) => update("state", event.target.value)}
+        >
           <option value="">{lang === "te" ? "అన్ని ప్రాంతాలు" : "Anywhere"}</option>
           {STATES.map((state) => (
             <option key={state} value={state}>
@@ -582,7 +641,12 @@ function FilterPanel({
         <label htmlFor="filter-education" className="sbm-label">
           {lang === "te" ? "విద్య" : "Education"}
         </label>
-        <select id="filter-education" className="sbm-field" value={filters.education} onChange={(event) => update("education", event.target.value)}>
+        <select
+          id="filter-education"
+          className="sbm-field"
+          value={filters.education}
+          onChange={(event) => update("education", event.target.value)}
+        >
           <option value="">{lang === "te" ? "ఏదైనా" : "Any education"}</option>
           {EDUCATION_OPTIONS.map((education) => (
             <option key={education} value={education}>
@@ -596,7 +660,12 @@ function FilterPanel({
         <label htmlFor="filter-occupation" className="sbm-label">
           {lang === "te" ? "ఉద్యోగం" : "Occupation"}
         </label>
-        <select id="filter-occupation" className="sbm-field" value={filters.occupation} onChange={(event) => update("occupation", event.target.value)}>
+        <select
+          id="filter-occupation"
+          className="sbm-field"
+          value={filters.occupation}
+          onChange={(event) => update("occupation", event.target.value)}
+        >
           <option value="">{lang === "te" ? "ఏదైనా" : "Any occupation"}</option>
           {OCCUPATION_OPTIONS.map((occupation) => (
             <option key={occupation} value={occupation}>
@@ -610,7 +679,12 @@ function FilterPanel({
         <label htmlFor="filter-marital" className="sbm-label">
           {lang === "te" ? "వైవాహిక స్థితి" : "Marital status"}
         </label>
-        <select id="filter-marital" className="sbm-field" value={filters.maritalStatus} onChange={(event) => update("maritalStatus", event.target.value)}>
+        <select
+          id="filter-marital"
+          className="sbm-field"
+          value={filters.maritalStatus}
+          onChange={(event) => update("maritalStatus", event.target.value)}
+        >
           <option value="">{lang === "te" ? "అన్ని స్థితులు" : "Any status"}</option>
           {MARITAL_STATUS_OPTIONS.map((status) => (
             <option key={status.value} value={status.value}>
@@ -641,7 +715,11 @@ function FilterPanel({
           <div>
             <span className="sbm-label">{lang === "te" ? "ఎత్తు" : "Height"}</span>
             <div className="grid grid-cols-2 gap-2">
-              <select className="sbm-field" value={filters.minHeight} onChange={(event) => update("minHeight", event.target.value)}>
+              <select
+                className="sbm-field"
+                value={filters.minHeight}
+                onChange={(event) => update("minHeight", event.target.value)}
+              >
                 <option value="">Min</option>
                 {HEIGHT_CHOICES.map((choice) => (
                   <option key={choice.cm} value={choice.cm}>
@@ -649,7 +727,11 @@ function FilterPanel({
                   </option>
                 ))}
               </select>
-              <select className="sbm-field" value={filters.maxHeight} onChange={(event) => update("maxHeight", event.target.value)}>
+              <select
+                className="sbm-field"
+                value={filters.maxHeight}
+                onChange={(event) => update("maxHeight", event.target.value)}
+              >
                 <option value="">Max</option>
                 {HEIGHT_CHOICES.map((choice) => (
                   <option key={choice.cm} value={choice.cm}>
@@ -664,7 +746,12 @@ function FilterPanel({
             <label htmlFor="filter-star" className="sbm-label">
               {lang === "te" ? "నక్షత్రం" : "Star"}
             </label>
-            <select id="filter-star" className="sbm-field" value={filters.star} onChange={(event) => update("star", event.target.value)}>
+            <select
+              id="filter-star"
+              className="sbm-field"
+              value={filters.star}
+              onChange={(event) => update("star", event.target.value)}
+            >
               <option value="">{lang === "te" ? "ఏదైనా" : "Any star"}</option>
               {NAKSHATRA_OPTIONS.map((item) => (
                 <option key={item.value} value={item.value}>
@@ -678,7 +765,12 @@ function FilterPanel({
             <label htmlFor="filter-rashi" className="sbm-label">
               {lang === "te" ? "రాశి" : "Rashi"}
             </label>
-            <select id="filter-rashi" className="sbm-field" value={filters.rashi} onChange={(event) => update("rashi", event.target.value)}>
+            <select
+              id="filter-rashi"
+              className="sbm-field"
+              value={filters.rashi}
+              onChange={(event) => update("rashi", event.target.value)}
+            >
               <option value="">{lang === "te" ? "ఏదైనా" : "Any rashi"}</option>
               {RASHI_OPTIONS.map((item) => (
                 <option key={item.value} value={item.value}>
@@ -705,7 +797,12 @@ function FilterPanel({
             <label htmlFor="filter-food" className="sbm-label">
               {lang === "te" ? "ఆహారం" : "Food habit"}
             </label>
-            <select id="filter-food" className="sbm-field" value={filters.foodHabit} onChange={(event) => update("foodHabit", event.target.value)}>
+            <select
+              id="filter-food"
+              className="sbm-field"
+              value={filters.foodHabit}
+              onChange={(event) => update("foodHabit", event.target.value)}
+            >
               <option value="">{lang === "te" ? "ఏదైనా" : "Any"}</option>
               {FOOD_HABIT_OPTIONS.map((item) => (
                 <option key={item.value} value={item.value}>
@@ -721,7 +818,12 @@ function FilterPanel({
         <button type="submit" className="sbm-button sbm-button--primary flex-1">
           {lang === "te" ? "వర్తించండి" : "Apply filters"}
         </button>
-        <button type="button" onClick={() => setFilters(EMPTY_FILTERS)} className="sbm-button sbm-button--outline px-3" aria-label="Clear filters">
+        <button
+          type="button"
+          onClick={() => setFilters(EMPTY_FILTERS)}
+          className="sbm-button sbm-button--outline px-3"
+          aria-label="Clear filters"
+        >
           <RotateCcw className="h-3.5 w-3.5" />
         </button>
       </div>

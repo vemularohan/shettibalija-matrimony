@@ -110,5 +110,4 @@ describe("Detailed Matrimonial Profile Requirements", () => {
     expect(empValues).toContain("other");
     expect(empValues).toContain("not_working");
   });
-
 });

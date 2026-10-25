@@ -39,9 +39,9 @@ function RefundPage() {
           title: "2. Duplicate or erroneous charges",
           body: (
             <p>
-              If an account is charged more than once because of a payment gateway error or technical
-              fault, the excess amount will be returned to the original payment method within 5 to 7
-              working days after verification.
+              If an account is charged more than once because of a payment gateway error or
+              technical fault, the excess amount will be returned to the original payment method
+              within 5 to 7 working days after verification.
             </p>
           ),
         },
@@ -63,7 +63,8 @@ function RefundPage() {
             <p>
               For a payment dispute or a question about membership activation, write to
               support@shettibalijamatrimony.org from your registered email address and include the
-              transaction or order ID. Please do not send card numbers or banking passwords by email.
+              transaction or order ID. Please do not send card numbers or banking passwords by
+              email.
             </p>
           ),
         },

@@ -121,7 +121,9 @@ export function HeroPhotoGallery() {
               </a>
               <span className="front-door__member-note">
                 {isTelugu ? "ఇప్పటికే సభ్యులా?" : "Already a member?"}{" "}
-                <Link to="/login" search={{}}>{isTelugu ? "లాగిన్" : "Login"}</Link>
+                <Link to="/login" search={{}}>
+                  {isTelugu ? "లాగిన్" : "Login"}
+                </Link>
               </span>
             </div>
             <div className="front-door__trust">
@@ -221,8 +223,8 @@ export function HeroPhotoGallery() {
                 <span>
                   {isTelugu ? (
                     <>
-                      <Link to="/terms">నిబంధనలు</Link> మరియు <Link to="/privacy">గోప్యతా విధానాన్ని</Link>{" "}
-                      అంగీకరిస్తున్నాను.
+                      <Link to="/terms">నిబంధనలు</Link> మరియు{" "}
+                      <Link to="/privacy">గోప్యతా విధానాన్ని</Link> అంగీకరిస్తున్నాను.
                     </>
                   ) : (
                     <>
@@ -239,7 +241,6 @@ export function HeroPhotoGallery() {
           </div>
         </div>
       </div>
-
     </section>
   );
 }

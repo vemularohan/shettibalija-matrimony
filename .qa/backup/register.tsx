@@ -186,14 +186,38 @@ function RegisterPage() {
       <header className="registration-stage-head">
         <div className="registration-shell">
           <div className="registration-topline">
-            <Link to="/" className="registration-brand"><ShettibalijaLogo size="sm" priority /><span><strong>{SITE_NAME}</strong><small lang="te">{SITE_NAME_TE}</small></span></Link>
-            <p>Already a member? <Link to="/login">Sign in</Link></p>
+            <Link to="/" className="registration-brand">
+              <ShettibalijaLogo size="sm" priority />
+              <span>
+                <strong>{SITE_NAME}</strong>
+                <small lang="te">{SITE_NAME_TE}</small>
+              </span>
+            </Link>
+            <p>
+              Already a member? <Link to="/login">Sign in</Link>
+            </p>
           </div>
           <div className="registration-heading">
-            <div><p className="site-kicker">Create your profile</p><h1>Start an introduction your family can feel good about.</h1></div>
-            <p>Build your profile in short, guided steps. You can save a local draft while you complete the details needed for community review.</p>
+            <div>
+              <p className="site-kicker">Create your profile</p>
+              <h1>Start an introduction your family can feel good about.</h1>
+            </div>
+            <p>
+              Build your profile in short, guided steps. You can save a local draft while you
+              complete the details needed for community review.
+            </p>
           </div>
-          <ol className="registration-route" aria-label="Profile creation progress"><li className="is-current"><span>01</span>Account access</li><li><span>02</span>Profile details</li><li><span>03</span>Review &amp; submit</li></ol>
+          <ol className="registration-route" aria-label="Profile creation progress">
+            <li className="is-current">
+              <span>01</span>Account access
+            </li>
+            <li>
+              <span>02</span>Profile details
+            </li>
+            <li>
+              <span>03</span>Review &amp; submit
+            </li>
+          </ol>
         </div>
       </header>
 
@@ -207,15 +231,9 @@ function RegisterPage() {
         {successMessage ? (
           <div className="registration-success">
             <p>{successMessage}</p>
-            <p>
-              Please verify your email address to log in and manage your matrimony profile.
-            </p>
+            <p>Please verify your email address to log in and manage your matrimony profile.</p>
             <div className="pt-2">
-              <Button
-                asChild
-                size="lg"
-                className="registration-success-action"
-              >
+              <Button asChild size="lg" className="registration-success-action">
                 <Link to="/login">Proceed to Login</Link>
               </Button>
             </div>
@@ -227,7 +245,10 @@ function RegisterPage() {
               <CardHeader className="registration-account-heading">
                 <p className="site-kicker">Step 1 of 3</p>
                 <CardTitle>Create your secure account</CardTitle>
-                <CardDescription>Use this email address or mobile number to return and manage the profile you create.</CardDescription>
+                <CardDescription>
+                  Use this email address or mobile number to return and manage the profile you
+                  create.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="registration-methods">
@@ -295,7 +316,14 @@ function RegisterPage() {
             </Card>
 
             {/* 10-Section Matrimonial Biodata Form */}
-            <div className="registration-profile-steps"><DetailedProfileForm initialData={initialData} onSave={handleProfileSubmit} isSubmitting={submitting} submitButtonText="Register & Create Profile" /></div>
+            <div className="registration-profile-steps">
+              <DetailedProfileForm
+                initialData={initialData}
+                onSave={handleProfileSubmit}
+                isSubmitting={submitting}
+                submitButtonText="Register & Create Profile"
+              />
+            </div>
 
             <div className="registration-sign-in-note">
               Already registered?{" "}

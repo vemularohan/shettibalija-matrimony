@@ -54,14 +54,18 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <FooterColumn title={lang === "te" ? "మ్యాట్రిమోనీ" : "Matrimony"} links={matrimonyLinks} />
+          <FooterColumn
+            title={lang === "te" ? "మ్యాట్రిమోనీ" : "Matrimony"}
+            links={matrimonyLinks}
+          />
           <FooterColumn title={lang === "te" ? "సమాజం" : "Community"} links={communityLinks} />
           <FooterColumn title={lang === "te" ? "చట్టపరమైనవి" : "Legal"} links={legalLinks} />
         </div>
 
         <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 text-[11px] text-white/45 sm:flex-row sm:items-center">
           <p>
-            © {new Date().getFullYear()} {SITE_NAME}. {lang === "te" ? "అన్ని హక్కులు రక్షించబడ్డాయి." : "All rights reserved."}
+            © {new Date().getFullYear()} {SITE_NAME}.{" "}
+            {lang === "te" ? "అన్ని హక్కులు రక్షించబడ్డాయి." : "All rights reserved."}
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <a
@@ -76,7 +80,9 @@ export function SiteFooter() {
               rel="noreferrer"
               className="transition-colors hover:text-white"
             >
-              {lang === "te" ? "ఫోటో: Dinesh Cyanam / CC BY-SA 2.0" : "Photography: Dinesh Cyanam / CC BY-SA 2.0"}
+              {lang === "te"
+                ? "ఫోటో: Dinesh Cyanam / CC BY-SA 2.0"
+                : "Photography: Dinesh Cyanam / CC BY-SA 2.0"}
             </a>
             <span className="hidden h-3 w-px bg-white/15 sm:block" />
             <span className="flex items-center gap-1.5">
@@ -90,23 +96,14 @@ export function SiteFooter() {
   );
 }
 
-function FooterColumn({
-  title,
-  links,
-}: {
-  title: string;
-  links: { to: string; label: string }[];
-}) {
+function FooterColumn({ title, links }: { title: string; links: { to: string; label: string }[] }) {
   return (
     <div>
       <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#D1A329]">{title}</p>
       <ul className="mt-4 space-y-3">
         {links.map(({ to, label }) => (
           <li key={label}>
-            <Link
-              to={to}
-              className="text-[13px] text-white/70 transition-colors hover:text-white"
-            >
+            <Link to={to} className="text-[13px] text-white/70 transition-colors hover:text-white">
               {label}
             </Link>
           </li>

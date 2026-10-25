@@ -74,7 +74,11 @@ export function ProfileCard({
         <div className="absolute inset-x-0 bottom-0 p-4 text-white">
           <p className="font-serif text-xl leading-tight tracking-[-0.01em]">
             {name}
-            {profile.age ? <span className="font-sans text-[13px] font-medium text-white/75">, {profile.age}</span> : null}
+            {profile.age ? (
+              <span className="font-sans text-[13px] font-medium text-white/75">
+                , {profile.age}
+              </span>
+            ) : null}
           </p>
           {location ? (
             <p className="mt-1 flex items-center gap-1 text-[11px] text-white/75">
@@ -88,7 +92,9 @@ export function ProfileCard({
       <div className="flex flex-1 flex-col p-4">
         <div className="min-h-[2.5rem] space-y-1 text-[12px] leading-5 text-[#5f5765]">
           {profile.education ? <p className="truncate">{profile.education}</p> : null}
-          {profile.occupation ? <p className="truncate text-[#24103F]">{profile.occupation}</p> : null}
+          {profile.occupation ? (
+            <p className="truncate text-[#24103F]">{profile.occupation}</p>
+          ) : null}
           {!profile.education && !profile.occupation ? (
             <p className="text-[#9a929e]">Profile details are being completed.</p>
           ) : null}
@@ -98,7 +104,9 @@ export function ProfileCard({
           {height ? <span>{height}</span> : null}
           {profile.star ? <span>{profile.star}</span> : null}
           {profile.gothram ? <span>{profile.gothram}</span> : null}
-          {profile.profile_code ? <span className="ml-auto font-medium tracking-wide">{profile.profile_code}</span> : null}
+          {profile.profile_code ? (
+            <span className="ml-auto font-medium tracking-wide">{profile.profile_code}</span>
+          ) : null}
         </div>
 
         <div className="mt-auto flex items-center gap-1.5 pt-4">

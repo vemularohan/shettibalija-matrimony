@@ -134,7 +134,9 @@ function HelpPage() {
 
         <div className="mt-16 grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
           <div>
-            <span className="sbm-kicker">{lang === "te" ? "సాధారణ ప్రశ్నలు" : "Common questions"}</span>
+            <span className="sbm-kicker">
+              {lang === "te" ? "సాధారణ ప్రశ్నలు" : "Common questions"}
+            </span>
             <h2 className="sbm-heading mt-4 max-w-sm">
               {lang === "te" ? "మరికొన్ని వివరాలు." : "A few more details."}
             </h2>
@@ -143,10 +145,7 @@ function HelpPage() {
                 ? "మీకు సహాయం కావాలంటే, మీ నమోదిత ఇమెయిల్ నుండి మాకు రాయండి."
                 : "If you need help with your account, write from your registered email so we can find you quickly."}
             </p>
-            <a
-              href="mailto:support@shettibalijamatrimony.org"
-              className="sbm-link-arrow mt-6"
-            >
+            <a href="mailto:support@shettibalijamatrimony.org" className="sbm-link-arrow mt-6">
               support@shettibalijamatrimony.org
               <ArrowRight className="h-3.5 w-3.5" />
             </a>
@@ -163,9 +162,7 @@ function HelpPage() {
                     className="flex w-full items-start justify-between gap-6 py-5 text-left"
                     aria-expanded={isOpen}
                   >
-                    <span className="text-sm font-semibold leading-6 text-[#24103F]">
-                      {item.q}
-                    </span>
+                    <span className="text-sm font-semibold leading-6 text-[#24103F]">{item.q}</span>
                     <ChevronDown
                       className={`mt-1 h-4 w-4 shrink-0 text-[#6B6570] transition-transform ${
                         isOpen ? "rotate-180" : ""
@@ -173,9 +170,7 @@ function HelpPage() {
                     />
                   </button>
                   {isOpen ? (
-                    <p className="max-w-2xl pb-5 text-[13px] leading-7 text-[#6B6570]">
-                      {item.a}
-                    </p>
+                    <p className="max-w-2xl pb-5 text-[13px] leading-7 text-[#6B6570]">{item.a}</p>
                   ) : null}
                 </div>
               );

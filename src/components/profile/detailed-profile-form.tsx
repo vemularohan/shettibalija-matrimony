@@ -283,11 +283,7 @@ export function DetailedProfileForm({
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          <button
-            type="button"
-            onClick={handleSaveDraft}
-            className="sbm-link-arrow text-[11px]"
-          >
+          <button type="button" onClick={handleSaveDraft} className="sbm-link-arrow text-[11px]">
             <Save className="h-3.5 w-3.5 text-[#D1A329]" aria-hidden />
             {t("saveDraft")}
           </button>
@@ -361,9 +357,7 @@ export function DetailedProfileForm({
                     <User className="h-6 w-6 text-[#D1A329]" />
                     {t("secPersonal")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[1]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[1]}</p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -487,9 +481,7 @@ export function DetailedProfileForm({
                     <Sparkles className="h-6 w-6 text-[#D1A329]" />
                     {t("secHoroscope")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[2]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[2]}</p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -621,9 +613,7 @@ export function DetailedProfileForm({
                     <Briefcase className="h-6 w-6 text-[#D1A329]" />
                     {t("secCareer")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[3]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[3]}</p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -764,9 +754,7 @@ export function DetailedProfileForm({
                     <Ruler className="h-6 w-6 text-[#D1A329]" />
                     {t("secPhysical")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[4]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[4]}</p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -818,9 +806,7 @@ export function DetailedProfileForm({
                     <Users className="h-6 w-6 text-[#D1A329]" />
                     {t("secFamily")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[5]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[5]}</p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -981,9 +967,7 @@ export function DetailedProfileForm({
                     <Compass className="h-6 w-6 text-[#D1A329]" />
                     {t("secCommunity")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[6]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[6]}</p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -1059,9 +1043,7 @@ export function DetailedProfileForm({
                     <Utensils className="h-6 w-6 text-[#D1A329]" />
                     {t("secLifestyle")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[7]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[7]}</p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-3">
@@ -1142,9 +1124,7 @@ export function DetailedProfileForm({
                     <Phone className="h-6 w-6 text-[#D1A329]" />
                     {t("secContact")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[8]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[8]}</p>
                 </div>
 
                 <div className="space-y-4 max-w-lg">
@@ -1199,9 +1179,7 @@ export function DetailedProfileForm({
                     <HeartHandshake className="h-6 w-6 text-[#D1A329]" />
                     {t("secPartner")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[9]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[9]}</p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -1372,9 +1350,7 @@ export function DetailedProfileForm({
                     <CheckCircle2 className="h-6 w-6 text-[#D1A329]" />
                     {t("secConsent")}
                   </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {sectionDescriptions[10]}
-                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{sectionDescriptions[10]}</p>
                 </div>
 
                 <div className="rounded-2xl border-2 border-gold/40 bg-gold/5 p-5 space-y-4">
