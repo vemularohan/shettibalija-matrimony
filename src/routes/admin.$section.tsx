@@ -13,6 +13,7 @@ const SECTION_ALIASES: Record<string, AdminSection> = {
   memberships: "memberships",
   payments: "payments",
   reports: "reports",
+  support: "support",
   "audit-log": "audit-log",
 };
 

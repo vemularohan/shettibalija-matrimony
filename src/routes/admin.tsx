@@ -11,6 +11,7 @@ import {
   FileCheck2,
   HeartHandshake,
   LayoutDashboard,
+  LifeBuoy,
   Menu,
   MessageSquareWarning,
   RefreshCw,
@@ -42,6 +43,7 @@ export type AdminSection =
   | "memberships"
   | "payments"
   | "reports"
+  | "support"
   | "audit-log";
 
 const NAV_ITEMS: { section: AdminSection; label: string; icon: typeof LayoutDashboard }[] = [
@@ -54,6 +56,7 @@ const NAV_ITEMS: { section: AdminSection; label: string; icon: typeof LayoutDash
   { section: "memberships", label: "Memberships", icon: Shield },
   { section: "payments", label: "Payments", icon: CircleDollarSign },
   { section: "reports", label: "Reports", icon: MessageSquareWarning },
+  { section: "support", label: "Support", icon: LifeBuoy },
   { section: "audit-log", label: "Audit log", icon: FileCheck2 },
 ];
 
@@ -229,6 +232,8 @@ function AdminSection({
       return <PaymentsSection search={search} />;
     case "reports":
       return <ReportsSection search={search} />;
+    case "support":
+      return <SupportSection search={search} />;
     case "audit-log":
       return <AuditLogSection search={search} />;
     default:
@@ -372,6 +377,7 @@ function AdminPreviewSection({ section, search }: { section: AdminSection; searc
     memberships: "214 active memberships · 14 activated this month",
     payments: "₹1,28,400 in successful payments this month",
     reports: "2 open safety reports require attention",
+    support: "Support tickets and inquiries from members and visitors",
     "audit-log": "Profile approved · Verification completed · Report resolved",
   };
 
@@ -1063,6 +1069,133 @@ function ReportsSection({ search }: { search: string }) {
                         variant="outline"
                         onClick={() => {
                           if (window.confirm("Resolve this report?")) resolve.mutate(row.id);
+                        }}
+                      >
+                        Resolve
+                      </Button>
+                    ) : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+    </AdminPanel>
+  );
+}
+
+function SupportSection({ search }: { search: string }) {
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: ["admin-support", search],
+    queryFn: async () => {
+      let request = supabase
+        .from("support_requests")
+        .select(
+          "id, owner_id, subject, message, status, ticket_code, contact_name, contact_email, contact_phone, created_at, resolved_at",
+        )
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (search) {
+        request = request.or(
+          `ticket_code.ilike.%${search}%,contact_name.ilike.%${search}%,contact_email.ilike.%${search}%,message.ilike.%${search}%`,
+        );
+      }
+      const { data, error } = await request;
+      if (error) throw error;
+      return (data ?? []) as {
+        id: string;
+        owner_id: string | null;
+        subject: string;
+        message: string;
+        status: string;
+        ticket_code: string | null;
+        contact_name: string | null;
+        contact_email: string | null;
+        contact_phone: string | null;
+        created_at: string;
+        resolved_at: string | null;
+      }[];
+    },
+  });
+
+  const resolve = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("support_requests")
+        .update({ status: "resolved", resolved_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Support ticket marked as resolved.");
+      void queryClient.invalidateQueries({ queryKey: ["admin-support"] });
+    },
+    onError: (error) => toast.error(getErrorMessage(error, "The ticket could not be updated.")),
+  });
+
+  return (
+    <AdminPanel
+      title="Member & Visitor Support"
+      description="Respond to inquiries and platform support requests submitted by registered members and community visitors."
+      count={query.data?.length ?? 0}
+    >
+      {query.isLoading ? <TableSkeleton /> : null}
+      {query.isError ? <QueryError onRetry={() => void query.refetch()} /> : null}
+      {!query.isLoading && !query.isError && !query.data?.length ? (
+        <EmptyAdminState message="No support requests found." />
+      ) : null}
+      {query.data?.length ? (
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Ticket</th>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Inquiry / Message</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {query.data.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    <span className="admin-mono font-semibold text-[#24103F]">
+                      {row.ticket_code || "—"}
+                    </span>
+                  </td>
+                  <td>
+                    <strong>{row.contact_name || "Member"}</strong>
+                    {row.contact_email ? (
+                      <span className="block text-xs text-[#6B6570]">{row.contact_email}</span>
+                    ) : null}
+                    {row.contact_phone ? (
+                      <span className="block text-xs text-[#8C827A]">{row.contact_phone}</span>
+                    ) : null}
+                  </td>
+                  <td>
+                    <span className="text-xs font-medium text-[#24103F]">{row.subject}</span>
+                  </td>
+                  <td className="max-w-xs">
+                    <p className="line-clamp-2 text-xs text-[#3D354A]">{row.message}</p>
+                  </td>
+                  <td>
+                    <StatusBadge value={row.status} />
+                  </td>
+                  <td>{formatDate(row.created_at)}</td>
+                  <td>
+                    {row.status !== "resolved" ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          if (window.confirm("Mark this support ticket as resolved?")) {
+                            resolve.mutate(row.id);
+                          }
                         }}
                       >
                         Resolve
