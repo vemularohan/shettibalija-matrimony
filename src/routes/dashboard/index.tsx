@@ -35,7 +35,7 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function DashboardOverviewPage() {
-  const { user, account } = useAuth();
+  const { user, account, isAdmin, isModerator } = useAuth();
   const { lang } = useLanguage();
   const ownProfileQuery = useOwnMatrimonialProfile();
   const profile = ownProfileQuery.data;
@@ -87,6 +87,22 @@ function DashboardOverviewPage() {
 
   return (
     <div className="space-y-9">
+      {(!profile || !profile.declaration_accepted) && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded border border-[#D1A329] bg-[#FAF8F3] p-4 text-xs text-[#24103F]">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="h-4 w-4 shrink-0 text-[#D1A329]" />
+            <span>
+              {lang === "te"
+                ? "మీ మ్యాట్రిమోనీ ప్రొఫైల్ ఇంకా పూర్తి కాలేదు. సంబంధాల అన్వేషణలో కనిపించడానికి ప్రొఫైల్‌ను పూర్తి చేయండి."
+                : "Your matrimonial profile is incomplete. Complete your profile to appear in community discovery."}
+            </span>
+          </div>
+          <Link to="/onboarding" className="sbm-button sbm-button--primary shrink-0 text-xs">
+            {lang === "te" ? "ప్రొఫైల్ పూర్తి చేయండి" : "Complete Profile"}
+          </Link>
+        </div>
+      )}
+
       <header className="flex flex-col justify-between gap-5 border-b border-[#ded5c8] pb-7 sm:flex-row sm:items-end">
         <div>
           <span className="sbm-kicker">
@@ -108,6 +124,15 @@ function DashboardOverviewPage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
+          {(isAdmin || isModerator) && (
+            <Link
+              to="/admin"
+              className="sbm-button sbm-button--outline border-[#087333] text-[#087333]"
+            >
+              <ShieldCheck className="h-4 w-4" aria-hidden />
+              {lang === "te" ? "నిర్వాహక పోర్టల్" : "Admin Portal"}
+            </Link>
+          )}
           <Link to="/dashboard/profile" className="sbm-button sbm-button--outline">
             <Edit3 className="h-4 w-4" aria-hidden />
             {lang === "te" ? "ప్రొఫైల్ సవరించండి" : "Edit profile"}
@@ -265,13 +290,17 @@ function DashboardOverviewPage() {
             <div className="border border-dashed border-[#cdbfa6] bg-white px-6 py-12 text-center">
               <UserRound className="mx-auto h-6 w-6 text-[#D1A329]" aria-hidden />
               <h3 className="mt-4 font-serif text-2xl text-[#24103F]">
-                No profile found for this account.
+                {lang === "te"
+                  ? "ఈ ఖాతాకు మ్యాట్రిమోనీ ప్రొఫైల్ కనుగొనబడలేదు."
+                  : "No profile found for this account."}
               </h3>
               <p className="mx-auto mt-2 max-w-xs text-[12px] leading-6 text-[#6B6570]">
-                Create your matrimonial profile to appear in discovery and receive interests.
+                {lang === "te"
+                  ? "అన్వేషణలో కనిపించడానికి మరియు ఆసక్తులు పొందడానికి మీ మ్యాట్రిమోనీ ప్రొఫైల్‌ను సృష్టించండి."
+                  : "Create your matrimonial profile to appear in discovery and receive interests."}
               </p>
-              <Link to="/dashboard/profile" className="sbm-button sbm-button--primary mt-5">
-                Create your profile
+              <Link to="/onboarding" className="sbm-button sbm-button--primary mt-5">
+                {lang === "te" ? "ప్రొఫైల్ సృష్టించండి" : "Create your profile"}
               </Link>
             </div>
           )}

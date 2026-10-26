@@ -17,14 +17,17 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MembershipRouteImport } from './routes/membership'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SuccessStoriesRouteImport } from './routes/success-stories'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminSectionRouteImport } from './routes/admin.$section'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardContactsRouteImport } from './routes/dashboard/contacts'
 import { Route as DashboardInterestsRouteImport } from './routes/dashboard/interests'
@@ -79,6 +82,11 @@ const MembershipRoute = MembershipRouteImport.update({
   path: '/membership',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -92,6 +100,11 @@ const RefundRoute = RefundRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -118,6 +131,11 @@ const AdminSectionRoute = AdminSectionRouteImport.update({
   id: '/$section',
   path: '/$section',
   getParentRoute: () => AdminRoute,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
@@ -194,14 +212,17 @@ export interface FileRoutesByFullPath {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
+  '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/admin/$section': typeof AdminSectionRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
   '/dashboard/matches': typeof DashboardMatchesRoute
@@ -224,14 +245,17 @@ export interface FileRoutesByTo {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
+  '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/admin/$section': typeof AdminSectionRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
   '/dashboard/matches': typeof DashboardMatchesRoute
@@ -256,14 +280,17 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
+  '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/admin/$section': typeof AdminSectionRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/dashboard/contacts': typeof DashboardContactsRoute
   '/dashboard/interests': typeof DashboardInterestsRoute
   '/dashboard/matches': typeof DashboardMatchesRoute
@@ -289,14 +316,17 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/membership'
+    | '/onboarding'
     | '/privacy'
     | '/refund'
     | '/register'
+    | '/reset-password'
     | '/search'
     | '/settings'
     | '/success-stories'
     | '/terms'
     | '/admin/$section'
+    | '/auth/callback'
     | '/dashboard/contacts'
     | '/dashboard/interests'
     | '/dashboard/matches'
@@ -319,14 +349,17 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/membership'
+    | '/onboarding'
     | '/privacy'
     | '/refund'
     | '/register'
+    | '/reset-password'
     | '/search'
     | '/settings'
     | '/success-stories'
     | '/terms'
     | '/admin/$section'
+    | '/auth/callback'
     | '/dashboard/contacts'
     | '/dashboard/interests'
     | '/dashboard/matches'
@@ -350,14 +383,17 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/membership'
+    | '/onboarding'
     | '/privacy'
     | '/refund'
     | '/register'
+    | '/reset-password'
     | '/search'
     | '/settings'
     | '/success-stories'
     | '/terms'
     | '/admin/$section'
+    | '/auth/callback'
     | '/dashboard/contacts'
     | '/dashboard/interests'
     | '/dashboard/matches'
@@ -382,13 +418,16 @@ export interface RootRouteChildren {
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   MembershipRoute: typeof MembershipRoute
+  OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
   SuccessStoriesRoute: typeof SuccessStoriesRoute
   TermsRoute: typeof TermsRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   ProfileIdRoute: typeof ProfileIdRoute
   ProfilesCodeRoute: typeof ProfilesCodeRoute
 }
@@ -451,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembershipRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -470,6 +516,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -506,6 +559,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/$section'
       preLoaderRoute: typeof AdminSectionRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -652,13 +712,16 @@ const rootRouteChildren: RootRouteChildren = {
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   MembershipRoute: MembershipRoute,
+  OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
   SuccessStoriesRoute: SuccessStoriesRoute,
   TermsRoute: TermsRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   ProfileIdRoute: ProfileIdRoute,
   ProfilesCodeRoute: ProfilesCodeRoute,
 }

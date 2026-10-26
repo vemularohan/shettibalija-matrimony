@@ -1,5 +1,7 @@
 export type DetailedProfileFormData = {
   // 1. Personal Details
+  profileFor?:
+    "myself" | "daughter" | "son" | "brother" | "sister" | "relative" | "friend" | string;
   fullName: string;
   dateOfBirth: string; // YYYY-MM-DD
   timeOfBirth: string;

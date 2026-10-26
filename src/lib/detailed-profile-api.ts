@@ -88,6 +88,18 @@ export async function saveDetailedMatrimonialProfile({
     declaration_accepted_at: formData.declarationAcceptedAt || new Date().toISOString(),
   };
 
+  if (!finalProfileId) {
+    const { data: existingProfile } = await supabase
+      .from("matrimonial_profiles")
+      .select("id")
+      .eq("owner_id", userId)
+      .maybeSingle();
+
+    if (existingProfile?.id) {
+      finalProfileId = existingProfile.id;
+    }
+  }
+
   if (finalProfileId) {
     // Try updating with extended payload first; fall back to base payload if remote schema doesn't have new columns
     const { error: extError } = await supabase
