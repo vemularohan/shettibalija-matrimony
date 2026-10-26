@@ -175,10 +175,12 @@ export function OnboardingPage() {
         if (photos && photos.length > 0) {
           const primary = photos.find((p) => p.is_primary) || photos[0];
           if (primary?.storage_path) {
-            const { data: publicUrlData } = supabase.storage
+            const { data: signedUrlData } = await supabase.storage
               .from(PHOTO_BUCKET)
-              .getPublicUrl(primary.storage_path);
-            setUploadedPhotoUrl(publicUrlData.publicUrl);
+              .createSignedUrl(primary.storage_path, 3600);
+            if (signedUrlData?.signedUrl) {
+              setUploadedPhotoUrl(signedUrlData.signedUrl);
+            }
           }
         }
       } catch (err) {
@@ -382,8 +384,10 @@ export function OnboardingPage() {
           .eq("id", effectiveProfileId);
       }
 
-      const { data: publicData } = supabase.storage.from(PHOTO_BUCKET).getPublicUrl(filePath);
-      setUploadedPhotoUrl(publicData.publicUrl);
+      const { data: signedData } = await supabase.storage
+        .from(PHOTO_BUCKET)
+        .createSignedUrl(filePath, 3600);
+      setUploadedPhotoUrl(signedData?.signedUrl ?? null);
       toast.success(
         isTe ? "ఫోటో విజయవంతంగా అప్‌లోడ్ చేయబడింది." : "Profile photo uploaded successfully!",
       );
