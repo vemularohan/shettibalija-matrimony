@@ -38,13 +38,18 @@ function SuccessStoriesPage() {
     queryKey: ["published-success-stories"],
     retry: false,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("success_stories")
-        .select("id, couple_names, city, marriage_year, story, photo_url, created_at")
-        .eq("is_published", true)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as Story[];
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data, error } = await (supabase as any)
+          .from("success_stories")
+          .select("id, couple_names, city, marriage_year, story, photo_url, created_at")
+          .eq("is_published", true)
+          .order("created_at", { ascending: false });
+        if (error) return [];
+        return (data ?? []) as Story[];
+      } catch {
+        return [];
+      }
     },
   });
 

@@ -141,6 +141,146 @@ export type Database = {
           },
         ];
       };
+      family_details: {
+        Row: {
+          brothers_count: number | null;
+          brothers_details: string | null;
+          created_at: string;
+          family_details: string | null;
+          family_location: string | null;
+          family_type: string | null;
+          father_name: string | null;
+          father_profession: string | null;
+          id: string;
+          mother_name: string | null;
+          mother_profession: string | null;
+          owner_id: string;
+          profile_id: string;
+          sisters_count: number | null;
+          sisters_details: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          brothers_count?: number | null;
+          brothers_details?: string | null;
+          created_at?: string;
+          family_details?: string | null;
+          family_location?: string | null;
+          family_type?: string | null;
+          father_name?: string | null;
+          father_profession?: string | null;
+          id?: string;
+          mother_name?: string | null;
+          mother_profession?: string | null;
+          owner_id: string;
+          profile_id: string;
+          sisters_count?: number | null;
+          sisters_details?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          brothers_count?: number | null;
+          brothers_details?: string | null;
+          created_at?: string;
+          family_details?: string | null;
+          family_location?: string | null;
+          family_type?: string | null;
+          father_name?: string | null;
+          father_profession?: string | null;
+          id?: string;
+          mother_name?: string | null;
+          mother_profession?: string | null;
+          owner_id?: string;
+          profile_id?: string;
+          sisters_count?: number | null;
+          sisters_details?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "family_details_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "family_details_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: true;
+            referencedRelation: "approved_matrimonial_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "family_details_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: true;
+            referencedRelation: "matrimonial_profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      horoscope_details: {
+        Row: {
+          created_at: string;
+          gothram: string | null;
+          horoscope_available: boolean | null;
+          horoscope_file_path: string | null;
+          id: string;
+          owner_id: string;
+          profile_id: string;
+          rashi: string | null;
+          star: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          gothram?: string | null;
+          horoscope_available?: boolean | null;
+          horoscope_file_path?: string | null;
+          id?: string;
+          owner_id: string;
+          profile_id: string;
+          rashi?: string | null;
+          star?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          gothram?: string | null;
+          horoscope_available?: boolean | null;
+          horoscope_file_path?: string | null;
+          id?: string;
+          owner_id?: string;
+          profile_id?: string;
+          rashi?: string | null;
+          star?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "horoscope_details_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "horoscope_details_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: true;
+            referencedRelation: "approved_matrimonial_profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "horoscope_details_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: true;
+            referencedRelation: "matrimonial_profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       interests: {
         Row: {
           created_at: string;
@@ -195,19 +335,33 @@ export type Database = {
       };
       matrimonial_profiles: {
         Row: {
+          about_me: string | null;
           age: number;
+          citizenship: string | null;
           city: string | null;
           community: string;
+          community_profession: string | null;
+          complexion: string | null;
           created_at: string;
-          verified_at: string | null;
-          last_active_at: string | null;
+          declaration_accepted: boolean | null;
+          declaration_accepted_at: string | null;
+          designation: string | null;
           display_name: string;
+          drinking_habit: string | null;
           education: string | null;
+          employment_type: string | null;
           family_summary: string | null;
+          food_habit: string | null;
           gender: string;
+          gothram: string | null;
+          has_profile_photo: boolean;
           height_cm: number | null;
+          horoscope_available: boolean | null;
           id: string;
+          is_demo: boolean;
+          job_location: string | null;
           languages: string[];
+          last_active_at: string | null;
           marital_status: string;
           moderation_status: string;
           mother_tongue: string;
@@ -215,25 +369,49 @@ export type Database = {
           occupation: string | null;
           owner_id: string;
           photo_visibility: string;
+          place_of_birth: string | null;
+          present_location: string | null;
           profile_code: string;
+          rashi: string | null;
+          salary_amount: string | null;
+          salary_currency: string | null;
+          salary_period: string | null;
+          smoking_habit: string | null;
+          star: string | null;
           state: string | null;
+          time_of_birth: string | null;
           updated_at: string;
+          verified_at: string | null;
           visibility: string;
         };
         Insert: {
+          about_me?: string | null;
           age: number;
+          citizenship?: string | null;
           city?: string | null;
           community?: string;
+          community_profession?: string | null;
+          complexion?: string | null;
           created_at?: string;
-          verified_at?: string | null;
-          last_active_at?: string | null;
+          declaration_accepted?: boolean | null;
+          declaration_accepted_at?: string | null;
+          designation?: string | null;
           display_name: string;
+          drinking_habit?: string | null;
           education?: string | null;
+          employment_type?: string | null;
           family_summary?: string | null;
+          food_habit?: string | null;
           gender: string;
+          gothram?: string | null;
+          has_profile_photo?: boolean;
           height_cm?: number | null;
+          horoscope_available?: boolean | null;
           id?: string;
+          is_demo?: boolean;
+          job_location?: string | null;
           languages?: string[];
+          last_active_at?: string | null;
           marital_status?: string;
           moderation_status?: string;
           mother_tongue?: string;
@@ -241,25 +419,49 @@ export type Database = {
           occupation?: string | null;
           owner_id: string;
           photo_visibility?: string;
+          place_of_birth?: string | null;
+          present_location?: string | null;
           profile_code?: string;
+          rashi?: string | null;
+          salary_amount?: string | null;
+          salary_currency?: string | null;
+          salary_period?: string | null;
+          smoking_habit?: string | null;
+          star?: string | null;
           state?: string | null;
+          time_of_birth?: string | null;
           updated_at?: string;
+          verified_at?: string | null;
           visibility?: string;
         };
         Update: {
+          about_me?: string | null;
           age?: number;
+          citizenship?: string | null;
           city?: string | null;
           community?: string;
+          community_profession?: string | null;
+          complexion?: string | null;
           created_at?: string;
-          verified_at?: string | null;
-          last_active_at?: string | null;
+          declaration_accepted?: boolean | null;
+          declaration_accepted_at?: string | null;
+          designation?: string | null;
           display_name?: string;
+          drinking_habit?: string | null;
           education?: string | null;
+          employment_type?: string | null;
           family_summary?: string | null;
+          food_habit?: string | null;
           gender?: string;
+          gothram?: string | null;
+          has_profile_photo?: boolean;
           height_cm?: number | null;
+          horoscope_available?: boolean | null;
           id?: string;
+          is_demo?: boolean;
+          job_location?: string | null;
           languages?: string[];
+          last_active_at?: string | null;
           marital_status?: string;
           moderation_status?: string;
           mother_tongue?: string;
@@ -267,9 +469,19 @@ export type Database = {
           occupation?: string | null;
           owner_id?: string;
           photo_visibility?: string;
+          place_of_birth?: string | null;
+          present_location?: string | null;
           profile_code?: string;
+          rashi?: string | null;
+          salary_amount?: string | null;
+          salary_currency?: string | null;
+          salary_period?: string | null;
+          smoking_habit?: string | null;
+          star?: string | null;
           state?: string | null;
+          time_of_birth?: string | null;
           updated_at?: string;
+          verified_at?: string | null;
           visibility?: string;
         };
         Relationships: [
@@ -402,6 +614,7 @@ export type Database = {
         Row: {
           created_at: string;
           education: string | null;
+          family_preferences: string | null;
           id: string;
           marital_statuses: string[];
           max_age: number | null;
@@ -411,13 +624,21 @@ export type Database = {
           occupation: string | null;
           other_preferences: string | null;
           owner_id: string;
+          preferred_citizenship: string | null;
+          preferred_community: string | null;
+          preferred_food_habit: string | null;
+          preferred_gothram: string | null;
           preferred_locations: string[];
+          preferred_rashi: string | null;
+          preferred_star: string | null;
           profile_id: string;
+          requirements_text: string | null;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
           education?: string | null;
+          family_preferences?: string | null;
           id?: string;
           marital_statuses?: string[];
           max_age?: number | null;
@@ -427,13 +648,21 @@ export type Database = {
           occupation?: string | null;
           other_preferences?: string | null;
           owner_id: string;
+          preferred_citizenship?: string | null;
+          preferred_community?: string | null;
+          preferred_food_habit?: string | null;
+          preferred_gothram?: string | null;
           preferred_locations?: string[];
+          preferred_rashi?: string | null;
+          preferred_star?: string | null;
           profile_id: string;
+          requirements_text?: string | null;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
           education?: string | null;
+          family_preferences?: string | null;
           id?: string;
           marital_statuses?: string[];
           max_age?: number | null;
@@ -443,8 +672,15 @@ export type Database = {
           occupation?: string | null;
           other_preferences?: string | null;
           owner_id?: string;
+          preferred_citizenship?: string | null;
+          preferred_community?: string | null;
+          preferred_food_habit?: string | null;
+          preferred_gothram?: string | null;
           preferred_locations?: string[];
+          preferred_rashi?: string | null;
+          preferred_star?: string | null;
           profile_id?: string;
+          requirements_text?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -704,6 +940,7 @@ export type Database = {
       };
       profiles: {
         Row: {
+          account_status: string;
           account_type: string;
           created_at: string;
           full_name: string;
@@ -713,6 +950,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          account_status?: string;
           account_type?: string;
           created_at?: string;
           full_name?: string;
@@ -722,6 +960,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          account_status?: string;
           account_type?: string;
           created_at?: string;
           full_name?: string;
@@ -828,45 +1067,6 @@ export type Database = {
           },
         ];
       };
-      success_stories: {
-        Row: {
-          city: string | null;
-          couple_names: string;
-          created_at: string;
-          id: string;
-          is_published: boolean;
-          marriage_year: number | null;
-          permission_confirmed: boolean;
-          photo_url: string | null;
-          story: string;
-          updated_at: string;
-        };
-        Insert: {
-          city?: string | null;
-          couple_names: string;
-          created_at?: string;
-          id?: string;
-          is_published?: boolean;
-          marriage_year?: number | null;
-          permission_confirmed?: boolean;
-          photo_url?: string | null;
-          story: string;
-          updated_at?: string;
-        };
-        Update: {
-          city?: string | null;
-          couple_names?: string;
-          created_at?: string;
-          id?: string;
-          is_published?: boolean;
-          marriage_year?: number | null;
-          permission_confirmed?: boolean;
-          photo_url?: string | null;
-          story?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       user_roles: {
         Row: {
           created_at: string;
@@ -892,132 +1092,97 @@ export type Database = {
     Views: {
       approved_matrimonial_profiles: {
         Row: {
-          about_me: string | null;
           age: number | null;
-          citizenship: string | null;
           city: string | null;
           community: string | null;
-          community_profession: string | null;
-          complexion: string | null;
           created_at: string | null;
-          designation: string | null;
           display_name: string | null;
-          drinking_habit: string | null;
           education: string | null;
-          employment_type: string | null;
           family_summary: string | null;
           food_habit: string | null;
           gender: string | null;
           gothram: string | null;
-          has_profile_photo: boolean | null;
           height_cm: number | null;
-          horoscope_available: boolean | null;
           id: string | null;
-          job_location: string | null;
+          is_demo: boolean | null;
           languages: string[] | null;
           last_active_at: string | null;
           marital_status: string | null;
           mother_tongue: string | null;
           native_place: string | null;
           occupation: string | null;
+          photo_url: string | null;
           photo_visibility: string | null;
-          place_of_birth: string | null;
-          present_location: string | null;
           profile_code: string | null;
           rashi: string | null;
-          smoking_habit: string | null;
           star: string | null;
           state: string | null;
-          time_of_birth: string | null;
-          updated_at: string | null;
           verified_at: string | null;
         };
         Insert: {
-          about_me?: string | null;
           age?: number | null;
-          citizenship?: string | null;
           city?: string | null;
           community?: string | null;
-          community_profession?: string | null;
-          complexion?: string | null;
           created_at?: string | null;
-          designation?: string | null;
           display_name?: string | null;
-          drinking_habit?: string | null;
           education?: string | null;
-          employment_type?: string | null;
           family_summary?: string | null;
           food_habit?: string | null;
           gender?: string | null;
           gothram?: string | null;
-          has_profile_photo?: boolean | null;
           height_cm?: number | null;
-          horoscope_available?: boolean | null;
           id?: string | null;
-          job_location?: string | null;
+          is_demo?: boolean | null;
           languages?: string[] | null;
           last_active_at?: string | null;
           marital_status?: string | null;
           mother_tongue?: string | null;
           native_place?: string | null;
           occupation?: string | null;
+          photo_url?: never;
           photo_visibility?: string | null;
-          place_of_birth?: string | null;
-          present_location?: string | null;
           profile_code?: string | null;
           rashi?: string | null;
-          smoking_habit?: string | null;
           star?: string | null;
           state?: string | null;
-          time_of_birth?: string | null;
-          updated_at?: string | null;
           verified_at?: string | null;
         };
         Update: {
-          about_me?: string | null;
           age?: number | null;
-          citizenship?: string | null;
           city?: string | null;
           community?: string | null;
-          community_profession?: string | null;
-          complexion?: string | null;
           created_at?: string | null;
-          designation?: string | null;
           display_name?: string | null;
-          drinking_habit?: string | null;
           education?: string | null;
-          employment_type?: string | null;
           family_summary?: string | null;
           food_habit?: string | null;
           gender?: string | null;
           gothram?: string | null;
-          has_profile_photo?: boolean | null;
           height_cm?: number | null;
-          horoscope_available?: boolean | null;
           id?: string | null;
-          job_location?: string | null;
+          is_demo?: boolean | null;
           languages?: string[] | null;
           last_active_at?: string | null;
           marital_status?: string | null;
           mother_tongue?: string | null;
           native_place?: string | null;
           occupation?: string | null;
+          photo_url?: never;
           photo_visibility?: string | null;
-          place_of_birth?: string | null;
-          present_location?: string | null;
           profile_code?: string | null;
           rashi?: string | null;
-          smoking_habit?: string | null;
           star?: string | null;
           state?: string | null;
-          time_of_birth?: string | null;
-          updated_at?: string | null;
           verified_at?: string | null;
         };
         Relationships: [];
       };
     };
     Functions: {
+      activate_free_membership: { Args: { p_plan_id: string }; Returns: string };
+      cleanup_all_demo_profiles: { Args: never; Returns: number };
+      cleanup_demo_profiles: { Args: never; Returns: number };
+      deactivate_account: { Args: never; Returns: undefined };
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"];
@@ -1025,32 +1190,18 @@ export type Database = {
         };
         Returns: boolean;
       };
-      is_staff: {
-        Args: {
-          _user_id: string;
-        };
-        Returns: boolean;
-      };
+      is_staff: { Args: { _user_id: string }; Returns: boolean };
       profile_photo_status: {
-        Args: {
-          p_profile_id: string;
-        };
+        Args: { p_profile_id: string };
         Returns: {
           has_photos: boolean;
           photo_visibility: string;
         }[];
       };
+      seed_demo_profile_batch: { Args: { p_batch: Json }; Returns: number };
       viewer_can_open_photos: {
-        Args: {
-          p_profile_id: string;
-        };
+        Args: { p_profile_id: string };
         Returns: boolean;
-      };
-      activate_free_membership: {
-        Args: {
-          p_plan_id: string;
-        };
-        Returns: string;
       };
     };
     Enums: {

@@ -24,6 +24,7 @@ export type PublicProfileCardData = {
   about_me?: string | null | undefined;
   gender?: string | null | undefined;
   horoscope_available?: boolean | undefined;
+  is_demo?: boolean | undefined;
 };
 
 export function ProfileCard({

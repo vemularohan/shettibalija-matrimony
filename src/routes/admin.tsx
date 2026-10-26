@@ -90,6 +90,7 @@ type ProfileRow = {
   moderation_status: string;
   visibility: string;
   verified_at: string | null;
+  is_demo?: boolean;
   created_at: string;
   last_active_at: string | null;
 };
@@ -421,7 +422,7 @@ function useAdminProfiles(search: string) {
       let query = supabase
         .from("matrimonial_profiles")
         .select(
-          "id, profile_code, display_name, gender, age, city, state, education, occupation, moderation_status, visibility, verified_at, created_at, last_active_at",
+          "id, profile_code, display_name, gender, age, city, state, education, occupation, moderation_status, visibility, verified_at, is_demo, created_at, last_active_at",
         )
         .order("created_at", { ascending: false })
         .limit(100);
@@ -450,6 +451,7 @@ function ProfilesTable({
   moderation?: boolean;
 }) {
   const queryClient = useQueryClient();
+  const [demoFilter, setDemoFilter] = useState<"all" | "real" | "demo">("all");
   const profilesQuery = useAdminProfiles(search);
   const moderationMutation = useMutation({
     mutationFn: async ({
@@ -496,12 +498,45 @@ function ProfilesTable({
     onError: (error) => toast.error(getErrorMessage(error, "Could not update verification.")),
   });
 
-  const rows = moderation
+  const rawRows = moderation
     ? (profilesQuery.data?.filter((profile) => profile.moderation_status !== "approved") ?? [])
     : (profilesQuery.data ?? []);
 
+  const rows = rawRows.filter((p) => {
+    if (demoFilter === "real") return !p.is_demo;
+    if (demoFilter === "demo") return !!p.is_demo;
+    return true;
+  });
+
+  const realCount = rawRows.filter((p) => !p.is_demo).length;
+  const demoCount = rawRows.filter((p) => !!p.is_demo).length;
+
   return (
     <AdminPanel title={title} description={description} count={rows.length}>
+      <div className="flex items-center gap-2 mb-4 text-xs">
+        <span className="text-[#6B6570] font-medium">Dataset:</span>
+        <button
+          type="button"
+          onClick={() => setDemoFilter("all")}
+          className={`px-2.5 py-1 rounded-md transition-colors ${demoFilter === "all" ? "bg-[#24103F] text-white font-medium" : "bg-white text-[#6B6570] border border-[#EBE6DE] hover:bg-stone-50"}`}
+        >
+          All ({rawRows.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setDemoFilter("real")}
+          className={`px-2.5 py-1 rounded-md transition-colors ${demoFilter === "real" ? "bg-[#24103F] text-white font-medium" : "bg-white text-[#6B6570] border border-[#EBE6DE] hover:bg-stone-50"}`}
+        >
+          Real Members ({realCount})
+        </button>
+        <button
+          type="button"
+          onClick={() => setDemoFilter("demo")}
+          className={`px-2.5 py-1 rounded-md transition-colors ${demoFilter === "demo" ? "bg-amber-700 text-white font-medium" : "bg-white text-amber-800 border border-amber-300 hover:bg-amber-50"}`}
+        >
+          Demo Profiles ({demoCount})
+        </button>
+      </div>
       {profilesQuery.isLoading ? <TableSkeleton /> : null}
       {profilesQuery.isError ? <QueryError onRetry={() => void profilesQuery.refetch()} /> : null}
       {!profilesQuery.isLoading && !profilesQuery.isError && rows.length === 0 ? (
@@ -528,7 +563,14 @@ function ProfilesTable({
               {rows.map((profile) => (
                 <tr key={profile.id}>
                   <td>
-                    <strong>{profile.display_name}</strong>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <strong>{profile.display_name}</strong>
+                      {profile.is_demo ? (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
+                          Demo
+                        </span>
+                      ) : null}
+                    </div>
                     <span>{profile.profile_code}</span>
                   </td>
                   <td>
@@ -797,16 +839,51 @@ function VerificationSection({ search }: { search: string }) {
     onError: (err) => toast.error(getErrorMessage(err, "Verification failed.")),
   });
 
-  const rows =
+  const [demoFilter, setDemoFilter] = useState<"all" | "real" | "demo">("all");
+  const rawRows =
     query.data?.filter(
       (profile) => !profile.verified_at && profile.moderation_status === "approved",
     ) ?? [];
+
+  const rows = rawRows.filter((p) => {
+    if (demoFilter === "real") return !p.is_demo;
+    if (demoFilter === "demo") return !!p.is_demo;
+    return true;
+  });
+
+  const realCount = rawRows.filter((p) => !p.is_demo).length;
+  const demoCount = rawRows.filter((p) => !!p.is_demo).length;
+
   return (
     <AdminPanel
       title="Verification queue"
       description="Approved profiles that do not have a recorded verification timestamp."
       count={rows.length}
     >
+      <div className="flex items-center gap-2 mb-4 text-xs">
+        <span className="text-[#6B6570] font-medium">Dataset:</span>
+        <button
+          type="button"
+          onClick={() => setDemoFilter("all")}
+          className={`px-2.5 py-1 rounded-md transition-colors ${demoFilter === "all" ? "bg-[#24103F] text-white font-medium" : "bg-white text-[#6B6570] border border-[#EBE6DE] hover:bg-stone-50"}`}
+        >
+          All ({rawRows.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setDemoFilter("real")}
+          className={`px-2.5 py-1 rounded-md transition-colors ${demoFilter === "real" ? "bg-[#24103F] text-white font-medium" : "bg-white text-[#6B6570] border border-[#EBE6DE] hover:bg-stone-50"}`}
+        >
+          Real Members ({realCount})
+        </button>
+        <button
+          type="button"
+          onClick={() => setDemoFilter("demo")}
+          className={`px-2.5 py-1 rounded-md transition-colors ${demoFilter === "demo" ? "bg-amber-700 text-white font-medium" : "bg-white text-amber-800 border border-amber-300 hover:bg-amber-50"}`}
+        >
+          Demo Profiles ({demoCount})
+        </button>
+      </div>
       {query.isLoading ? <TableSkeleton /> : null}
       {query.isError ? <QueryError onRetry={() => void query.refetch()} /> : null}
       {!query.isLoading && !query.isError && rows.length === 0 ? (
@@ -828,7 +905,14 @@ function VerificationSection({ search }: { search: string }) {
               {rows.map((row) => (
                 <tr key={row.id}>
                   <td>
-                    <strong>{row.display_name}</strong>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <strong>{row.display_name}</strong>
+                      {row.is_demo ? (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
+                          Demo
+                        </span>
+                      ) : null}
+                    </div>
                     <span>{row.profile_code}</span>
                   </td>
                   <td>{[row.city, row.state].filter(Boolean).join(", ") || "—"}</td>
@@ -1261,7 +1345,14 @@ function SimpleProfileRows({ rows }: { rows: ProfileRow[] }) {
           {rows.map((row) => (
             <tr key={row.id}>
               <td>
-                <strong>{row.display_name}</strong>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <strong>{row.display_name}</strong>
+                  {row.is_demo ? (
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
+                      Demo
+                    </span>
+                  ) : null}
+                </div>
                 <span>{row.profile_code}</span>
               </td>
               <td>{[row.city, row.state].filter(Boolean).join(", ") || "—"}</td>

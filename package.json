@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "seed": "node scripts/seed-demo-profiles.mjs",
+    "seed:demo": "node scripts/seed-demo-profiles.mjs",
     "seed:clean": "node scripts/cleanup-demo-profiles.mjs",
+    "cleanup:demo": "node scripts/cleanup-demo-profiles.mjs",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest"

@@ -1,5 +1,5 @@
 // Cleanup script for Shettibalija Matrimony demo profiles
-// Removes all profiles marked with is_demo: true without affecting real members.
+// Safely removes only demo data (is_demo: true & demo auth users) without affecting real members.
 
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
@@ -33,17 +33,28 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function cleanup() {
-  console.log("🧹 Cleaning up demo profiles (is_demo: true)...");
+  console.log("🧹 Cleaning up demo profiles (is_demo: true & demo auth accounts)...");
 
-  const { error, count } = await supabase
-    .from("matrimonial_profiles")
-    .delete({ count: "exact" })
-    .eq("is_demo", true);
+  try {
+    const { data, error } = await supabase.rpc("cleanup_all_demo_profiles");
+    if (error) {
+      console.warn("RPC note:", error.message, "- trying direct query cleanup...");
+      const { count, error: delError } = await supabase
+        .from("matrimonial_profiles")
+        .delete({ count: "exact" })
+        .eq("is_demo", true);
 
-  if (error) {
-    console.error("Cleanup error:", error.message);
-  } else {
-    console.log(`✅ Cleanup completed. Removed ${count ?? 0} demo profiles.`);
+      if (delError) {
+        console.error("Cleanup error:", delError.message);
+      } else {
+        console.log(`✅ Cleanup completed. Removed ${count ?? 0} demo profiles.`);
+      }
+    } else {
+      console.log(`✅ Cleanup completed successfully via RPC. Cleaned demo records.`);
+    }
+  } catch (err) {
+    console.error("Cleanup failed:", err.message);
+    process.exit(1);
   }
 }
 

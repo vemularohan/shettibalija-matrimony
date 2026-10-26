@@ -269,9 +269,16 @@ export function ProfileDetailPage() {
             {lang === "te" ? "అన్వేషణకు తిరిగి" : "Back to discovery"}
           </Link>
 
-          <span className="text-[11px] font-semibold tracking-[0.08em] text-[#087333]">
-            {SITE_NAME} · {profile.profile_code || "PROFILE"}
-          </span>
+          <div className="flex items-center gap-2">
+            {Boolean((profile as { is_demo?: boolean }).is_demo) && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
+                Demo Profile
+              </span>
+            )}
+            <span className="text-[11px] font-semibold tracking-[0.08em] text-[#087333]">
+              {SITE_NAME} · {profile.profile_code || "PROFILE"}
+            </span>
+          </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[340px_1fr]">
