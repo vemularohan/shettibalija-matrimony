@@ -13,17 +13,15 @@ export const getAuthorizedPhotos = createServerFn({ method: "POST" })
     const { getRequest } = await import("@tanstack/react-start/server");
     const { createClient } = await import("@supabase/supabase-js");
 
-    const SUPABASE_URL = process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"];
+    const SUPABASE_URL =
+      process.env["SUPABASE_URL"] ||
+      process.env["VITE_SUPABASE_URL"] ||
+      "https://taczcgaxegbmqasfmsiz.supabase.co";
     const PUBLISHABLE =
-      process.env["SUPABASE_PUBLISHABLE_KEY"] || process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
-    if (!SUPABASE_URL || !PUBLISHABLE) {
-      return {
-        allowed: false as const,
-        reason: "server_misconfigured",
-        hasPhotos: false,
-        photos: [] as const,
-      };
-    }
+      process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+      process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+      process.env["SUPABASE_ANON_KEY"] ||
+      "sb_publishable_6bOGcseIbIfq9QU8YZtDyw_3wjnrZUN";
 
     if (!data.profileId) {
       return {

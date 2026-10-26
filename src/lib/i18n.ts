@@ -368,9 +368,14 @@ export function setStoredLanguage(lang: Language): void {
 }
 
 export function useLanguage() {
-  const [lang, setLangState] = useState<Language>(() => getStoredLanguage());
+  const [lang, setLangState] = useState<Language>("en");
 
   useEffect(() => {
+    const stored = getStoredLanguage();
+    if (stored && stored !== "en") {
+      setLangState(stored);
+    }
+
     function onLangChange(event: Event) {
       const customEvent = event as CustomEvent<Language>;
       if (customEvent.detail) {
