@@ -9,12 +9,19 @@ import { SITE_NAME } from "@/lib/site";
 export const Route = createFileRoute("/auth/callback")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { returnTo?: string; error?: string; error_description?: string } => {
-    const res: { returnTo?: string; error?: string; error_description?: string } = {};
+  ): { returnTo?: string; error?: string; error_description?: string; code?: string } => {
+    const res: {
+      returnTo?: string;
+      error?: string;
+      error_description?: string;
+      code?: string;
+    } = {};
     if (typeof search["returnTo"] === "string") res.returnTo = search["returnTo"];
     if (typeof search["error"] === "string") res.error = search["error"];
     if (typeof search["error_description"] === "string")
       res.error_description = search["error_description"];
+    // PKCE flow: Supabase appends ?code=... to the redirectTo URL
+    if (typeof search["code"] === "string") res.code = search["code"];
     return res;
   },
   component: AuthCallbackPage,
@@ -25,12 +32,7 @@ export const Route = createFileRoute("/auth/callback")({
 
 function sanitizeReturnTo(raw: string | undefined): string | null {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return null;
-  if (
-    raw === "/login" ||
-    raw === "/register" ||
-    raw.startsWith("/auth/callback") ||
-    raw === "/onboarding"
-  ) {
+  if (raw === "/login" || raw === "/register" || raw.startsWith("/auth/callback")) {
     return null;
   }
   return raw;
@@ -61,15 +63,35 @@ function AuthCallbackPage() {
 
     async function handleAuthResolution() {
       try {
-        // Give Supabase client a moment to exchange code / parse hash tokens
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        let activeUser: import("@supabase/supabase-js").User | null = null;
 
-        let activeUser: import("@supabase/supabase-js").User | null = session?.user ?? null;
+        // PKCE flow: Supabase appends ?code=<auth_code> to the redirectTo URL.
+        // We must explicitly exchange it; getSession() alone won't do it in SSR apps.
+        const rawCode =
+          search.code ??
+          (typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("code")
+            : null);
+
+        if (rawCode) {
+          setStatusText(lang === "te" ? "ధృవీకరిస్తున్నాము..." : "Completing sign in...");
+          const { data, error } = await supabase.auth.exchangeCodeForSession(rawCode);
+          if (error) {
+            throw error;
+          }
+          activeUser = data.session?.user ?? null;
+        }
 
         if (!activeUser) {
-          // Wait briefly for auth listener to pick up session from OAuth redirect hash
+          // Implicit / hash flow fallback: check if session is already established
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          activeUser = session?.user ?? null;
+        }
+
+        if (!activeUser) {
+          // Last resort: wait briefly for auth listener to pick up session from hash tokens
           const sessionPromise = new Promise<import("@supabase/supabase-js").User | null>(
             (resolve) => {
               const timeout = setTimeout(() => resolve(null), 3500);
@@ -140,7 +162,7 @@ function AuthCallbackPage() {
     return () => {
       isMounted = false;
     };
-  }, [search.error, search.error_description, search.returnTo, lang, navigate]);
+  }, [search.error, search.error_description, search.returnTo, search.code, lang, navigate]);
 
   const isTe = lang === "te";
 
