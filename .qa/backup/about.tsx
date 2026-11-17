@@ -3,7 +3,7 @@ import { Users, Heart, Shield, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SITE_NAME, SITE_NAME_TE, COMMUNITY_NAME } from "@/lib/site";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 
 export const Route = createFileRoute("/about")({
   component: AboutPage,
@@ -24,7 +24,7 @@ function AboutPage() {
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14 flex flex-col items-center">
           <div className="mb-6 rounded-xl border border-[#E4DDD3] bg-white p-3.5 shadow-sm">
-            <ShettibalijaLogo size="xl" priority />
+            <SettibalijaLogo size="xl" priority />
           </div>
 
           <span className="text-xs font-semibold uppercase tracking-widest text-[#087333]">

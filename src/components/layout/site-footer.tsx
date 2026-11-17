@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { useLanguage } from "@/lib/i18n";
 
@@ -16,7 +16,7 @@ export function SiteFooter() {
   ];
 
   const communityLinks = [
-    { to: "/about", label: lang === "te" ? "శెట్టిబలిజ సంఘం" : "Shettibalija Sangham" },
+    { to: "/about", label: lang === "te" ? "సెట్టిబలిజ సంఘం" : "Settibalija Sangham" },
     { to: "/success-stories", label: lang === "te" ? "కుటుంబ కథలు" : "Family stories" },
     { to: "/help", label: lang === "te" ? "సహాయ కేంద్రం" : "Help centre" },
   ];
@@ -35,7 +35,7 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div className="max-w-sm">
             <div className="flex items-center gap-3">
-              <ShettibalijaLogo size="sm" linkToHome theme="dark" />
+              <SettibalijaLogo size="sm" linkToHome theme="dark" />
               <div>
                 <p className="text-sm font-bold tracking-tight">{SITE_NAME}</p>
                 <p className="sbm-telugu mt-0.5 text-[10px] text-[#D1A329]">{SITE_NAME_TE}</p>
@@ -43,8 +43,8 @@ export function SiteFooter() {
             </div>
             <p className="mt-5 text-[13px] leading-7 text-white/65">
               {lang === "te"
-                ? "శెట్టిబలిజ కుటుంబాల కోసం ఒక ప్రశాంతమైన, గోప్యతా కేంద్రిత వివాహ వేదిక. మన విలువలు, మన బంధాలు."
-                : "A calm, privacy-first matrimonial space for Shettibalija families. Built around shared roots, family involvement and considered introductions."}
+                ? "సెట్టిబలిజ కుటుంబాల కోసం ఒక ప్రశాంతమైన, గోప్యతా కేంద్రిత వివాహ వేదిక. మన విలువలు, మన బంధాలు."
+                : "A calm, privacy-first matrimonial space for Settibalija families. Built around shared roots, family involvement and considered introductions."}
             </p>
             <div className="mt-6">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/40">
@@ -69,10 +69,10 @@ export function SiteFooter() {
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <a
-              href="mailto:support@shettibalijamatrimony.org"
+              href="mailto:support@settibalijamatrimony.org"
               className="transition-colors hover:text-white"
             >
-              support@shettibalijamatrimony.org
+              support@settibalijamatrimony.org
             </a>
             <a
               href="https://commons.wikimedia.org/wiki/File:Rituals_Hindu_wedding_Telangana_south_India_culture.jpg"
@@ -86,7 +86,7 @@ export function SiteFooter() {
             </a>
             <span className="hidden h-3 w-px bg-white/15 sm:block" />
             <span className="flex items-center gap-1.5">
-              {lang === "te" ? "శెట్టిబలిజ సమాజం కోసం" : "For the Shettibalija community"}
+              {lang === "te" ? "సెట్టిబలిజ సమాజం కోసం" : "For the Settibalija community"}
               <Heart className="h-3 w-3 fill-[#D1A329] text-[#D1A329]" aria-hidden />
             </span>
           </div>

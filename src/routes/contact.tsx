@@ -11,14 +11,14 @@ import { useLanguage } from "@/lib/i18n";
 import { getErrorMessage } from "@/lib/errors";
 import { SITE_NAME } from "@/lib/site";
 
-const SUPPORT_EMAIL = "support@shettibalijamatrimony.org";
+const SUPPORT_EMAIL = "support@settibalijamatrimony.org";
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
   head: () => ({
     meta: [
       { title: `Contact Us | ${SITE_NAME}` },
-      { name: "description", content: "Contact the Shettibalija Matrimony community support team" },
+      { name: "description", content: "Contact the Settibalija Matrimony community support team" },
     ],
   }),
 });
@@ -233,7 +233,7 @@ export function ContactPage() {
               <p className="mt-1 text-xs text-[#526357]">
                 {isTe
                   ? "మా సహాయక బృందం సాధారణంగా 24 గంటలలోపు ప్రతిస్పందిస్తుంది."
-                  : "Our community support team will review this and respond to your email. You can also write to support@shettibalijamatrimony.org referencing this code."}
+                  : "Our community support team will review this and respond to your email. You can also write to support@settibalijamatrimony.org referencing this code."}
               </p>
             </div>
           ) : null}

@@ -56,10 +56,10 @@ export function LegalPage({
               Still unsure?
             </p>
             <a
-              href="mailto:support@shettibalijamatrimony.org"
+              href="mailto:support@settibalijamatrimony.org"
               className="mt-2 block break-words text-[11px] font-semibold text-[#087333] underline"
             >
-              support@shettibalijamatrimony.org
+              support@settibalijamatrimony.org
             </a>
           </div>
         </aside>

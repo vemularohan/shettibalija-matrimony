@@ -1,5 +1,5 @@
 /**
- * Shettibalija Matrimony — Marketing & Editorial Couple Imagery
+ * Settibalija Matrimony — Marketing & Editorial Couple Imagery
  *
  * ============================================================================
  * ARCHITECTURAL RULE — STRICT DISTINCTION

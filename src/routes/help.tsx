@@ -12,7 +12,7 @@ export const Route = createFileRoute("/help")({
       {
         name: "description",
         content:
-          "Answers about creating a profile, privacy, membership and safety on Shettibalija Matrimony.",
+          "Answers about creating a profile, privacy, membership and safety on Settibalija Matrimony.",
       },
     ],
   }),
@@ -77,8 +77,8 @@ const HELP_FAQS = [
     id: "profile-review",
     q: "How does profile review work?",
     qTe: "ప్రొఫైల్ సమీక్ష ప్రక్రియ ఎలా జరుగుతుంది?",
-    a: "Every new profile and major update goes to the community moderation queue. Administrators check for completeness, respectful language, and accurate Shettibalija community details before approving it to appear in member discovery.",
-    aTe: "ప్రతి కొత్త ప్రొఫైల్ మరియు ముఖ్యమైన మార్పు సమాజ నిర్వాహకుల పరిశీలనకు వెళ్తుంది. వివరాల సమగ్రత, సరైన భాష మరియు శెట్టిబలిజ సమాజ నిబంధనలను నిర్ధారించిన తర్వాత మాత్రమే అన్వేషణలో ప్రదర్శించబడుతుంది.",
+    a: "Every new profile and major update goes to the community moderation queue. Administrators check for completeness, respectful language, and accurate Settibalija community details before approving it to appear in member discovery.",
+    aTe: "ప్రతి కొత్త ప్రొఫైల్ మరియు ముఖ్యమైన మార్పు సమాజ నిర్వాహకుల పరిశీలనకు వెళ్తుంది. వివరాల సమగ్రత, సరైన భాష మరియు సెట్టిబలిజ సమాజ నిబంధనలను నిర్ధారించిన తర్వాత మాత్రమే అన్వేషణలో ప్రదర్శించబడుతుంది.",
   },
   {
     id: "contact-privacy",
@@ -140,8 +140,8 @@ const HELP_FAQS = [
     id: "contact-support",
     q: "How do I contact customer support?",
     qTe: "సహాయక బృందాన్ని ఎలా సంప్రదించాలి?",
-    a: "You can submit an inquiry through our Contact page to receive a ticket reference code (e.g. SBM-REQ-XXXX), or email us directly at support@shettibalijamatrimony.org. Our community desk responds within 24–48 hours.",
-    aTe: "మీరు మా Contact పేజీ ద్వారా విచారణను సమర్పించి రిఫరెన్స్ కోడ్ పొందవచ్చు, లేదా support@shettibalijamatrimony.org కు నేరుగా ఇమెయిల్ చేయవచ్చు. మా బృందం 24–48 గంటల్లో ప్రతిస్పందిస్తుంది.",
+    a: "You can submit an inquiry through our Contact page to receive a ticket reference code (e.g. SBM-REQ-XXXX), or email us directly at support@settibalijamatrimony.org. Our community desk responds within 24–48 hours.",
+    aTe: "మీరు మా Contact పేజీ ద్వారా విచారణను సమర్పించి రిఫరెన్స్ కోడ్ పొందవచ్చు, లేదా support@settibalijamatrimony.org కు నేరుగా ఇమెయిల్ చేయవచ్చు. మా బృందం 24–48 గంటల్లో ప్రతిస్పందిస్తుంది.",
   },
 ];
 
@@ -208,10 +208,10 @@ function HelpPage() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <a
-                href="mailto:support@shettibalijamatrimony.org"
+                href="mailto:support@settibalijamatrimony.org"
                 className="sbm-link-arrow text-[12px]"
               >
-                support@shettibalijamatrimony.org
+                support@settibalijamatrimony.org
                 <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </div>

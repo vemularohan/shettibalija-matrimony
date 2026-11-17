@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useAuth } from "@/hooks/use-auth";
 import { useUnreadNotificationCount } from "@/hooks/use-member-data";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { useLanguage } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -63,7 +63,7 @@ export function SiteHeader() {
           to="/"
           className="flex shrink-0 items-center gap-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D1A329] focus-visible:ring-offset-2"
         >
-          <ShettibalijaLogo size="sm" priority />
+          <SettibalijaLogo size="sm" priority />
           <span className="flex flex-col leading-none">
             <span className="font-sans text-[13px] font-bold tracking-[-0.015em] text-[#242024]">
               {SITE_NAME}
@@ -168,7 +168,7 @@ export function SiteHeader() {
 
               <div className="flex items-center justify-between border-b border-[#ded5c8] px-5 py-4">
                 <div className="flex items-center gap-2.5">
-                  <ShettibalijaLogo size="sm" priority />
+                  <SettibalijaLogo size="sm" priority />
                   <div>
                     <p className="text-sm font-bold text-[#242024]">{SITE_NAME}</p>
                     <p className="sbm-telugu text-[9px] text-[#a37d1c]">{SITE_NAME_TE}</p>

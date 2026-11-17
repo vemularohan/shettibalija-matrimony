@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { ArrowRight, Lock, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { useLanguage } from "@/lib/i18n";
 import { SITE_NAME } from "@/lib/site";
 import { supabase } from "@/integrations/supabase/client";
@@ -92,7 +92,7 @@ function AuthGate({ children, admin }: { children: ReactNode; admin?: boolean })
           </div>
 
           <div className="border border-[#ded5c8] bg-white p-6 sm:p-8">
-            <ShettibalijaLogo size="md" linkToHome />
+            <SettibalijaLogo size="md" linkToHome />
             <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#a37d1c]">
               {SITE_NAME}
             </p>
@@ -179,7 +179,7 @@ function AdminLogin() {
     <div className="sbm-page flex min-h-[70vh] items-center bg-[#FAF8F3]">
       <div className="sbm-container w-full max-w-lg py-14 sm:py-20">
         <div className="border border-[#ded5c8] bg-white p-6 shadow-sm sm:p-9">
-          <ShettibalijaLogo size="md" linkToHome />
+          <SettibalijaLogo size="md" linkToHome />
           <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-[#a37d1c]">
             {SITE_NAME} · Administration
           </p>

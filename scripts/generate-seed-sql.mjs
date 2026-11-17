@@ -11,7 +11,7 @@ function esc(val) {
   return `'${val.replace(/'/g, "''")}'`;
 }
 
-let sql = `-- Full Seed of 50 Demo Members for Shettibalija Matrimony
+let sql = `-- Full Seed of 50 Demo Members for Settibalija Matrimony
 create or replace function public.seed_all_demo_profiles()
 returns table(inserted_count integer, approved_count integer)
 language plpgsql
@@ -83,7 +83,7 @@ for (const p of DEMO_PROFILES_DATA) {
     ${p.age},
     ${p.height_cm},
     ${esc(p.marital_status)},
-    'Shettibalija',
+    'Settibalija',
     'Telugu',
     ${esc(p.native_place)},
     ${esc(p.present_location)},

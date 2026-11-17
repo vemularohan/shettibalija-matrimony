@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { useLanguage } from "@/lib/i18n";
 
 export const MEMBER_NAV_ITEMS = [
@@ -36,10 +36,10 @@ export function MemberSidebar({ className }: { className?: string }) {
   return (
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center gap-3 border-b border-[#ded5c8] px-2 pb-4">
-        <ShettibalijaLogo size="sm" linkToHome />
+        <SettibalijaLogo size="sm" linkToHome />
         <div className="min-w-0">
           <p className="truncate font-serif text-sm font-semibold leading-tight text-[#24103F]">
-            Shettibalija
+            Settibalija
           </p>
           <p className="sbm-telugu truncate text-[10px] text-[#087333]">సభ్యుల పోర్టల్</p>
         </div>

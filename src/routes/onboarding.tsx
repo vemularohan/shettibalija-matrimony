@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
@@ -402,7 +402,7 @@ export function OnboardingPage() {
     return (
       <div className="flex min-h-[75vh] items-center justify-center bg-[#FAF8F3]">
         <div className="text-center">
-          <ShettibalijaLogo size="md" linkToHome />
+          <SettibalijaLogo size="md" linkToHome />
           <div className="mx-auto mt-6 flex h-10 w-10 items-center justify-center text-[#D1A329]">
             <Loader2 className="h-6 w-6 animate-spin" />
           </div>
@@ -418,7 +418,7 @@ export function OnboardingPage() {
     return (
       <div className="flex min-h-[80vh] items-center justify-center bg-[#FAF8F3] px-4 py-16">
         <div className="w-full max-w-xl border border-[#ded5c8] bg-white p-8 text-center shadow-sm sm:p-12">
-          <ShettibalijaLogo size="md" linkToHome />
+          <SettibalijaLogo size="md" linkToHome />
           <div className="mx-auto mt-7 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-[#087333]">
             <CheckCircle2 size={36} />
           </div>
@@ -435,16 +435,18 @@ export function OnboardingPage() {
           ) : null}
           <p className="mx-auto mt-4 max-w-md text-[13px] leading-6 text-[#6B6570]">
             {isTe
-              ? "మీ మ్యాట్రిమోనీ ప్రొఫైల్ సేవ్ చేయబడింది. సమీక్ష తర్వాత సమాజ అన్వేషణలో ప్రదర్శించబడుతుంది. ఇప్పుడు మీరు మ్యాచ్‌లను పరిశీలించవచ్చు."
-              : "Your matrimonial profile has been safely stored and submitted for community review. In the meantime, you can begin exploring matches."}
+              ? "మీ మ్యాట్రిమోనీ ప్రొఫైల్ సేవ్ చేయబడింది. మీ సభ్యత్వాన్ని సక్రియం చేయడానికి మరియు సంబంధాలను సంప్రదించడానికి ఒకేసారి రిజిస్ట్రేషన్ రుసుము (₹999) చెల్లించండి."
+              : "Your matrimonial profile has been safely saved. Complete your one-time registration fee payment of ₹999 to activate your lifetime membership and contact matches."}
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link to="/dashboard" className="sbm-button sbm-button--primary">
-              <span>{isTe ? "డ్యాష్‌బోర్డ్‌కు వెళ్లండి" : "Go to Dashboard"}</span>
+            <Link to="/payment" className="sbm-button sbm-button--primary">
+              <span>
+                {isTe ? "₹999 చెల్లించి సభ్యత్వం సక్రియం చేయండి" : "Pay ₹999 & Activate Membership"}
+              </span>
               <ArrowRight size={17} />
             </Link>
-            <Link to="/search" className="sbm-button sbm-button--outline">
-              <span>{isTe ? "మ్యాచ్‌లను చూడండి" : "Discover Matches"}</span>
+            <Link to="/dashboard" className="sbm-button sbm-button--outline">
+              <span>{isTe ? "డ్యాష్‌బోర్డ్‌కు వెళ్లండి" : "Go to Dashboard"}</span>
             </Link>
           </div>
         </div>
@@ -460,7 +462,7 @@ export function OnboardingPage() {
       <header className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="flex items-center justify-between border-b border-[#ded5c8] pb-5">
           <div className="flex items-center gap-3">
-            <ShettibalijaLogo size="sm" linkToHome />
+            <SettibalijaLogo size="sm" linkToHome />
             <div>
               <p className="font-serif text-sm font-bold text-[#24103F]">
                 {isTe ? SITE_NAME_TE : SITE_NAME}
@@ -1538,8 +1540,8 @@ export function OnboardingPage() {
                 </p>
                 <p className="mt-2 text-[#6B6570]">
                   {isTe
-                    ? "నేను శెట్టిబలిజ కమ్యూనిటీ మ్యాట్రిమోనీ వేదికపై నమోదు చేస్తున్న వివరాలన్నీ సత్యమైనవని, సరైనవని ప్రమాణపూర్వకంగా ప్రకటిస్తున్నాను. నా కుటుంబ సభ్యుల అంగీకారంతోనే ఈ ప్రొఫైల్ వివరాలు సమర్పిస్తున్నాను. ఇతర సభ్యుల గోప్యతను, గౌరవాన్ని కాపాడతానని హామీ ఇస్తున్నాను."
-                    : "I hereby solemnly declare that all information furnished in this matrimonial profile is true, correct, and complete to the best of my knowledge and belief. I affirm that this profile is being submitted with proper family consent for the sole purpose of genuine matrimonial matchmaking within the Shettibalija community. I agree to respect the privacy, sanctity and safety of other members."}
+                    ? "నేను సెట్టిబలిజ కమ్యూనిటీ మ్యాట్రిమోనీ వేదికపై నమోదు చేస్తున్న వివరాలన్నీ సత్యమైనవని, సరైనవని ప్రమాణపూర్వకంగా ప్రకటిస్తున్నాను. నా కుటుంబ సభ్యుల అంగీకారంతోనే ఈ ప్రొఫైల్ వివరాలు సమర్పిస్తున్నాను. ఇతర సభ్యుల గోప్యతను, గౌరవాన్ని కాపాడతానని హామీ ఇస్తున్నాను."
+                    : "I hereby solemnly declare that all information furnished in this matrimonial profile is true, correct, and complete to the best of my knowledge and belief. I affirm that this profile is being submitted with proper family consent for the sole purpose of genuine matrimonial matchmaking within the Settibalija community. I agree to respect the privacy, sanctity and safety of other members."}
                 </p>
               </div>
 

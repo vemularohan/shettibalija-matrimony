@@ -24,7 +24,7 @@ import {
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { AdminGuard } from "@/components/shared/require-auth";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -154,7 +154,7 @@ function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void })
       ) : null}
       <aside className={`admin-portal__sidebar ${open ? "is-open" : ""}`}>
         <div className="admin-portal__brand">
-          <ShettibalijaLogo size="sm" theme="dark" priority />
+          <SettibalijaLogo size="sm" theme="dark" priority />
           <div>
             <strong>{SITE_NAME}</strong>
             <span>{SITE_NAME_TE}</span>
@@ -265,7 +265,7 @@ function AdminPreviewSection({ section, search }: { section: AdminSection; searc
           <div>
             <span className="admin-portal__kicker">Today</span>
             <h2>Good morning, Admin.</h2>
-            <p>Here is what needs your attention across Shettibalija Matrimony.</p>
+            <p>Here is what needs your attention across Settibalija Matrimony.</p>
           </div>
           <Button variant="outline">Refresh</Button>
         </div>
@@ -1041,38 +1041,214 @@ function MembershipSection({ search }: { search: string }) {
   );
 }
 
+type PaymentRecord = {
+  id: string;
+  owner_id: string;
+  amount_paise: number;
+  currency: string;
+  status: string;
+  order_id: string | null;
+  gateway_payment_id: string | null;
+  verified_at?: string | null;
+  created_at: string;
+  membership_id?: string | null;
+};
+
 function PaymentsSection({ search }: { search: string }) {
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
   const query = useQuery({
-    queryKey: ["admin-payments", search],
+    queryKey: ["admin-payments"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("payments")
         .select(
-          "id, owner_id, amount_paise, currency, status, order_id, gateway_payment_id, created_at",
+          "id, owner_id, amount_paise, currency, status, order_id, gateway_payment_id, created_at, membership_id",
         )
         .order("created_at", { ascending: false })
-        .limit(100);
+        .limit(200);
       if (error) throw error;
-      return (data ?? []).filter(
-        (row) =>
-          !search || row.status.includes(search.toLowerCase()) || row.order_id?.includes(search),
-      );
+      return (data ?? []) as PaymentRecord[];
     },
   });
+
+  const membershipsCountQuery = useQuery({
+    queryKey: ["admin-active-memberships-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("memberships")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active");
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const allRecords = query.data ?? [];
+
+  // Metrics computation from trusted records
+  const successfulRecords = allRecords.filter((r) => r.status === "successful");
+  const successfulCount = successfulRecords.length;
+  const totalRevenuePaise = successfulRecords.reduce((sum, r) => sum + r.amount_paise, 0);
+  const pendingCount = allRecords.filter(
+    (r) => r.status === "pending" || r.status === "processing",
+  ).length;
+  const failedCount = allRecords.filter((r) => r.status === "failed").length;
+  const refundedCount = allRecords.filter(
+    (r) => r.status === "refunded" || r.status === "refund_pending",
+  ).length;
+  const activeMembershipsCount = membershipsCountQuery.data ?? successfulCount;
+
+  // Filter & Search
+  const filteredRecords = allRecords.filter((r) => {
+    if (statusFilter !== "all" && r.status !== statusFilter) return false;
+    if (search.trim()) {
+      const term = search.toLowerCase();
+      const matchesSearch =
+        r.owner_id.toLowerCase().includes(term) ||
+        (r.order_id && r.order_id.toLowerCase().includes(term)) ||
+        (r.gateway_payment_id && r.gateway_payment_id.toLowerCase().includes(term)) ||
+        r.status.toLowerCase().includes(term);
+      if (!matchesSearch) return false;
+    }
+    return true;
+  });
+
   return (
-    <RecordTable
-      title="Payments"
-      description="Provider-backed payment records. Card information is never stored here."
-      query={query}
-      columns={["Member", "Amount", "Status", "Reference", "Created"]}
-      renderRow={(row) => [
-        <span className="admin-mono">{row.owner_id.slice(0, 8)}…</span>,
-        formatCurrency(row.amount_paise),
-        <StatusBadge value={row.status} />,
-        <span className="admin-mono">{row.order_id ?? row.gateway_payment_id ?? "—"}</span>,
-        formatDate(row.created_at),
-      ]}
-    />
+    <div className="space-y-6">
+      {/* Financial Summary Metrics Bar */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="rounded border border-[#ded5c8] bg-white p-4">
+          <span className="text-[11px] font-medium text-[#6B6570]">Collected Revenue</span>
+          <p className="mt-1 font-serif text-xl font-bold text-[#087333]">
+            {formatCurrency(totalRevenuePaise)}
+          </p>
+          <span className="text-[10px] text-[#087333] font-semibold">Verified INR</span>
+        </div>
+
+        <div className="rounded border border-[#ded5c8] bg-white p-4">
+          <span className="text-[11px] font-medium text-[#6B6570]">Successful Fees</span>
+          <p className="mt-1 font-serif text-xl font-bold text-[#24103F]">{successfulCount}</p>
+          <span className="text-[10px] text-[#6B6570]">₹999 Registrations</span>
+        </div>
+
+        <div className="rounded border border-[#ded5c8] bg-white p-4">
+          <span className="text-[11px] font-medium text-[#6B6570]">Active Members</span>
+          <p className="mt-1 font-serif text-xl font-bold text-[#087333]">
+            {activeMembershipsCount}
+          </p>
+          <span className="text-[10px] text-[#087333]">Lifetime Status</span>
+        </div>
+
+        <div className="rounded border border-[#ded5c8] bg-white p-4">
+          <span className="text-[11px] font-medium text-[#6B6570]">Pending Payments</span>
+          <p className="mt-1 font-serif text-xl font-bold text-amber-700">{pendingCount}</p>
+          <span className="text-[10px] text-amber-700">Awaiting Gateway</span>
+        </div>
+
+        <div className="rounded border border-[#ded5c8] bg-white p-4">
+          <span className="text-[11px] font-medium text-[#6B6570]">Failed Payments</span>
+          <p className="mt-1 font-serif text-xl font-bold text-rose-700">{failedCount}</p>
+          <span className="text-[10px] text-rose-700">Abandoned / Error</span>
+        </div>
+
+        <div className="rounded border border-[#ded5c8] bg-white p-4">
+          <span className="text-[11px] font-medium text-[#6B6570]">Refunds</span>
+          <p className="mt-1 font-serif text-xl font-bold text-[#6B6570]">{refundedCount}</p>
+          <span className="text-[10px] text-[#6B6570]">Returned / Closed</span>
+        </div>
+      </div>
+
+      <AdminPanel
+        title="Registration Payments & Transactions"
+        description="Every member pays a one-time registration fee of ₹999. Only server-verified transactions activate memberships."
+        count={filteredRecords.length}
+      >
+        {/* Status Filter Tabs */}
+        <div className="flex flex-wrap items-center gap-2 mb-4 text-xs">
+          <span className="text-[#6B6570] font-medium">Status Filter:</span>
+          {["all", "successful", "pending", "processing", "failed", "refunded"].map((status) => (
+            <button
+              key={status}
+              type="button"
+              onClick={() => setStatusFilter(status)}
+              className={`px-2.5 py-1 rounded-md transition-colors capitalize ${
+                statusFilter === status
+                  ? "bg-[#24103F] text-white font-medium"
+                  : "bg-white text-[#6B6570] border border-[#EBE6DE] hover:bg-stone-50"
+              }`}
+            >
+              {status}{" "}
+              {status === "all"
+                ? `(${allRecords.length})`
+                : `(${allRecords.filter((r) => r.status === status).length})`}
+            </button>
+          ))}
+        </div>
+
+        {query.isLoading ? <TableSkeleton /> : null}
+        {query.isError ? <QueryError onRetry={() => void query.refetch()} /> : null}
+
+        {!query.isLoading && !query.isError && filteredRecords.length === 0 ? (
+          <EmptyAdminState message="No registration payment records found matching this filter." />
+        ) : null}
+
+        {filteredRecords.length > 0 ? (
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Amount</th>
+                  <th>Payment Status</th>
+                  <th>Order Reference</th>
+                  <th>Gateway Payment ID</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRecords.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <span className="admin-mono font-semibold text-[#24103F]">
+                        {item.owner_id.slice(0, 8)}…
+                      </span>
+                    </td>
+                    <td>
+                      <span className="font-bold text-[#24103F]">
+                        {formatCurrency(item.amount_paise)}
+                      </span>
+                    </td>
+                    <td>
+                      <StatusBadge value={item.status} />
+                    </td>
+                    <td>
+                      <span className="admin-mono text-xs">{item.order_id || "—"}</span>
+                    </td>
+                    <td>
+                      <span className="admin-mono text-xs">{item.gateway_payment_id || "—"}</span>
+                    </td>
+                    <td>
+                      <span className="text-xs text-[#6B6570]">{formatDate(item.created_at)}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+
+        {/* Security & Audit Notice */}
+        <div className="mt-4 border-t border-[#ded5c8] pt-3 text-[11px] text-[#6B6570] flex items-center gap-2">
+          <Shield size={14} className="text-[#087333] shrink-0" />
+          <span>
+            Financial Integrity: All registration fee payments are verified via cryptographic
+            signatures. Manual arbitrary payment approvals are restricted to maintain audit
+            consistency.
+          </span>
+        </div>
+      </AdminPanel>
+    </div>
   );
 }
 

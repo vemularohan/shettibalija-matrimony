@@ -67,7 +67,7 @@ export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
       { title: `Search Profiles | ${SITE_NAME}` },
-      { name: "description", content: "Search reviewed Shettibalija matrimony profiles" },
+      { name: "description", content: "Search reviewed Settibalija matrimony profiles" },
     ],
   }),
 });
@@ -400,14 +400,14 @@ function SearchPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <span className="text-[11px] font-semibold tracking-wider uppercase text-[#087333]">
-                Shettibalija Matrimony Registry
+                Settibalija Matrimony Registry
               </span>
               <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#24103F]">
                 {lang === "te" ? "మ్యాచ్‌ల శోధన" : "Search Profiles"}
               </h1>
               <p className="text-xs text-[#756A61] mt-1">
                 {lang === "te"
-                  ? "శెట్టిబలిజ కమ్యూనిటీలో సమీక్షించిన వధువు/వరుల ప్రొఫైల్‌లు"
+                  ? "సెట్టిబలిజ కమ్యూనిటీలో సమీక్షించిన వధువు/వరుల ప్రొఫైల్‌లు"
                   : "Explore reviewed matrimonial profiles with detailed cultural, education & horoscope criteria"}
               </p>
             </div>
@@ -866,8 +866,8 @@ function SearchPage() {
                         actions.isInterestsError
                       ? "Profile results are unavailable"
                       : lang === "te"
-                        ? `శెట్టిబలిజ సమాజంలో ${profilesQuery.data?.count ?? 0} ప్రొఫైల్స్`
-                        : `${profilesQuery.data?.count ?? 0} profiles from the Shettibalija community`}
+                        ? `సెట్టిబలిజ సమాజంలో ${profilesQuery.data?.count ?? 0} ప్రొఫైల్స్`
+                        : `${profilesQuery.data?.count ?? 0} profiles from the Settibalija community`}
                 </p>
               </div>
 
@@ -1188,7 +1188,7 @@ function SearchPage() {
                         {/* Action Bar */}
                         <div className="search-result-actions pt-2 border-t border-[#E4DDD3]/60 flex flex-wrap items-center justify-between gap-2.5">
                           <span className="text-[11px] text-[#B0A8B8]">
-                            Community: Shettibalija
+                            Community: Settibalija
                           </span>
 
                           <div className="flex items-center gap-2">

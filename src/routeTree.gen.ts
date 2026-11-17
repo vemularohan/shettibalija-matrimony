@@ -18,6 +18,7 @@ import { Route as HelpRouteImport } from './routes/help'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -85,6 +86,11 @@ const MembershipRoute = MembershipRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/onboarding': typeof OnboardingRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/register': typeof RegisterRoute
@@ -246,6 +253,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/onboarding': typeof OnboardingRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/register': typeof RegisterRoute
@@ -281,6 +289,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/onboarding': typeof OnboardingRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/register': typeof RegisterRoute
@@ -317,6 +326,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/membership'
     | '/onboarding'
+    | '/payment'
     | '/privacy'
     | '/refund'
     | '/register'
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/membership'
     | '/onboarding'
+    | '/payment'
     | '/privacy'
     | '/refund'
     | '/register'
@@ -384,6 +395,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/membership'
     | '/onboarding'
+    | '/payment'
     | '/privacy'
     | '/refund'
     | '/register'
@@ -419,6 +431,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MembershipRoute: typeof MembershipRoute
   OnboardingRoute: typeof OnboardingRoute
+  PaymentRoute: typeof PaymentRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
   RegisterRoute: typeof RegisterRoute
@@ -495,6 +508,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -713,6 +733,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MembershipRoute: MembershipRoute,
   OnboardingRoute: OnboardingRoute,
+  PaymentRoute: PaymentRoute,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
   RegisterRoute: RegisterRoute,

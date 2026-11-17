@@ -9,7 +9,7 @@ export const Route = createFileRoute("/privacy")({
       { title: `Privacy Policy | ${SITE_NAME}` },
       {
         name: "description",
-        content: "Privacy policy and member protection on Shettibalija Matrimony",
+        content: "Privacy policy and member protection on Settibalija Matrimony",
       },
     ],
   }),
@@ -79,7 +79,7 @@ function PrivacyPage() {
           body: (
             <p>
               Members may update, hide or request deletion of their profile through their dashboard
-              settings, or by writing to support@shettibalijamatrimony.org from their registered
+              settings, or by writing to support@settibalijamatrimony.org from their registered
               email address. We will explain what will be removed and any records we are required to
               retain.
             </p>

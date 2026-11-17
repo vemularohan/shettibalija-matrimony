@@ -4,7 +4,7 @@ import path from "node:path";
 import { SITE_LOGO_URL, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import { TRANSLATIONS } from "@/lib/i18n";
 
-describe("Shettibalija Sangham Logo & Branding Verification", () => {
+describe("Settibalija Sangham Logo & Branding Verification", () => {
   it("has the official logo files present in public", () => {
     const publicLogo = path.resolve(process.cwd(), "public/logo.png");
     const publicMatrimonyLogo = path.resolve(process.cwd(), "public/matrimonylogo.png");
@@ -20,18 +20,18 @@ describe("Shettibalija Sangham Logo & Branding Verification", () => {
   });
 
   it("contains bilingual site titles and subtitles in i18n", () => {
-    expect(TRANSLATIONS.en.siteName).toBe("Shettibalija Matrimony");
+    expect(TRANSLATIONS.en.siteName).toBe("Settibalija Matrimony");
     expect(TRANSLATIONS.en.siteSubtitle).toBe(
-      "Find your perfect life partner within the Shettibalija community.",
+      "Find your perfect life partner within the Settibalija community.",
     );
 
-    expect(TRANSLATIONS.te.siteName).toBe("శెట్టిబలిజ మ్యాట్రిమోనీ");
+    expect(TRANSLATIONS.te.siteName).toBe("సెట్టిబలిజ మ్యాట్రిమోనీ");
     expect(TRANSLATIONS.te.siteSubtitle).toBe(
-      "శెట్టిబలిజ సమాజంలో మీకు సరైన జీవిత భాగస్వామిని కనుగొనండి.",
+      "సెట్టిబలిజ సమాజంలో మీకు సరైన జీవిత భాగస్వామిని కనుగొనండి.",
     );
   });
 
   it("matches site tagline in site.ts", () => {
-    expect(SITE_TAGLINE).toBe("Find your perfect life partner within the Shettibalija community.");
+    expect(SITE_TAGLINE).toBe("Find your perfect life partner within the Settibalija community.");
   });
 });

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
       { title: `Terms and Conditions | ${SITE_NAME}` },
-      { name: "description", content: "Terms of service for Shettibalija Matrimony" },
+      { name: "description", content: "Terms of service for Settibalija Matrimony" },
     ],
   }),
 });
@@ -27,7 +27,7 @@ function TermsPage() {
             <p>
               To register as a member of {SITE_NAME}, you must be legally competent to enter into a
               marriage under applicable laws (minimum age 18 for females and 21 for males). The
-              platform is dedicated to matrimonial alliances within the Shettibalija community.
+              platform is dedicated to matrimonial alliances within the Settibalija community.
             </p>
           ),
         },

@@ -1,8 +1,8 @@
-# Shettibalija Matrimony
+# Settibalija Matrimony
 
 ## Outcome
 
-Replace the placeholder with a trustworthy, culturally relevant matrimony service for Telugu-speaking Shettibalija families, prioritizing secure member registration, profiles, and discovery.
+Replace the placeholder with a trustworthy, culturally relevant matrimony service for Telugu-speaking Settibalija families, prioritizing secure member registration, profiles, and discovery.
 
 ## Build
 

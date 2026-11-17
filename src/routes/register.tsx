@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { useLanguage } from "@/lib/i18n";
 import heroImage from "@/assets/hero-wedding-telangana.jpg";
 
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/register")({
       { title: `Create Account | ${SITE_NAME}` },
       {
         name: "description",
-        content: "Create your free account to begin your Shettibalija matrimonial journey",
+        content: "Create your free account to begin your Settibalija matrimonial journey",
       },
     ],
   }),
@@ -312,13 +312,13 @@ function RegisterPage() {
 
   return (
     <div className="login-experience">
-      <section className="login-experience__visual" aria-label="Shettibalija family community">
+      <section className="login-experience__visual" aria-label="Settibalija family community">
         <img src={heroImage} alt="A bride and groom during a traditional Telugu wedding ritual" />
         <div className="login-experience__visual-wash" />
         <div className="login-experience__visual-copy">
           <span className="login-experience__eyebrow">
             <span />
-            {isTelugu ? "శెట్టిబలిజ కుటుంబాల కోసం" : "For Shettibalija families"}
+            {isTelugu ? "సెట్టిబలిజ కుటుంబాల కోసం" : "For Settibalija families"}
           </span>
           <h1>
             {isTelugu ? (
@@ -373,7 +373,7 @@ function RegisterPage() {
         </div>
 
         <div className="login-experience__form-wrap">
-          <ShettibalijaLogo size="md" linkToHome priority />
+          <SettibalijaLogo size="md" linkToHome priority />
           <p className="login-experience__brand">{isTelugu ? SITE_NAME_TE : SITE_NAME}</p>
 
           {accountReady ? (

@@ -7,7 +7,7 @@ import { getAuthorizedPhotos } from "@/functions/photos";
 import { supabase } from "@/integrations/supabase/client";
 import { PHOTO_BUCKET, SITE_NAME_TE } from "@/lib/site";
 import { initials } from "@/lib/format";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 
 type Props = {
   profileId: string;
@@ -110,7 +110,7 @@ export function ProtectedPhoto({
           loading="lazy"
         />
       ) : (
-        /* Shettibalija Official Branded Avatar */
+        /* Settibalija Official Branded Avatar */
         <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#24103F] via-[#2f0c54] to-[#140424] p-4 text-center select-none overflow-hidden">
           {/* Subtle Logo Watermark in background */}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-10">
@@ -129,7 +129,7 @@ export function ProtectedPhoto({
               compact ? "h-14 w-14" : "h-20 w-20",
             )}
           >
-            <ShettibalijaLogo size={compact ? "xs" : "sm"} priority theme="dark" />
+            <SettibalijaLogo size={compact ? "xs" : "sm"} priority theme="dark" />
           </div>
 
           <span

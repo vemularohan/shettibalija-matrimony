@@ -804,7 +804,7 @@ export function ProfileDetailPage() {
                     <div>
                       <p className="text-xs text-muted-foreground">Community</p>
                       <p className="font-bold text-[#087333]">
-                        {profile.community || "Shettibalija"}
+                        {profile.community || "Settibalija"}
                       </p>
                     </div>
                     <div>

@@ -89,7 +89,7 @@ function DashboardInterestsPage() {
       <MemberPageHeader
         kicker="Interests"
         title="Interests and proposals"
-        description="Track and respond to expressions of interest from Shettibalija families."
+        description="Track and respond to expressions of interest from Settibalija families."
         actions={
           <div className="flex border border-[#cfc5b8] bg-white">
             <button

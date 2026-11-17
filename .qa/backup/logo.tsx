@@ -24,11 +24,11 @@ interface LogoProps {
 }
 
 /**
- * Shettibalija Sangham Official Logo Component.
+ * Settibalija Sangham Official Logo Component.
  * Uses the exact project asset file `/logo.png` while strictly preserving
  * its natural 1281x1227 aspect ratio without distortion or cropping.
  */
-export function ShettibalijaLogo({
+export function SettibalijaLogo({
   size = "md",
   className,
   imgClassName,
@@ -51,7 +51,7 @@ export function ShettibalijaLogo({
     >
       <img
         src={SITE_LOGO_URL}
-        alt="Shettibalija Sangham Official Logo"
+        alt="Settibalija Sangham Official Logo"
         width={1281}
         height={1227}
         loading={priority ? "eager" : "lazy"}

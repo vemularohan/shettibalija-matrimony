@@ -26,5 +26,5 @@ Both photographs are real documentary images from Telangana, India, not generate
   - `couple-story-03.webp` (Demo Success Story 3: Sravanthi & Ramesh)
   - `couple-mature-companion.webp` (About Us: "A lifetime of quiet companionship & family roots")
   - `couple-celebration-journey.webp` (Membership & Community: "Investing in a future of shared joy")
-- Character: Fictional illustrative couple imagery created specifically for Shettibalija Matrimony brand communication.
+- Character: Fictional illustrative couple imagery created specifically for Settibalija Matrimony brand communication.
 - Distinction: Strictly independent marketing content. NOT member profile photos, NOT linked to any user_id or member database record, and NEVER displayed on member cards or within `/admin/members`.

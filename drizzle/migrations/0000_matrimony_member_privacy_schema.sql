@@ -54,7 +54,7 @@ create table public.matrimonial_profiles (
   age smallint not null check (age between 18 and 99),
   height_cm smallint,
   marital_status text not null default 'never_married',
-  community text not null default 'Shettibalija',
+  community text not null default 'Settibalija',
   mother_tongue text not null default 'Telugu',
   native_place text,
   city text,

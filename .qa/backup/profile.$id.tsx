@@ -395,7 +395,7 @@ export function ProfileDetailPage() {
             <div className="border-y border-[#C9A227]/45 bg-transparent py-5 sm:py-7">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[#A88724]">
-                  {lang === "te" ? "శెట్టిబలిజ మ్యాట్రిమోనీ ID" : "Matrimony ID"} ·{" "}
+                  {lang === "te" ? "సెట్టిబలిజ మ్యాట్రిమోనీ ID" : "Matrimony ID"} ·{" "}
                   {profile.profile_code || "—"}
                 </span>
               </div>

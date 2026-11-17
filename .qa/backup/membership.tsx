@@ -184,7 +184,7 @@ function MembershipPage() {
     <div className="min-h-screen bg-[#F7F3EA]">
       <header className="border-b border-[#E4DDD3] bg-[#F7F3EA] px-4 pb-9 pt-24 sm:pb-12">
         <div className="mx-auto max-w-6xl">
-          <p className="eyebrow">{isTelugu ? "శెట్టిబలిజ సభ్యత్వం" : "Shettibalija membership"}</p>
+          <p className="eyebrow">{isTelugu ? "సెట్టిబలిజ సభ్యత్వం" : "Settibalija membership"}</p>
           <h1 className="mt-2 font-serif text-4xl font-medium tracking-tight text-[#24103F] sm:text-6xl">
             {isTelugu ? "మీ ప్రయాణాన్ని ఎంచుకోండి" : "Choose your journey"}
           </h1>
@@ -389,8 +389,8 @@ function MembershipPage() {
           </h3>
           <p className="mt-2 text-sm leading-6 text-[#756A61]">
             {isTelugu
-              ? "శెట్టిబలిజ సమాజంలో ప్రొఫైల్‌లను కనుగొని కుటుంబాలతో పరిచయం కావడానికి సభ్యత్వ ఫీచర్లు సహాయపడతాయి. ఫోటోలు మరియు సంప్రదింపు వివరాల అభ్యర్థనలు ప్రతి సభ్యుని గోప్యతా ఎంపికలను అనుసరిస్తాయి."
-              : "Membership features support profile discovery and member connections within the Shettibalija community. Photo access and contact information requests follow each member's privacy choices."}
+              ? "సెట్టిబలిజ సమాజంలో ప్రొఫైల్‌లను కనుగొని కుటుంబాలతో పరిచయం కావడానికి సభ్యత్వ ఫీచర్లు సహాయపడతాయి. ఫోటోలు మరియు సంప్రదింపు వివరాల అభ్యర్థనలు ప్రతి సభ్యుని గోప్యతా ఎంపికలను అనుసరిస్తాయి."
+              : "Membership features support profile discovery and member connections within the Settibalija community. Photo access and contact information requests follow each member's privacy choices."}
           </p>
         </div>
       </div>

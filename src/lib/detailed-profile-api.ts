@@ -56,7 +56,7 @@ export async function saveDetailedMatrimonialProfile({
     age: calculatedAge,
     height_cm: formData.heightCm || null,
     marital_status: formData.maritalStatus,
-    community: "Shettibalija",
+    community: "Settibalija",
     mother_tongue: "Telugu",
     native_place: formData.nativePlace.trim() || null,
     city: formData.presentPlace.trim() || formData.jobLocation.trim() || null,

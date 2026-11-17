@@ -23,7 +23,7 @@ import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import { EDUCATION_OPTIONS, MARITAL_STATUS_OPTIONS, STATES } from "@/lib/options";
 import { formatINRFromPaise } from "@/lib/format";
 import type { Json } from "@/integrations/supabase/types";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { CoupleDestinationSection } from "@/components/home/couple-destination-section";
 import { SuccessStoriesSpotlight } from "@/components/home/success-stories-spotlight";
 
@@ -303,7 +303,7 @@ function HomePage() {
               <div className="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full border border-[#D1A329]/10" />
               <div className="relative">
                 <p className="sbm-kicker sbm-kicker--light">
-                  {lang === "te" ? "మన సమాజం" : "The Shettibalija way"}
+                  {lang === "te" ? "మన సమాజం" : "The Settibalija way"}
                 </p>
                 <p className="sbm-telugu mt-8 text-3xl leading-[1.35] text-[#F5E5B2] sm:text-4xl">
                   మన మూలాలు.
@@ -344,8 +344,8 @@ function HomePage() {
                     title: lang === "te" ? "సమాజం మొదట" : "Community first",
                     text:
                       lang === "te"
-                        ? "శెట్టిబలిజ కుటుంబాలు, గోత్రాలు మరియు సంప్రదాయాలను గౌరవించే వేదిక."
-                        : "Built for Shettibalija families, with room for gothram, native place and the traditions that shape a family.",
+                        ? "సెట్టిబలిజ కుటుంబాలు, గోత్రాలు మరియు సంప్రదాయాలను గౌరవించే వేదిక."
+                        : "Built for Settibalija families, with room for gothram, native place and the traditions that shape a family.",
                   },
                   {
                     number: "02",
@@ -677,7 +677,7 @@ function HomePage() {
           <div className="relative grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <div>
               <div className="flex items-center gap-3">
-                <ShettibalijaLogo size="sm" theme="dark" />
+                <SettibalijaLogo size="sm" theme="dark" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#D1A329]">
                   {SITE_NAME}
                 </span>
@@ -689,8 +689,8 @@ function HomePage() {
               </p>
               <p className="mt-7 max-w-lg text-sm leading-7 text-white/65">
                 {lang === "te"
-                  ? "శెట్టిబలిజ కుటుంబాల మధ్య గౌరవప్రదమైన పరిచయాలకు ఒక ప్రశాంతమైన స్థలం."
-                  : "A considered place for Shettibalija families to meet, talk and begin something lasting."}
+                  ? "సెట్టిబలిజ కుటుంబాల మధ్య గౌరవప్రదమైన పరిచయాలకు ఒక ప్రశాంతమైన స్థలం."
+                  : "A considered place for Settibalija families to meet, talk and begin something lasting."}
               </p>
             </div>
             <div className="lg:pb-2">

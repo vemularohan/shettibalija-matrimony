@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { DetailedProfileForm } from "@/components/profile/detailed-profile-form";
 import {
   type DetailedProfileFormData,
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
       { title: `Register | ${SITE_NAME}` },
-      { name: "description", content: "Create your Shettibalija Matrimony profile" },
+      { name: "description", content: "Create your Settibalija Matrimony profile" },
     ],
   }),
 });
@@ -187,7 +187,7 @@ function RegisterPage() {
         <div className="registration-shell">
           <div className="registration-topline">
             <Link to="/" className="registration-brand">
-              <ShettibalijaLogo size="sm" priority />
+              <SettibalijaLogo size="sm" priority />
               <span>
                 <strong>{SITE_NAME}</strong>
                 <small lang="te">{SITE_NAME_TE}</small>

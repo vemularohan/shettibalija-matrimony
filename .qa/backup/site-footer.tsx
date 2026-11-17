@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, HeartHandshake, ShieldCheck } from "lucide-react";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { SITE_NAME } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n";
 
@@ -61,11 +61,11 @@ export function SiteFooter() {
           <div className="site-footer-brand">
             <Link to="/" className="site-brand">
               <span className="site-brand-mark">
-                <ShettibalijaLogo size="sm" />
+                <SettibalijaLogo size="sm" />
               </span>
               <span className="site-brand-copy">
                 <strong>{SITE_NAME}</strong>
-                <small lang="te">శెట్టిబలిజ సంఘం</small>
+                <small lang="te">సెట్టిబలిజ సంఘం</small>
               </span>
             </Link>
             <p>

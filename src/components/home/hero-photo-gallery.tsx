@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { useLanguage } from "@/lib/i18n";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
 import heroImage from "@/assets/hero-wedding-telangana.jpg";
@@ -83,7 +83,7 @@ export function HeroPhotoGallery() {
         <div className="front-door__content">
           <div className="front-door__copy">
             <div className="front-door__eyebrow">
-              <ShettibalijaLogo size="sm" priority />
+              <SettibalijaLogo size="sm" priority />
               <span>
                 <strong>{SITE_NAME}</strong>
                 <small>{SITE_NAME_TE}</small>
@@ -111,8 +111,8 @@ export function HeroPhotoGallery() {
             </h1>
             <p className="front-door__description">
               {isTelugu
-                ? "శెట్టిబలిజ కుటుంబాలు మరియు వ్యక్తుల కోసం గౌరవప్రదమైన, విశ్వసనీయమైన వివాహ పరిచయాలు."
-                : "Meaningful introductions for Shettibalija individuals and families, shaped by shared values, culture and trust."}
+                ? "సెట్టిబలిజ కుటుంబాలు మరియు వ్యక్తుల కోసం గౌరవప్రదమైన, విశ్వసనీయమైన వివాహ పరిచయాలు."
+                : "Meaningful introductions for Settibalija individuals and families, shaped by shared values, culture and trust."}
             </p>
             <div className="front-door__actions">
               <a href="#find-your-match" className="front-door__search-link">

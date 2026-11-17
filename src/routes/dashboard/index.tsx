@@ -3,6 +3,8 @@ import {
   ArrowRight,
   Bell,
   Camera,
+  CheckCircle2,
+  CreditCard,
   Crown,
   Edit3,
   Heart,
@@ -103,6 +105,58 @@ function DashboardOverviewPage() {
         </div>
       )}
 
+      {profile && profile.declaration_accepted && membershipQuery.data?.status !== "active" && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-[#087333]/30 bg-white p-5 shadow-xs">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FAF8F3] text-[#24103F] border border-[#D1A329]">
+              <Crown className="h-5 w-5 text-[#D1A329]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm text-[#24103F]">
+                  {lang === "te"
+                    ? "ఒకేసారి రిజిస్ట్రేషన్ రుసుము: ₹999"
+                    : "One-Time Registration Fee: ₹999"}
+                </span>
+                <span className="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+                  {lang === "te" ? "చెల్లింపు పెండింగ్‌లో ఉంది" : "Payment Pending"}
+                </span>
+              </div>
+              <p className="mt-1 text-xs text-[#6B6570]">
+                {lang === "te"
+                  ? "వార్షిక చందాలు లేవు. ఒక్కసారి చెల్లించి మీ సెట్టిబలిజ మ్యాట్రిమోనీ సభ్యత్వాన్ని సక్రియం చేసుకోండి."
+                  : "Pay once. No annual renewal. Activate your lifetime membership to connect with matching Settibalija families."}
+              </p>
+            </div>
+          </div>
+          <Link to="/payment" className="sbm-button sbm-button--primary shrink-0 text-xs">
+            <CreditCard className="h-3.5 w-3.5" />
+            <span>
+              {lang === "te" ? "₹999 చెల్లించి యాక్టివేట్ చేయండి" : "Pay ₹999 & Activate"}
+            </span>
+          </Link>
+        </div>
+      )}
+
+      {membershipQuery.data?.status === "active" && (
+        <div className="flex items-center justify-between border border-[#087333]/20 bg-[#087333]/5 px-5 py-3 text-xs">
+          <div className="flex items-center gap-2 text-[#087333]">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <span className="font-semibold">
+              {lang === "te"
+                ? "మీ సెట్టిబలిజ మ్యాట్రిమోనీ సభ్యత్వం యాక్టివ్‌గా ఉంది."
+                : "Your Settibalija Matrimony membership is active."}
+            </span>
+          </div>
+          <Link
+            to="/dashboard/payments"
+            className="text-[11px] font-semibold text-[#087333] underline"
+          >
+            {lang === "te" ? "రసీదు చూడండి" : "View receipt"}
+          </Link>
+        </div>
+      )}
+
       <header className="flex flex-col justify-between gap-5 border-b border-[#ded5c8] pb-7 sm:flex-row sm:items-end">
         <div>
           <span className="sbm-kicker">
@@ -118,7 +172,15 @@ function DashboardOverviewPage() {
               </span>
             ) : null}
             <span className="hidden h-3 w-px bg-[#d4cabd] sm:block" />
-            <span>{planName ? `${planName} member` : "Free account"}</span>
+            <span>
+              {membershipQuery.data?.status === "active"
+                ? lang === "te"
+                  ? "జీవితకాల సభ్యుడు (యాక్టివ్)"
+                  : "Lifetime Member (Active)"
+                : lang === "te"
+                  ? "రిజిస్ట్రేషన్ రుసుము పెండింగ్"
+                  : "Registration Fee Pending"}
+            </span>
             <span className="hidden h-3 w-px bg-[#d4cabd] sm:block" />
             <span>Contact details are private by default</span>
           </div>

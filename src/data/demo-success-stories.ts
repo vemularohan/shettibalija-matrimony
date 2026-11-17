@@ -1,11 +1,11 @@
 /**
- * Shettibalija Matrimony — Demo & Illustrative Success Stories
+ * Settibalija Matrimony — Demo & Illustrative Success Stories
  *
  * ============================================================================
  * ARCHITECTURAL RULE — DEMO / MARKETING CONTENT
  * ============================================================================
  * These stories represent illustrative demo narratives showcasing how families
- * connect within the Shettibalija community.
+ * connect within the Settibalija community.
  *
  * - Fictional couple names and illustrative experiences.
  * - Fictional marketing couple imagery (never attached to member accounts).
@@ -60,7 +60,7 @@ export const DEMO_SUCCESS_STORIES: DemoSuccessStory[] = [
     headline: "Shared roots, shared ambitions.",
     headline_te: "మన మూలాలు, మన ఆశయాలు.",
     story:
-      "Both pursuing demanding professional careers, they looked for a partner who understood modern aspirations while honoring their Shettibalija cultural roots. A thoughtful conversation between their parents gave them the foundation to build a warm, supportive home together.",
+      "Both pursuing demanding professional careers, they looked for a partner who understood modern aspirations while honoring their Settibalija cultural roots. A thoughtful conversation between their parents gave them the foundation to build a warm, supportive home together.",
     story_te:
       "వృత్తిపరమైన రంగాలలో స్థిరపడినప్పటికీ, తమ సాంస్కృతిక మూలాలను మరియు కుటుంబ విలువలనూ గౌరవించే జీవిత భాగస్వామి కోసం వెతికారు. తల్లిదండ్రుల మధ్య జరిగిన గౌరవప్రదమైన సంభాషణ నేడు వారి సంతోషకరమైన దాంపత్యానికి పునాది అయింది.",
     photo_url: "/images/couples/couple-story-02.webp",

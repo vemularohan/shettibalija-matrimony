@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { z } from "zod";
 import matrimonyHomeHero from "@/assets/matrimony-home-hero-2026.jpg";
 
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: `Login | ${SITE_NAME}` },
-      { name: "description", content: "Sign in to your Shettibalija Matrimony account" },
+      { name: "description", content: "Sign in to your Settibalija Matrimony account" },
     ],
   }),
 });
@@ -87,7 +87,7 @@ function LoginPage() {
         <div className="account-stage-aside-shade" aria-hidden="true" />
         <div className="account-stage-aside-content">
           <Link to="/" className="account-stage-brand">
-            <ShettibalijaLogo size="sm" priority />
+            <SettibalijaLogo size="sm" priority />
             <span>
               <strong>{SITE_NAME}</strong>
               <small lang="te">{SITE_NAME_TE}</small>
@@ -117,7 +117,7 @@ function LoginPage() {
       <main className="account-stage-main">
         <div className="account-stage-mobile-brand">
           <Link to="/" className="account-stage-brand">
-            <ShettibalijaLogo size="sm" priority />
+            <SettibalijaLogo size="sm" priority />
             <span>
               <strong>{SITE_NAME}</strong>
               <small lang="te">{SITE_NAME_TE}</small>

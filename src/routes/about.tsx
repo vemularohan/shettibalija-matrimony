@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, HeartHandshake, Lock, Sparkles, Users } from "lucide-react";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { SITE_NAME, SITE_NAME_TE, COMMUNITY_NAME } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n";
 import { MARKETING_COUPLE_IMAGES } from "@/data/marketing-couples";
@@ -76,7 +76,7 @@ function AboutPage() {
 
             <div className="border-l-2 border-[#D1A329] pl-5">
               <div className="flex items-center gap-3">
-                <ShettibalijaLogo size="md" priority />
+                <SettibalijaLogo size="md" priority />
                 <div>
                   <p className="font-serif text-lg text-[#24103F]">{SITE_NAME}</p>
                   <p className="sbm-telugu mt-1 text-[11px] text-[#087333]">{SITE_NAME_TE}</p>
@@ -182,7 +182,7 @@ function AboutPage() {
                 </h2>
                 <p className="sbm-body mt-5 text-[14px] leading-7">
                   {isTe
-                    ? "వివాహం అనేది కేవలం ఒక వేడుక కాదు; అది రెండు కుటుంబాల కలయిక మరియు దశాబ్దాల పాటు పరస్పర ఆదరణతో సాగే పవిత్రమైన ప్రయాణం. శెట్టిబలిజ సంప్రదాయంలో పెద్దల గౌరవం, గోత్రం మరియు కుటుంబ బాధ్యతలు ఈ బంధానికి బలమైన పునాదులు. మా ప్రతి సేవ ఈ శాశ్వతమైన బంధాన్ని దృష్టిలో ఉంచుకునే రూపొందించబడింది."
+                    ? "వివాహం అనేది కేవలం ఒక వేడుక కాదు; అది రెండు కుటుంబాల కలయిక మరియు దశాబ్దాల పాటు పరస్పర ఆదరణతో సాగే పవిత్రమైన ప్రయాణం. సెట్టిబలిజ సంప్రదాయంలో పెద్దల గౌరవం, గోత్రం మరియు కుటుంబ బాధ్యతలు ఈ బంధానికి బలమైన పునాదులు. మా ప్రతి సేవ ఈ శాశ్వతమైన బంధాన్ని దృష్టిలో ఉంచుకునే రూపొందించబడింది."
                     : "Matrimony in our community is not merely about a wedding ceremony; it is about building a home where two families grow together with enduring trust, dignity, and shared traditions over decades. We design every feature to support this lifelong commitment."}
                 </p>
                 <div className="mt-6 flex items-center gap-2 text-[12px] font-semibold text-[#087333]">

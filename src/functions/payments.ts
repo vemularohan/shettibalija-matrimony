@@ -3,37 +3,59 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
+import { ONE_TIME_REGISTRATION_FEE_PAISE } from "@/lib/site";
 
 type AuthContext = { supabase: SupabaseClient<Database>; userId: string };
 
+/**
+ * Initiates Razorpay Order for the ₹999 One-Time Registration Fee.
+ * Idempotent: rejects duplicate orders if membership is already active.
+ * Safe fallback: returns graceful gateway_pending mode if keys are not yet configured.
+ */
 export const createPaidOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator(z.object({ planId: z.string().uuid() }))
-  .handler(async ({ data, context }) => {
-    const keyId = process.env["RAZORPAY_KEY_ID"];
-    const keySecret = process.env["RAZORPAY_KEY_SECRET"];
-    if (!keyId || !keySecret) {
+  .validator(
+    z
+      .object({
+        planId: z.string().uuid().optional(),
+      })
+      .optional(),
+  )
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context as AuthContext;
+
+    // 1. Guard against duplicate membership activation
+    const { data: existingActive } = await supabase
+      .from("memberships")
+      .select("id, status")
+      .eq("owner_id", userId)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (existingActive) {
       return {
         ok: false as const,
-        message: "Online payments are not configured yet. Please contact the community office.",
+        alreadyActive: true as const,
+        message: "Your Settibalija Matrimony membership is already active.",
       };
     }
 
-    const { supabase, userId } = context as AuthContext;
-    const { data: plan, error: planError } = await supabase
-      .from("membership_plans")
-      .select("*")
-      .eq("id", data.planId)
-      .eq("active", true)
-      .maybeSingle();
-    if (planError || !plan) {
-      return { ok: false as const, message: "That membership plan is not available." };
-    }
-    if (plan.price_paise == null || plan.price_paise <= 0) {
-      return { ok: false as const, message: "Use the free plan activation instead." };
+    const keyId = process.env["RAZORPAY_KEY_ID"];
+    const keySecret = process.env["RAZORPAY_KEY_SECRET"];
+
+    if (!keyId || !keySecret) {
+      return {
+        ok: false as const,
+        mode: "gateway_pending" as const,
+        amount: ONE_TIME_REGISTRATION_FEE_PAISE,
+        amountInr: 999,
+        currency: "INR" as const,
+        message:
+          "Payment gateway integration is currently in preparation. Online registration fee collection will be enabled shortly.",
+      };
     }
 
-    const receipt = `sbm_${userId.slice(0, 8)}_${Date.now()}`;
+    const receipt = `sbm_reg_${userId.slice(0, 8)}_${Date.now()}`;
     const orderRes = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
       headers: {
@@ -41,46 +63,90 @@ export const createPaidOrder = createServerFn({ method: "POST" })
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        amount: plan.price_paise,
+        amount: ONE_TIME_REGISTRATION_FEE_PAISE,
         currency: "INR",
         receipt,
-        notes: { plan_id: plan.id, user_id: userId },
+        notes: {
+          user_id: userId,
+          purpose: "registration_fee",
+          tier: "lifetime",
+        },
       }),
     });
+
     if (!orderRes.ok) {
-      return { ok: false as const, message: "Could not create a payment order." };
+      return {
+        ok: false as const,
+        mode: "error" as const,
+        message: "Could not create payment order with the payment provider. Please try again.",
+      };
     }
+
     const order = (await orderRes.json()) as { id: string; amount: number };
+
+    // Record pending transaction in database audit trail via service client
+    const serviceKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+    const supabaseUrl =
+      process.env["SUPABASE_URL"] ||
+      process.env["VITE_SUPABASE_URL"] ||
+      "https://taczcgaxegbmqasfmsiz.supabase.co";
+
+    if (serviceKey && supabaseUrl) {
+      try {
+        const { createClient } = await import("@supabase/supabase-js");
+        const adminClient = createClient<Database>(supabaseUrl, serviceKey, {
+          auth: { persistSession: false, autoRefreshToken: false },
+        });
+
+        await adminClient.from("payments").insert({
+          owner_id: userId,
+          order_id: order.id,
+          amount_paise: ONE_TIME_REGISTRATION_FEE_PAISE,
+          currency: "INR",
+          status: "pending",
+        });
+      } catch (logErr) {
+        console.error("Failed to log pending payment initiation:", logErr);
+      }
+    }
 
     return {
       ok: true as const,
+      mode: "ready" as const,
       keyId,
       orderId: order.id,
       amount: order.amount,
       currency: "INR",
-      planName: plan.name,
-      planId: plan.id,
+      planName: "One-Time Registration",
     };
   });
 
+/**
+ * Server-side payment signature verification and atomic membership activation.
+ * Never trusts client assertions; validates HMAC-SHA256 signature against Razorpay secret.
+ */
 export const verifyPaidOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(
     z.object({
-      planId: z.string().uuid(),
       orderId: z.string().min(3),
       paymentId: z.string().min(3),
       signature: z.string().min(3),
+      planId: z.string().uuid().optional(),
     }),
   )
   .handler(async ({ data, context }) => {
     const keySecret = process.env["RAZORPAY_KEY_SECRET"];
     const serviceKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
-    const supabaseUrl = process.env["SUPABASE_URL"];
+    const supabaseUrl =
+      process.env["SUPABASE_URL"] ||
+      process.env["VITE_SUPABASE_URL"] ||
+      "https://taczcgaxegbmqasfmsiz.supabase.co";
+
     if (!keySecret || !serviceKey || !supabaseUrl) {
       return {
         ok: false as const,
-        message: "Payment verification is not configured on the server.",
+        message: "Payment verification service is not configured on the server.",
       };
     }
 
@@ -89,61 +155,51 @@ export const verifyPaidOrder = createServerFn({ method: "POST" })
       .createHmac("sha256", keySecret)
       .update(`${data.orderId}|${data.paymentId}`)
       .digest("hex");
-    if (expected !== data.signature) {
-      return { ok: false as const, message: "Payment signature could not be verified." };
+
+    const expectedBuf = Buffer.from(expected, "utf-8");
+    const actualBuf = Buffer.from(data.signature, "utf-8");
+
+    if (
+      expectedBuf.length !== actualBuf.length ||
+      !crypto.timingSafeEqual(expectedBuf, actualBuf)
+    ) {
+      return {
+        ok: false as const,
+        message: "Payment signature could not be verified by the server. Verification failed.",
+      };
     }
 
+    const { userId } = context as AuthContext;
     const { createClient } = await import("@supabase/supabase-js");
     const admin = createClient<Database>(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { userId } = context as AuthContext;
 
-    const { data: plan } = await admin
-      .from("membership_plans")
-      .select("*")
-      .eq("id", data.planId)
-      .maybeSingle();
-    if (!plan) return { ok: false as const, message: "Plan not found." };
+    // Invoke atomic activation procedure
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: membershipId, error: rpcError } = await (admin.rpc as any)(
+      "activate_registration_membership",
+      {
+        p_user_id: userId,
+        p_order_id: data.orderId,
+        p_payment_id: data.paymentId,
+        p_amount_paise: ONE_TIME_REGISTRATION_FEE_PAISE,
+        p_signature: data.signature,
+      },
+    );
 
-    const startsAt = new Date();
-    const expiresAt =
-      plan.duration_days != null
-        ? new Date(startsAt.getTime() + plan.duration_days * 86400000).toISOString()
-        : null;
-
-    const { data: membership, error: membershipError } = await admin
-      .from("memberships")
-      .insert({
-        owner_id: userId,
-        plan_id: plan.id,
-        status: "active",
-        starts_at: startsAt.toISOString(),
-        expires_at: expiresAt,
-      })
-      .select("id")
-      .single();
-    if (membershipError || !membership) {
+    if (rpcError) {
+      console.error("Membership activation procedure failed:", rpcError);
       return {
         ok: false as const,
-        message: "Payment succeeded but membership could not be saved.",
+        message: "Payment verified, but membership activation encountered a system error.",
       };
     }
 
-    await admin.from("payments").insert({
-      owner_id: userId,
-      membership_id: membership.id,
-      order_id: data.orderId,
-      gateway_payment_id: data.paymentId,
-      amount_paise: plan.price_paise ?? 0,
-      currency: "INR",
-      status: "successful",
-    });
-    await admin.from("notifications").insert({
-      owner_id: userId,
-      title: "Payment Successful",
-      message: `Your ${plan.name} membership is now active.`,
-    });
-
-    return { ok: true as const };
+    return {
+      ok: true as const,
+      membershipId: membershipId as string,
+      message:
+        "Payment successfully verified. Your Settibalija Matrimony membership is now active.",
+    };
   });

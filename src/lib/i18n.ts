@@ -4,11 +4,11 @@ export type Language = "en" | "te";
 
 export const TRANSLATIONS = {
   en: {
-    siteName: "Shettibalija Matrimony",
-    siteSubtitle: "Find your perfect life partner within the Shettibalija community.",
+    siteName: "Settibalija Matrimony",
+    siteSubtitle: "Find your perfect life partner within the Settibalija community.",
     heroHeadline: "Find Your Perfect Life Partner",
-    heroSupportingText: "Trusted matrimonial platform for the Shettibalija community.",
-    logoAlt: "Shettibalija Sangham Official Logo",
+    heroSupportingText: "Trusted matrimonial platform for the Settibalija community.",
+    logoAlt: "Settibalija Sangham Official Logo",
     heading: "Create a Matrimony Profile",
     subheading: "Find your perfect match",
     profileFor: "Profile created for",
@@ -148,7 +148,7 @@ export const TRANSLATIONS = {
     // Section 10: Declaration & Consent
     declarationTitle: "Declaration & Consent",
     declarationNotice:
-      "I declare that the information provided by me is correct and I authorize Shettibalija Matrimony to publish this information on its website and official social media channels for matrimonial purposes, subject to the site's Privacy Policy and Terms & Conditions.",
+      "I declare that the information provided by me is correct and I authorize Settibalija Matrimony to publish this information on its website and official social media channels for matrimonial purposes, subject to the site's Privacy Policy and Terms & Conditions.",
     declarationAcknowledge: "I confirm the above declaration is true and authentic.",
 
     // Actions & Form Controls
@@ -173,11 +173,11 @@ export const TRANSLATIONS = {
     declarationReq: "You must accept the declaration to proceed.",
   },
   te: {
-    siteName: "శెట్టిబలిజ మ్యాట్రిమోనీ",
-    siteSubtitle: "శెట్టిబలిజ సమాజంలో మీకు సరైన జీవిత భాగస్వామిని కనుగొనండి.",
+    siteName: "సెట్టిబలిజ మ్యాట్రిమోనీ",
+    siteSubtitle: "సెట్టిబలిజ సమాజంలో మీకు సరైన జీవిత భాగస్వామిని కనుగొనండి.",
     heroHeadline: "మీకు సరైన జీవిత భాగస్వామిని కనుగొనండి",
-    heroSupportingText: "శెట్టిబలిజ సమాజానికి విశ్వసనీయమైన వివాహ వేదిక.",
-    logoAlt: "శెట్టిబలిజ సంఘం అధికారిక లోగో",
+    heroSupportingText: "సెట్టిబలిజ సమాజానికి విశ్వసనీయమైన వివాహ వేదిక.",
+    logoAlt: "సెట్టిబలిజ సంఘం అధికారిక లోగో",
     heading: "వివాహ ప్రొఫైల్ను సృష్టించండి",
     subheading: "మీకు సరైన జీవిత భాగస్వామిని కనుగొనండి",
     profileFor: "ప్రొఫైల్ ఎవరి కోసం",
@@ -315,7 +315,7 @@ export const TRANSLATIONS = {
     // Section 10: Declaration & Consent
     declarationTitle: "డిక్లరేషన్ మరియు సమ్మతి",
     declarationNotice:
-      "నేను అందించిన సమాచారం సరైనదని ప్రకటిస్తున్నాను. వివాహ సంబంధాల కోసం ఈ సమాచారాన్ని శెట్టిబలిజ మ్యాట్రిమోనీ వెబ్సైట్ మరియు అధికారిక సోషల్ మీడియా ఛానళ్లలో ప్రచురించడానికి నేను అనుమతిస్తున్నాను. ఇది వెబ్సైట్ గోప్యతా విధానం మరియు నిబంధనలు & షరతులకు లోబడి ఉంటుంది.",
+      "నేను అందించిన సమాచారం సరైనదని ప్రకటిస్తున్నాను. వివాహ సంబంధాల కోసం ఈ సమాచారాన్ని సెట్టిబలిజ మ్యాట్రిమోనీ వెబ్సైట్ మరియు అధికారిక సోషల్ మీడియా ఛానళ్లలో ప్రచురించడానికి నేను అనుమతిస్తున్నాను. ఇది వెబ్సైట్ గోప్యతా విధానం మరియు నిబంధనలు & షరతులకు లోబడి ఉంటుంది.",
     declarationAcknowledge: "నేను పైన పేర్కొన్న వివరాలను ధృవీకరిస్తున్నాను.",
 
     // Actions & Form Controls

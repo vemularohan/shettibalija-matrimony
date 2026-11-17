@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useUnreadNotificationCount, useOwnMatrimonialProfile } from "@/hooks/use-member-data";
 import { productSupabase } from "@/integrations/supabase/product-client";
 import { SITE_NAME } from "@/lib/site";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { useLanguage } from "@/lib/i18n";
 
@@ -85,8 +85,8 @@ export function SiteHeader() {
         <div className="public-shell">
           <p>
             {lang === "te"
-              ? "శెట్టిబలిజ కుటుంబాల కోసం సురక్షితమైన వివాహ పరిచయ వేదిక"
-              : "A considered matrimonial space for Shettibalija individuals and families"}
+              ? "సెట్టిబలిజ కుటుంబాల కోసం సురక్షితమైన వివాహ పరిచయ వేదిక"
+              : "A considered matrimonial space for Settibalija individuals and families"}
           </p>
           <LanguageSwitcher size="sm" variant="text" />
         </div>
@@ -95,11 +95,11 @@ export function SiteHeader() {
       <div className="public-shell site-header-main">
         <Link to="/" className="site-brand" aria-label={`${SITE_NAME} home`}>
           <span className="site-brand-mark">
-            <ShettibalijaLogo size="sm" priority />
+            <SettibalijaLogo size="sm" priority />
           </span>
           <span className="site-brand-copy">
             <strong>{SITE_NAME}</strong>
-            <small lang="te">శెట్టిబలిజ సంఘం</small>
+            <small lang="te">సెట్టిబలిజ సంఘం</small>
           </span>
         </Link>
 
@@ -178,11 +178,11 @@ export function SiteHeader() {
               <div className="site-mobile-drawer-top">
                 <Link to="/" className="site-brand" onClick={() => setOpen(false)}>
                   <span className="site-brand-mark">
-                    <ShettibalijaLogo size="sm" priority />
+                    <SettibalijaLogo size="sm" priority />
                   </span>
                   <span className="site-brand-copy">
                     <strong>{SITE_NAME}</strong>
-                    <small lang="te">శెట్టిబలిజ సంఘం</small>
+                    <small lang="te">సెట్టిబలిజ సంఘం</small>
                   </span>
                 </Link>
                 <button

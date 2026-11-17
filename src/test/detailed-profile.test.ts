@@ -30,11 +30,11 @@ describe("Detailed Matrimonial Profile Requirements", () => {
     const teNotice = TRANSLATIONS.te.declarationNotice;
 
     expect(enNotice).toBe(
-      "I declare that the information provided by me is correct and I authorize Shettibalija Matrimony to publish this information on its website and official social media channels for matrimonial purposes, subject to the site's Privacy Policy and Terms & Conditions.",
+      "I declare that the information provided by me is correct and I authorize Settibalija Matrimony to publish this information on its website and official social media channels for matrimonial purposes, subject to the site's Privacy Policy and Terms & Conditions.",
     );
 
     expect(teNotice).toBe(
-      "నేను అందించిన సమాచారం సరైనదని ప్రకటిస్తున్నాను. వివాహ సంబంధాల కోసం ఈ సమాచారాన్ని శెట్టిబలిజ మ్యాట్రిమోనీ వెబ్సైట్ మరియు అధికారిక సోషల్ మీడియా ఛానళ్లలో ప్రచురించడానికి నేను అనుమతిస్తున్నాను. ఇది వెబ్సైట్ గోప్యతా విధానం మరియు నిబంధనలు & షరతులకు లోబడి ఉంటుంది.",
+      "నేను అందించిన సమాచారం సరైనదని ప్రకటిస్తున్నాను. వివాహ సంబంధాల కోసం ఈ సమాచారాన్ని సెట్టిబలిజ మ్యాట్రిమోనీ వెబ్సైట్ మరియు అధికారిక సోషల్ మీడియా ఛానళ్లలో ప్రచురించడానికి నేను అనుమతిస్తున్నాను. ఇది వెబ్సైట్ గోప్యతా విధానం మరియు నిబంధనలు & షరతులకు లోబడి ఉంటుంది.",
     );
   });
 

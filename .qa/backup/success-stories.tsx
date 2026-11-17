@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { EmptyState, ErrorState } from "@/components/shared/empty-state";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { productSupabase } from "@/integrations/supabase/product-client";
 import { useLanguage } from "@/lib/i18n";
@@ -42,7 +42,7 @@ function SuccessStoriesPage() {
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#756A61] sm:text-base">
             {lang === "te"
               ? "జంటలు మరియు వారి కుటుంబాలు మాతో పంచుకుని ప్రచురణకు అంగీకరించిన కథలు మాత్రమే ఇక్కడ ఉంటాయి."
-              : "Stories couples and families have chosen to share with the Shettibalija community."}
+              : "Stories couples and families have chosen to share with the Settibalija community."}
           </p>
         </header>
 
@@ -84,9 +84,9 @@ function SuccessStoriesPage() {
                     ) : (
                       <div className="flex h-full items-center justify-center border border-[#C9A227]/50">
                         <div className="text-center">
-                          <ShettibalijaLogo size="lg" />
+                          <SettibalijaLogo size="lg" />
                           <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.18em] text-[#756A61]">
-                            {lang === "te" ? "శెట్టిబలిజ కుటుంబ కథ" : "A community story"}
+                            {lang === "te" ? "సెట్టిబలిజ కుటుంబ కథ" : "A community story"}
                           </p>
                         </div>
                       </div>

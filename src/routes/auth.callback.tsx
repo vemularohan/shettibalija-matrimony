@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AlertCircle, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { useLanguage } from "@/lib/i18n";
 import { SITE_NAME } from "@/lib/site";
 
@@ -170,7 +170,7 @@ function AuthCallbackPage() {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-[#FAF8F3] px-4 py-16">
         <div className="w-full max-w-md border border-[#ded5c8] bg-white p-7 text-center shadow-sm sm:p-9">
-          <ShettibalijaLogo size="md" linkToHome />
+          <SettibalijaLogo size="md" linkToHome />
           <div className="mx-auto mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-700">
             <AlertCircle className="h-6 w-6" />
           </div>
@@ -192,7 +192,7 @@ function AuthCallbackPage() {
   return (
     <div className="flex min-h-[70vh] items-center justify-center bg-[#FAF8F3] px-4 py-16">
       <div className="w-full max-w-md border border-[#ded5c8] bg-white p-8 text-center shadow-sm">
-        <ShettibalijaLogo size="md" linkToHome />
+        <SettibalijaLogo size="md" linkToHome />
         <div className="mx-auto mt-7 flex h-12 w-12 items-center justify-center text-[#D1A329]">
           <Loader2 className="h-7 w-7 animate-spin" />
         </div>

@@ -17,7 +17,7 @@ import {
   HeartHandshake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 
 export const MEMBER_NAV_ITEMS = [
   { to: "/dashboard", label: "My Home", labelTe: "నా హోమ్", icon: LayoutDashboard },
@@ -56,10 +56,10 @@ export function MemberSidebar({ className }: { className?: string }) {
   return (
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center gap-3 border-b border-[#C9A227]/45 px-2 pb-4">
-        <ShettibalijaLogo size="sm" theme="dark" linkToHome />
+        <SettibalijaLogo size="sm" theme="dark" linkToHome />
         <div className="min-w-0">
           <p className="truncate font-serif text-sm font-semibold leading-tight tracking-wide text-[#F7F3EA]">
-            Shettibalija
+            Settibalija
           </p>
           <p lang="te" className="truncate text-[10px] font-medium text-[#D7CDB9]">
             సభ్యుల పోర్టల్

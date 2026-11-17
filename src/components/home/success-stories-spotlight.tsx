@@ -22,7 +22,7 @@ export function SuccessStoriesSpotlight() {
             </h2>
             <p className="sbm-body mt-3 max-w-lg text-[13px] leading-6">
               {isTe
-                ? "శెట్టిబలిజ కుటుంబాలు కలిసి తమ విలువలను, సంప్రదాయాలను ఎలా ముందుకు తీసుకెళ్తున్నాయో తెలిపే నిదర్శన కథనాలు."
+                ? "సెట్టిబలిజ కుటుంబాలు కలిసి తమ విలువలను, సంప్రదాయాలను ఎలా ముందుకు తీసుకెళ్తున్నాయో తెలిపే నిదర్శన కథనాలు."
                 : "Illustrative glimpses into how community introductions grow into lasting marriages rooted in shared values."}
             </p>
           </div>

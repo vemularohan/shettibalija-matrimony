@@ -103,8 +103,8 @@ export function CoupleDestinationSection() {
                   </h3>
                   <p className="mt-0.5 text-[12px] leading-5 text-[#6B6570]">
                     {isTe
-                      ? "మన శెట్టిబలిజ సంప్రదాయాలను మరియు పెద్దల ఆశీర్వాదాలను నిలబెట్టే ఐక్యత."
-                      : "Rooted in Shettibalija traditions, gothram respect, and values passed across generations."}
+                      ? "మన సెట్టిబలిజ సంప్రదాయాలను మరియు పెద్దల ఆశీర్వాదాలను నిలబెట్టే ఐక్యత."
+                      : "Rooted in Settibalija traditions, gothram respect, and values passed across generations."}
                   </p>
                 </div>
               </div>

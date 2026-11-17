@@ -1,4 +1,4 @@
-// Cleanup script for Shettibalija Matrimony demo profiles
+// Cleanup script for Settibalija Matrimony demo profiles
 // Safely removes only demo data (is_demo: true & demo auth users) without affecting real members.
 
 import { createClient } from "@supabase/supabase-js";

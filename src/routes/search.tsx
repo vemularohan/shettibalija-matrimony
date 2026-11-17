@@ -30,7 +30,7 @@ export const Route = createFileRoute("/search")({
       { title: `Discover Profiles | ${SITE_NAME}` },
       {
         name: "description",
-        content: "Discover reviewed Shettibalija matrimony profiles by the details that matter.",
+        content: "Discover reviewed Settibalija matrimony profiles by the details that matter.",
       },
     ],
   }),
@@ -276,7 +276,7 @@ function SearchPage() {
               <p className="sbm-body mt-3 max-w-2xl">
                 {lang === "te"
                   ? "ప్రొఫైల్స్ సమీక్షించబడి, సమాజానికి సంబంధించిన వివరాలతో ఇక్కడ కనిపిస్తాయి. మీ కుటుంబంతో కలిసి చూడండి."
-                  : "Reviewed profiles from the Shettibalija community, with the family, education, work and cultural details families usually ask about."}
+                  : "Reviewed profiles from the Settibalija community, with the family, education, work and cultural details families usually ask about."}
               </p>
             </div>
 

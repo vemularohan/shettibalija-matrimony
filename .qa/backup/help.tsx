@@ -12,8 +12,8 @@ export const Route = createFileRoute("/help")({
 
 const FAQ_ITEMS = [
   {
-    q: "How do I register on Shettibalija Matrimony?",
-    qTe: "శెట్టిబలిజ మ్యాట్రిమోనీలో ఎలా రిజిస్టర్ అవ్వాలి?",
+    q: "How do I register on Settibalija Matrimony?",
+    qTe: "సెట్టిబలిజ మ్యాట్రిమోనీలో ఎలా రిజిస్టర్ అవ్వాలి?",
     a: "Registration is free. Select who the profile is for, create an account, and complete the candidate's personal, education, occupation and family details. New profiles are reviewed before appearing in search.",
     aTe: "రిజిస్ట్రేషన్ ఉచితం. ప్రొఫైల్ ఎవరి కోసమో ఎంచుకుని ఖాతా సృష్టించి, అభ్యర్థి వ్యక్తిగత, విద్య, ఉద్యోగ మరియు కుటుంబ వివరాలను నమోదు చేయండి. శోధనలో కనిపించే ముందు కొత్త ప్రొఫైల్ సమీక్షించబడుతుంది.",
   },

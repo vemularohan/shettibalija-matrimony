@@ -14,7 +14,7 @@ export const Route = createFileRoute("/success-stories")({
       {
         name: "description",
         content:
-          "Stories shared with permission by Shettibalija families who found a meaningful introduction through the community.",
+          "Stories shared with permission by Settibalija families who found a meaningful introduction through the community.",
       },
     ],
   }),
@@ -102,7 +102,7 @@ function SuccessStoriesPage() {
                 </h2>
                 <p className="mt-1 text-[13px] leading-6 text-[#6B6570]">
                   {isTe
-                    ? "దిగువన ఉన్న కథనాలు శెట్టిబలిజ సమాజంలో కుటుంబాలు ఎలా కనెక్ట్ అవుతాయో చూపించే నిదర్శనాలు. వాస్తవ సభ్యుల కథనాలు వారి స్పష్టమైన సమ్మతితో మాత్రమే ప్రచురించబడతాయి."
+                    ? "దిగువన ఉన్న కథనాలు సెట్టిబలిజ సమాజంలో కుటుంబాలు ఎలా కనెక్ట్ అవుతాయో చూపించే నిదర్శనాలు. వాస్తవ సభ్యుల కథనాలు వారి స్పష్టమైన సమ్మతితో మాత్రమే ప్రచురించబడతాయి."
                     : "The stories below illustrate how families connect, respect shared values, and build lasting marriages through thoughtful introductions. Actual member stories are published solely with verified family consent."}
                 </p>
               </div>

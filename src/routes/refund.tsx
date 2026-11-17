@@ -9,7 +9,7 @@ export const Route = createFileRoute("/refund")({
       { title: `Refund & Cancellation Policy | ${SITE_NAME}` },
       {
         name: "description",
-        content: "Refund and cancellation guidelines for Shettibalija Matrimony",
+        content: "Refund and cancellation guidelines for Settibalija Matrimony",
       },
     ],
   }),
@@ -28,9 +28,10 @@ function RefundPage() {
           title: "1. Membership services",
           body: (
             <p>
-              {SITE_NAME} offers matrimonial discovery and introduction features. Because a
-              membership provides immediate digital access to those features, payments that have
-              been successfully processed are generally non-refundable once the plan is active.
+              {SITE_NAME} charges every member a one-time registration fee of ₹999. Because a
+              membership provides immediate digital verification, directory publication and
+              community introduction features, payments that have been successfully verified are
+              generally non-refundable once the membership is active.
             </p>
           ),
         },
@@ -62,7 +63,7 @@ function RefundPage() {
           body: (
             <p>
               For a payment dispute or a question about membership activation, write to
-              support@shettibalijamatrimony.org from your registered email address and include the
+              support@settibalijamatrimony.org from your registered email address and include the
               transaction or order ID. Please do not send card numbers or banking passwords by
               email.
             </p>

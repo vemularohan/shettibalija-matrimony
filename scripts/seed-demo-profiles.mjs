@@ -1,4 +1,4 @@
-// Idempotent seed script for Shettibalija Matrimony demo profiles
+// Idempotent seed script for Settibalija Matrimony demo profiles
 // Seeds exactly 50 culturally plausible fictional demo profiles (25 brides, 25 grooms)
 // Running this script multiple times is 100% idempotent and safe.
 
@@ -35,7 +35,7 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function seed() {
-  console.log("🌱 Starting idempotent seed of 50 Shettibalija Matrimony demo profiles...");
+  console.log("🌱 Starting idempotent seed of 50 Settibalija Matrimony demo profiles...");
   console.log(`📦 Loaded ${DEMO_PROFILES_DATA.length} fictional profiles.`);
 
   const BATCH_SIZE = 10;

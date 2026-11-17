@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_NAME, SITE_NAME_TE } from "@/lib/site";
-import { ShettibalijaLogo } from "@/components/brand/logo";
+import { SettibalijaLogo } from "@/components/brand/logo";
 import { useLanguage } from "@/lib/i18n";
 import heroImage from "@/assets/login-wedding-telangana.jpg";
 
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: `Login | ${SITE_NAME}` },
-      { name: "description", content: "Sign in to your Shettibalija Matrimony account" },
+      { name: "description", content: "Sign in to your Settibalija Matrimony account" },
     ],
   }),
 });
@@ -235,13 +235,13 @@ function LoginPage() {
 
   return (
     <div className="login-experience">
-      <section className="login-experience__visual" aria-label="Shettibalija family community">
+      <section className="login-experience__visual" aria-label="Settibalija family community">
         <img src={heroImage} alt="A bride and groom during a Telangana Hindu wedding ritual" />
         <div className="login-experience__visual-wash" />
         <div className="login-experience__visual-copy">
           <span className="login-experience__eyebrow">
             <span />
-            {isTelugu ? "శెట్టిబలిజ కుటుంబాల కోసం" : "For Shettibalija families"}
+            {isTelugu ? "సెట్టిబలిజ కుటుంబాల కోసం" : "For Settibalija families"}
           </span>
           <h1>
             {isTelugu ? (
@@ -294,7 +294,7 @@ function LoginPage() {
         </div>
 
         <div className="login-experience__form-wrap">
-          <ShettibalijaLogo size="md" linkToHome priority />
+          <SettibalijaLogo size="md" linkToHome priority />
           <p className="login-experience__brand">{isTelugu ? SITE_NAME_TE : SITE_NAME}</p>
           <p className="login-experience__kicker">
             {isTelugu ? "సభ్యుల ప్రవేశం" : "Member access"}
@@ -417,7 +417,7 @@ function LoginPage() {
 
           <div className="login-experience__register">
             <p>
-              {isTelugu ? "శెట్టిబలిజ మ్యాట్రిమోనీకి కొత్తవారా?" : "New to Shettibalija Matrimony?"}
+              {isTelugu ? "సెట్టిబలిజ మ్యాట్రిమోనీకి కొత్తవారా?" : "New to Settibalija Matrimony?"}
             </p>
             <span>
               {isTelugu
