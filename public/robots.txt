@@ -13,4 +13,4 @@ Disallow: /profile/
 Disallow: /profiles/
 Disallow: /*?
 
-Sitemap: https://shettibalija-matrimony.vercel.app/sitemap.xml
+Sitemap: https://www.settibalijagoudsmatrimony.com/sitemap.xml
