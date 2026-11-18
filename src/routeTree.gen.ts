@@ -16,6 +16,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as MatrimonyGuidesRouteImport } from './routes/matrimony-guides'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PaymentRouteImport } from './routes/payment'
@@ -24,7 +25,23 @@ import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as SettibalijaBridesRouteImport } from './routes/settibalija-brides'
+import { Route as SettibalijaGroomsRouteImport } from './routes/settibalija-grooms'
+import { Route as SettibalijaMatrimonyRouteImport } from './routes/settibalija-matrimony'
+import { Route as SettibalijaMatrimonyBengaluruRouteImport } from './routes/settibalija-matrimony-bengaluru'
+import { Route as SettibalijaMatrimonyBhimavaramRouteImport } from './routes/settibalija-matrimony-bhimavaram'
+import { Route as SettibalijaMatrimonyChennaiRouteImport } from './routes/settibalija-matrimony-chennai'
+import { Route as SettibalijaMatrimonyEluruRouteImport } from './routes/settibalija-matrimony-eluru'
+import { Route as SettibalijaMatrimonyGunturRouteImport } from './routes/settibalija-matrimony-guntur'
+import { Route as SettibalijaMatrimonyHyderabadRouteImport } from './routes/settibalija-matrimony-hyderabad'
+import { Route as SettibalijaMatrimonyKakinadaRouteImport } from './routes/settibalija-matrimony-kakinada'
+import { Route as SettibalijaMatrimonyNelloreRouteImport } from './routes/settibalija-matrimony-nellore'
+import { Route as SettibalijaMatrimonyRajahmundryRouteImport } from './routes/settibalija-matrimony-rajahmundry'
+import { Route as SettibalijaMatrimonyTirupatiRouteImport } from './routes/settibalija-matrimony-tirupati'
+import { Route as SettibalijaMatrimonyVijayawadaRouteImport } from './routes/settibalija-matrimony-vijayawada'
+import { Route as SettibalijaMatrimonyVisakhapatnamRouteImport } from './routes/settibalija-matrimony-visakhapatnam'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShettibalijaMatrimonyRouteImport } from './routes/shettibalija-matrimony'
 import { Route as SuccessStoriesRouteImport } from './routes/success-stories'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminSectionRouteImport } from './routes/admin.$section'
@@ -40,6 +57,7 @@ import { Route as DashboardPrivacyRouteImport } from './routes/dashboard/privacy
 import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardShortlistRouteImport } from './routes/dashboard/shortlist'
+import { Route as MatrimonyGuidesSlugRouteImport } from './routes/matrimony-guides.$slug'
 import { Route as ProfileIdRouteImport } from './routes/profile.$id'
 import { Route as ProfilesCodeRouteImport } from './routes/profiles.$code'
 
@@ -76,6 +94,11 @@ const HelpRoute = HelpRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatrimonyGuidesRoute = MatrimonyGuidesRouteImport.update({
+  id: '/matrimony-guides',
+  path: '/matrimony-guides',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MembershipRoute = MembershipRouteImport.update({
@@ -118,9 +141,101 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettibalijaBridesRoute = SettibalijaBridesRouteImport.update({
+  id: '/settibalija-brides',
+  path: '/settibalija-brides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettibalijaGroomsRoute = SettibalijaGroomsRouteImport.update({
+  id: '/settibalija-grooms',
+  path: '/settibalija-grooms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettibalijaMatrimonyRoute = SettibalijaMatrimonyRouteImport.update({
+  id: '/settibalija-matrimony',
+  path: '/settibalija-matrimony',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettibalijaMatrimonyBengaluruRoute =
+  SettibalijaMatrimonyBengaluruRouteImport.update({
+    id: '/settibalija-matrimony-bengaluru',
+    path: '/settibalija-matrimony-bengaluru',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyBhimavaramRoute =
+  SettibalijaMatrimonyBhimavaramRouteImport.update({
+    id: '/settibalija-matrimony-bhimavaram',
+    path: '/settibalija-matrimony-bhimavaram',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyChennaiRoute =
+  SettibalijaMatrimonyChennaiRouteImport.update({
+    id: '/settibalija-matrimony-chennai',
+    path: '/settibalija-matrimony-chennai',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyEluruRoute =
+  SettibalijaMatrimonyEluruRouteImport.update({
+    id: '/settibalija-matrimony-eluru',
+    path: '/settibalija-matrimony-eluru',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyGunturRoute =
+  SettibalijaMatrimonyGunturRouteImport.update({
+    id: '/settibalija-matrimony-guntur',
+    path: '/settibalija-matrimony-guntur',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyHyderabadRoute =
+  SettibalijaMatrimonyHyderabadRouteImport.update({
+    id: '/settibalija-matrimony-hyderabad',
+    path: '/settibalija-matrimony-hyderabad',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyKakinadaRoute =
+  SettibalijaMatrimonyKakinadaRouteImport.update({
+    id: '/settibalija-matrimony-kakinada',
+    path: '/settibalija-matrimony-kakinada',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyNelloreRoute =
+  SettibalijaMatrimonyNelloreRouteImport.update({
+    id: '/settibalija-matrimony-nellore',
+    path: '/settibalija-matrimony-nellore',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyRajahmundryRoute =
+  SettibalijaMatrimonyRajahmundryRouteImport.update({
+    id: '/settibalija-matrimony-rajahmundry',
+    path: '/settibalija-matrimony-rajahmundry',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyTirupatiRoute =
+  SettibalijaMatrimonyTirupatiRouteImport.update({
+    id: '/settibalija-matrimony-tirupati',
+    path: '/settibalija-matrimony-tirupati',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyVijayawadaRoute =
+  SettibalijaMatrimonyVijayawadaRouteImport.update({
+    id: '/settibalija-matrimony-vijayawada',
+    path: '/settibalija-matrimony-vijayawada',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SettibalijaMatrimonyVisakhapatnamRoute =
+  SettibalijaMatrimonyVisakhapatnamRouteImport.update({
+    id: '/settibalija-matrimony-visakhapatnam',
+    path: '/settibalija-matrimony-visakhapatnam',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShettibalijaMatrimonyRoute = ShettibalijaMatrimonyRouteImport.update({
+  id: '/shettibalija-matrimony',
+  path: '/shettibalija-matrimony',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SuccessStoriesRoute = SuccessStoriesRouteImport.update({
@@ -198,6 +313,11 @@ const DashboardShortlistRoute = DashboardShortlistRouteImport.update({
   path: '/shortlist',
   getParentRoute: () => DashboardRoute,
 } as any)
+const MatrimonyGuidesSlugRoute = MatrimonyGuidesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => MatrimonyGuidesRoute,
+} as any)
 const ProfileIdRoute = ProfileIdRouteImport.update({
   id: '/profile/$id',
   path: '/profile/$id',
@@ -217,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
+  '/matrimony-guides': typeof MatrimonyGuidesRouteWithChildren
   '/membership': typeof MembershipRoute
   '/onboarding': typeof OnboardingRoute
   '/payment': typeof PaymentRoute
@@ -225,7 +346,23 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/settibalija-brides': typeof SettibalijaBridesRoute
+  '/settibalija-grooms': typeof SettibalijaGroomsRoute
+  '/settibalija-matrimony': typeof SettibalijaMatrimonyRoute
+  '/settibalija-matrimony-bengaluru': typeof SettibalijaMatrimonyBengaluruRoute
+  '/settibalija-matrimony-bhimavaram': typeof SettibalijaMatrimonyBhimavaramRoute
+  '/settibalija-matrimony-chennai': typeof SettibalijaMatrimonyChennaiRoute
+  '/settibalija-matrimony-eluru': typeof SettibalijaMatrimonyEluruRoute
+  '/settibalija-matrimony-guntur': typeof SettibalijaMatrimonyGunturRoute
+  '/settibalija-matrimony-hyderabad': typeof SettibalijaMatrimonyHyderabadRoute
+  '/settibalija-matrimony-kakinada': typeof SettibalijaMatrimonyKakinadaRoute
+  '/settibalija-matrimony-nellore': typeof SettibalijaMatrimonyNelloreRoute
+  '/settibalija-matrimony-rajahmundry': typeof SettibalijaMatrimonyRajahmundryRoute
+  '/settibalija-matrimony-tirupati': typeof SettibalijaMatrimonyTirupatiRoute
+  '/settibalija-matrimony-vijayawada': typeof SettibalijaMatrimonyVijayawadaRoute
+  '/settibalija-matrimony-visakhapatnam': typeof SettibalijaMatrimonyVisakhapatnamRoute
   '/settings': typeof SettingsRoute
+  '/shettibalija-matrimony': typeof ShettibalijaMatrimonyRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/admin/$section': typeof AdminSectionRoute
@@ -240,6 +377,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/shortlist': typeof DashboardShortlistRoute
+  '/matrimony-guides/$slug': typeof MatrimonyGuidesSlugRoute
   '/profile/$id': typeof ProfileIdRoute
   '/profiles/$code': typeof ProfilesCodeRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -251,6 +389,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
+  '/matrimony-guides': typeof MatrimonyGuidesRouteWithChildren
   '/membership': typeof MembershipRoute
   '/onboarding': typeof OnboardingRoute
   '/payment': typeof PaymentRoute
@@ -259,7 +398,23 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/settibalija-brides': typeof SettibalijaBridesRoute
+  '/settibalija-grooms': typeof SettibalijaGroomsRoute
+  '/settibalija-matrimony': typeof SettibalijaMatrimonyRoute
+  '/settibalija-matrimony-bengaluru': typeof SettibalijaMatrimonyBengaluruRoute
+  '/settibalija-matrimony-bhimavaram': typeof SettibalijaMatrimonyBhimavaramRoute
+  '/settibalija-matrimony-chennai': typeof SettibalijaMatrimonyChennaiRoute
+  '/settibalija-matrimony-eluru': typeof SettibalijaMatrimonyEluruRoute
+  '/settibalija-matrimony-guntur': typeof SettibalijaMatrimonyGunturRoute
+  '/settibalija-matrimony-hyderabad': typeof SettibalijaMatrimonyHyderabadRoute
+  '/settibalija-matrimony-kakinada': typeof SettibalijaMatrimonyKakinadaRoute
+  '/settibalija-matrimony-nellore': typeof SettibalijaMatrimonyNelloreRoute
+  '/settibalija-matrimony-rajahmundry': typeof SettibalijaMatrimonyRajahmundryRoute
+  '/settibalija-matrimony-tirupati': typeof SettibalijaMatrimonyTirupatiRoute
+  '/settibalija-matrimony-vijayawada': typeof SettibalijaMatrimonyVijayawadaRoute
+  '/settibalija-matrimony-visakhapatnam': typeof SettibalijaMatrimonyVisakhapatnamRoute
   '/settings': typeof SettingsRoute
+  '/shettibalija-matrimony': typeof ShettibalijaMatrimonyRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/admin/$section': typeof AdminSectionRoute
@@ -274,6 +429,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/shortlist': typeof DashboardShortlistRoute
+  '/matrimony-guides/$slug': typeof MatrimonyGuidesSlugRoute
   '/profile/$id': typeof ProfileIdRoute
   '/profiles/$code': typeof ProfilesCodeRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -287,6 +443,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
+  '/matrimony-guides': typeof MatrimonyGuidesRouteWithChildren
   '/membership': typeof MembershipRoute
   '/onboarding': typeof OnboardingRoute
   '/payment': typeof PaymentRoute
@@ -295,7 +452,23 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
+  '/settibalija-brides': typeof SettibalijaBridesRoute
+  '/settibalija-grooms': typeof SettibalijaGroomsRoute
+  '/settibalija-matrimony': typeof SettibalijaMatrimonyRoute
+  '/settibalija-matrimony-bengaluru': typeof SettibalijaMatrimonyBengaluruRoute
+  '/settibalija-matrimony-bhimavaram': typeof SettibalijaMatrimonyBhimavaramRoute
+  '/settibalija-matrimony-chennai': typeof SettibalijaMatrimonyChennaiRoute
+  '/settibalija-matrimony-eluru': typeof SettibalijaMatrimonyEluruRoute
+  '/settibalija-matrimony-guntur': typeof SettibalijaMatrimonyGunturRoute
+  '/settibalija-matrimony-hyderabad': typeof SettibalijaMatrimonyHyderabadRoute
+  '/settibalija-matrimony-kakinada': typeof SettibalijaMatrimonyKakinadaRoute
+  '/settibalija-matrimony-nellore': typeof SettibalijaMatrimonyNelloreRoute
+  '/settibalija-matrimony-rajahmundry': typeof SettibalijaMatrimonyRajahmundryRoute
+  '/settibalija-matrimony-tirupati': typeof SettibalijaMatrimonyTirupatiRoute
+  '/settibalija-matrimony-vijayawada': typeof SettibalijaMatrimonyVijayawadaRoute
+  '/settibalija-matrimony-visakhapatnam': typeof SettibalijaMatrimonyVisakhapatnamRoute
   '/settings': typeof SettingsRoute
+  '/shettibalija-matrimony': typeof ShettibalijaMatrimonyRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/terms': typeof TermsRoute
   '/admin/$section': typeof AdminSectionRoute
@@ -310,6 +483,7 @@ export interface FileRoutesById {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/shortlist': typeof DashboardShortlistRoute
+  '/matrimony-guides/$slug': typeof MatrimonyGuidesSlugRoute
   '/profile/$id': typeof ProfileIdRoute
   '/profiles/$code': typeof ProfilesCodeRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -324,6 +498,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/help'
     | '/login'
+    | '/matrimony-guides'
     | '/membership'
     | '/onboarding'
     | '/payment'
@@ -332,7 +507,23 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/search'
+    | '/settibalija-brides'
+    | '/settibalija-grooms'
+    | '/settibalija-matrimony'
+    | '/settibalija-matrimony-bengaluru'
+    | '/settibalija-matrimony-bhimavaram'
+    | '/settibalija-matrimony-chennai'
+    | '/settibalija-matrimony-eluru'
+    | '/settibalija-matrimony-guntur'
+    | '/settibalija-matrimony-hyderabad'
+    | '/settibalija-matrimony-kakinada'
+    | '/settibalija-matrimony-nellore'
+    | '/settibalija-matrimony-rajahmundry'
+    | '/settibalija-matrimony-tirupati'
+    | '/settibalija-matrimony-vijayawada'
+    | '/settibalija-matrimony-visakhapatnam'
     | '/settings'
+    | '/shettibalija-matrimony'
     | '/success-stories'
     | '/terms'
     | '/admin/$section'
@@ -347,6 +538,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/settings'
     | '/dashboard/shortlist'
+    | '/matrimony-guides/$slug'
     | '/profile/$id'
     | '/profiles/$code'
     | '/dashboard/'
@@ -358,6 +550,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/help'
     | '/login'
+    | '/matrimony-guides'
     | '/membership'
     | '/onboarding'
     | '/payment'
@@ -366,7 +559,23 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/search'
+    | '/settibalija-brides'
+    | '/settibalija-grooms'
+    | '/settibalija-matrimony'
+    | '/settibalija-matrimony-bengaluru'
+    | '/settibalija-matrimony-bhimavaram'
+    | '/settibalija-matrimony-chennai'
+    | '/settibalija-matrimony-eluru'
+    | '/settibalija-matrimony-guntur'
+    | '/settibalija-matrimony-hyderabad'
+    | '/settibalija-matrimony-kakinada'
+    | '/settibalija-matrimony-nellore'
+    | '/settibalija-matrimony-rajahmundry'
+    | '/settibalija-matrimony-tirupati'
+    | '/settibalija-matrimony-vijayawada'
+    | '/settibalija-matrimony-visakhapatnam'
     | '/settings'
+    | '/shettibalija-matrimony'
     | '/success-stories'
     | '/terms'
     | '/admin/$section'
@@ -381,6 +590,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/settings'
     | '/dashboard/shortlist'
+    | '/matrimony-guides/$slug'
     | '/profile/$id'
     | '/profiles/$code'
     | '/dashboard'
@@ -393,6 +603,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/help'
     | '/login'
+    | '/matrimony-guides'
     | '/membership'
     | '/onboarding'
     | '/payment'
@@ -401,7 +612,23 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/search'
+    | '/settibalija-brides'
+    | '/settibalija-grooms'
+    | '/settibalija-matrimony'
+    | '/settibalija-matrimony-bengaluru'
+    | '/settibalija-matrimony-bhimavaram'
+    | '/settibalija-matrimony-chennai'
+    | '/settibalija-matrimony-eluru'
+    | '/settibalija-matrimony-guntur'
+    | '/settibalija-matrimony-hyderabad'
+    | '/settibalija-matrimony-kakinada'
+    | '/settibalija-matrimony-nellore'
+    | '/settibalija-matrimony-rajahmundry'
+    | '/settibalija-matrimony-tirupati'
+    | '/settibalija-matrimony-vijayawada'
+    | '/settibalija-matrimony-visakhapatnam'
     | '/settings'
+    | '/shettibalija-matrimony'
     | '/success-stories'
     | '/terms'
     | '/admin/$section'
@@ -416,6 +643,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/settings'
     | '/dashboard/shortlist'
+    | '/matrimony-guides/$slug'
     | '/profile/$id'
     | '/profiles/$code'
     | '/dashboard/'
@@ -429,6 +657,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
+  MatrimonyGuidesRoute: typeof MatrimonyGuidesRouteWithChildren
   MembershipRoute: typeof MembershipRoute
   OnboardingRoute: typeof OnboardingRoute
   PaymentRoute: typeof PaymentRoute
@@ -437,7 +666,23 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
+  SettibalijaBridesRoute: typeof SettibalijaBridesRoute
+  SettibalijaGroomsRoute: typeof SettibalijaGroomsRoute
+  SettibalijaMatrimonyRoute: typeof SettibalijaMatrimonyRoute
+  SettibalijaMatrimonyBengaluruRoute: typeof SettibalijaMatrimonyBengaluruRoute
+  SettibalijaMatrimonyBhimavaramRoute: typeof SettibalijaMatrimonyBhimavaramRoute
+  SettibalijaMatrimonyChennaiRoute: typeof SettibalijaMatrimonyChennaiRoute
+  SettibalijaMatrimonyEluruRoute: typeof SettibalijaMatrimonyEluruRoute
+  SettibalijaMatrimonyGunturRoute: typeof SettibalijaMatrimonyGunturRoute
+  SettibalijaMatrimonyHyderabadRoute: typeof SettibalijaMatrimonyHyderabadRoute
+  SettibalijaMatrimonyKakinadaRoute: typeof SettibalijaMatrimonyKakinadaRoute
+  SettibalijaMatrimonyNelloreRoute: typeof SettibalijaMatrimonyNelloreRoute
+  SettibalijaMatrimonyRajahmundryRoute: typeof SettibalijaMatrimonyRajahmundryRoute
+  SettibalijaMatrimonyTirupatiRoute: typeof SettibalijaMatrimonyTirupatiRoute
+  SettibalijaMatrimonyVijayawadaRoute: typeof SettibalijaMatrimonyVijayawadaRoute
+  SettibalijaMatrimonyVisakhapatnamRoute: typeof SettibalijaMatrimonyVisakhapatnamRoute
   SettingsRoute: typeof SettingsRoute
+  ShettibalijaMatrimonyRoute: typeof ShettibalijaMatrimonyRoute
   SuccessStoriesRoute: typeof SuccessStoriesRoute
   TermsRoute: typeof TermsRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -496,6 +741,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/matrimony-guides': {
+      id: '/matrimony-guides'
+      path: '/matrimony-guides'
+      fullPath: '/matrimony-guides'
+      preLoaderRoute: typeof MatrimonyGuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/membership': {
       id: '/membership'
       path: '/membership'
@@ -552,11 +804,123 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settibalija-brides': {
+      id: '/settibalija-brides'
+      path: '/settibalija-brides'
+      fullPath: '/settibalija-brides'
+      preLoaderRoute: typeof SettibalijaBridesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-grooms': {
+      id: '/settibalija-grooms'
+      path: '/settibalija-grooms'
+      fullPath: '/settibalija-grooms'
+      preLoaderRoute: typeof SettibalijaGroomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony': {
+      id: '/settibalija-matrimony'
+      path: '/settibalija-matrimony'
+      fullPath: '/settibalija-matrimony'
+      preLoaderRoute: typeof SettibalijaMatrimonyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-bengaluru': {
+      id: '/settibalija-matrimony-bengaluru'
+      path: '/settibalija-matrimony-bengaluru'
+      fullPath: '/settibalija-matrimony-bengaluru'
+      preLoaderRoute: typeof SettibalijaMatrimonyBengaluruRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-bhimavaram': {
+      id: '/settibalija-matrimony-bhimavaram'
+      path: '/settibalija-matrimony-bhimavaram'
+      fullPath: '/settibalija-matrimony-bhimavaram'
+      preLoaderRoute: typeof SettibalijaMatrimonyBhimavaramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-chennai': {
+      id: '/settibalija-matrimony-chennai'
+      path: '/settibalija-matrimony-chennai'
+      fullPath: '/settibalija-matrimony-chennai'
+      preLoaderRoute: typeof SettibalijaMatrimonyChennaiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-eluru': {
+      id: '/settibalija-matrimony-eluru'
+      path: '/settibalija-matrimony-eluru'
+      fullPath: '/settibalija-matrimony-eluru'
+      preLoaderRoute: typeof SettibalijaMatrimonyEluruRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-guntur': {
+      id: '/settibalija-matrimony-guntur'
+      path: '/settibalija-matrimony-guntur'
+      fullPath: '/settibalija-matrimony-guntur'
+      preLoaderRoute: typeof SettibalijaMatrimonyGunturRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-hyderabad': {
+      id: '/settibalija-matrimony-hyderabad'
+      path: '/settibalija-matrimony-hyderabad'
+      fullPath: '/settibalija-matrimony-hyderabad'
+      preLoaderRoute: typeof SettibalijaMatrimonyHyderabadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-kakinada': {
+      id: '/settibalija-matrimony-kakinada'
+      path: '/settibalija-matrimony-kakinada'
+      fullPath: '/settibalija-matrimony-kakinada'
+      preLoaderRoute: typeof SettibalijaMatrimonyKakinadaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-nellore': {
+      id: '/settibalija-matrimony-nellore'
+      path: '/settibalija-matrimony-nellore'
+      fullPath: '/settibalija-matrimony-nellore'
+      preLoaderRoute: typeof SettibalijaMatrimonyNelloreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-rajahmundry': {
+      id: '/settibalija-matrimony-rajahmundry'
+      path: '/settibalija-matrimony-rajahmundry'
+      fullPath: '/settibalija-matrimony-rajahmundry'
+      preLoaderRoute: typeof SettibalijaMatrimonyRajahmundryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-tirupati': {
+      id: '/settibalija-matrimony-tirupati'
+      path: '/settibalija-matrimony-tirupati'
+      fullPath: '/settibalija-matrimony-tirupati'
+      preLoaderRoute: typeof SettibalijaMatrimonyTirupatiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-vijayawada': {
+      id: '/settibalija-matrimony-vijayawada'
+      path: '/settibalija-matrimony-vijayawada'
+      fullPath: '/settibalija-matrimony-vijayawada'
+      preLoaderRoute: typeof SettibalijaMatrimonyVijayawadaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settibalija-matrimony-visakhapatnam': {
+      id: '/settibalija-matrimony-visakhapatnam'
+      path: '/settibalija-matrimony-visakhapatnam'
+      fullPath: '/settibalija-matrimony-visakhapatnam'
+      preLoaderRoute: typeof SettibalijaMatrimonyVisakhapatnamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shettibalija-matrimony': {
+      id: '/shettibalija-matrimony'
+      path: '/shettibalija-matrimony'
+      fullPath: '/shettibalija-matrimony'
+      preLoaderRoute: typeof ShettibalijaMatrimonyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/success-stories': {
@@ -664,6 +1028,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardShortlistRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/matrimony-guides/$slug': {
+      id: '/matrimony-guides/$slug'
+      path: '/$slug'
+      fullPath: '/matrimony-guides/$slug'
+      preLoaderRoute: typeof MatrimonyGuidesSlugRouteImport
+      parentRoute: typeof MatrimonyGuidesRoute
+    }
     '/profile/$id': {
       id: '/profile/$id'
       path: '/profile/$id'
@@ -723,6 +1094,18 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface MatrimonyGuidesRouteChildren {
+  MatrimonyGuidesSlugRoute: typeof MatrimonyGuidesSlugRoute
+}
+
+const MatrimonyGuidesRouteChildren: MatrimonyGuidesRouteChildren = {
+  MatrimonyGuidesSlugRoute: MatrimonyGuidesSlugRoute,
+}
+
+const MatrimonyGuidesRouteWithChildren = MatrimonyGuidesRoute._addFileChildren(
+  MatrimonyGuidesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -731,6 +1114,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
+  MatrimonyGuidesRoute: MatrimonyGuidesRouteWithChildren,
   MembershipRoute: MembershipRoute,
   OnboardingRoute: OnboardingRoute,
   PaymentRoute: PaymentRoute,
@@ -739,7 +1123,24 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
+  SettibalijaBridesRoute: SettibalijaBridesRoute,
+  SettibalijaGroomsRoute: SettibalijaGroomsRoute,
+  SettibalijaMatrimonyRoute: SettibalijaMatrimonyRoute,
+  SettibalijaMatrimonyBengaluruRoute: SettibalijaMatrimonyBengaluruRoute,
+  SettibalijaMatrimonyBhimavaramRoute: SettibalijaMatrimonyBhimavaramRoute,
+  SettibalijaMatrimonyChennaiRoute: SettibalijaMatrimonyChennaiRoute,
+  SettibalijaMatrimonyEluruRoute: SettibalijaMatrimonyEluruRoute,
+  SettibalijaMatrimonyGunturRoute: SettibalijaMatrimonyGunturRoute,
+  SettibalijaMatrimonyHyderabadRoute: SettibalijaMatrimonyHyderabadRoute,
+  SettibalijaMatrimonyKakinadaRoute: SettibalijaMatrimonyKakinadaRoute,
+  SettibalijaMatrimonyNelloreRoute: SettibalijaMatrimonyNelloreRoute,
+  SettibalijaMatrimonyRajahmundryRoute: SettibalijaMatrimonyRajahmundryRoute,
+  SettibalijaMatrimonyTirupatiRoute: SettibalijaMatrimonyTirupatiRoute,
+  SettibalijaMatrimonyVijayawadaRoute: SettibalijaMatrimonyVijayawadaRoute,
+  SettibalijaMatrimonyVisakhapatnamRoute:
+    SettibalijaMatrimonyVisakhapatnamRoute,
   SettingsRoute: SettingsRoute,
+  ShettibalijaMatrimonyRoute: ShettibalijaMatrimonyRoute,
   SuccessStoriesRoute: SuccessStoriesRoute,
   TermsRoute: TermsRoute,
   AuthCallbackRoute: AuthCallbackRoute,

@@ -59,6 +59,7 @@ export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
       { title: `Create Your Matrimony Profile | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
       { name: "description", content: "Complete your matrimonial profile in simple steps" },
     ],
   }),

@@ -39,6 +39,7 @@ export const Route = createFileRoute("/payment")({
   head: () => ({
     meta: [
       { title: `Complete Your Registration | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
       {
         name: "description",
         content: `Pay the one-time registration fee of ₹${ONE_TIME_REGISTRATION_FEE_INR} to activate your Settibalija Matrimony membership.`,

@@ -28,6 +28,7 @@ export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
       { title: `Discover Profiles | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
       {
         name: "description",
         content: "Discover reviewed Settibalija matrimony profiles by the details that matter.",

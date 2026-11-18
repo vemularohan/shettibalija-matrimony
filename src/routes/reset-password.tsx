@@ -13,7 +13,10 @@ import { SITE_NAME } from "@/lib/site";
 export const Route = createFileRoute("/reset-password")({
   component: ResetPasswordPage,
   head: () => ({
-    meta: [{ title: `Reset Password | ${SITE_NAME}` }],
+    meta: [
+      { title: `Reset Password | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
   }),
 });
 

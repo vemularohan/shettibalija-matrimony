@@ -103,9 +103,9 @@ export function HeroPhotoGallery() {
                 </>
               ) : (
                 <>
-                  Find your life partner
+                  Settibalija Matrimony
                   <br />
-                  <em>within your community.</em>
+                  <em>for a shared future.</em>
                 </>
               )}
             </h1>

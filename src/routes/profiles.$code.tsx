@@ -7,6 +7,7 @@ export const Route = createFileRoute("/profiles/$code")({
   head: () => ({
     meta: [
       { title: `Member Profile | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
       { name: "description", content: "View member matrimonial profile" },
     ],
   }),

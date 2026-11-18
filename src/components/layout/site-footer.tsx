@@ -13,6 +13,14 @@ export function SiteFooter() {
     { to: "/register", label: lang === "te" ? "ప్రొఫైల్ సృష్టించండి" : "Create a profile" },
     { to: "/dashboard", label: lang === "te" ? "నా డ్యాష్‌బోర్డ్" : "My dashboard" },
     { to: "/membership", label: lang === "te" ? "సభ్యత్వం" : "Membership" },
+    {
+      to: "/settibalija-matrimony",
+      label: lang === "te" ? "సెట్టిబలిజ మ్యాట్రిమోనీ" : "Settibalija matrimony",
+    },
+    {
+      to: "/matrimony-guides",
+      label: lang === "te" ? "మ్యాట్రిమోనీ మార్గదర్శకాలు" : "Matrimony guides",
+    },
   ];
 
   const communityLinks = [

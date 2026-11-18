@@ -73,7 +73,10 @@ export const Route = createFileRoute("/admin")({
   },
   component: AdminPortal,
   head: () => ({
-    meta: [{ title: `Administration | ${SITE_NAME}` }],
+    meta: [
+      { title: `Administration | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
   }),
 });
 

@@ -26,15 +26,17 @@ import type { Json } from "@/integrations/supabase/types";
 import { SettibalijaLogo } from "@/components/brand/logo";
 import { CoupleDestinationSection } from "@/components/home/couple-destination-section";
 import { SuccessStoriesSpotlight } from "@/components/home/success-stories-spotlight";
+import { StructuredData } from "@/components/seo/structured-data";
+import { faqSchema, organizationSchema, pageHead, websiteSchema } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
-  head: () => ({
-    meta: [
-      { title: `${SITE_NAME} | A life partner. A shared future.` },
-      { name: "description", content: SITE_TAGLINE },
-    ],
-  }),
+  head: () =>
+    pageHead(
+      `${SITE_NAME} | Find Settibalija Brides & Grooms`,
+      `${SITE_TAGLINE} Create a profile, explore meaningful introductions and involve your family at your own pace.`,
+      "/",
+    ),
 });
 
 const FAQ_ITEMS = [
@@ -146,6 +148,13 @@ function HomePage() {
 
   return (
     <div className="flex w-full flex-col bg-[#FAF8F3]">
+      <StructuredData
+        data={[
+          organizationSchema,
+          websiteSchema,
+          faqSchema(FAQ_ITEMS.map((item) => ({ question: item.q, answer: item.a }))),
+        ]}
+      />
       <HeroPhotoGallery />
 
       {/* BEGIN WITH WHAT MATTERS */}

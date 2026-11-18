@@ -21,6 +21,7 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: `Login | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
       { name: "description", content: "Sign in to your Settibalija Matrimony account" },
     ],
   }),

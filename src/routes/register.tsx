@@ -50,6 +50,7 @@ export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
       { title: `Create Account | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
       {
         name: "description",
         content: "Create your free account to begin your Settibalija matrimonial journey",

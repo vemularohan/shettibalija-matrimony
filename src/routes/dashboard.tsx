@@ -9,6 +9,7 @@ export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: `Member Dashboard | ${SITE_NAME}` },
+      { name: "robots", content: "noindex,nofollow" },
       { name: "description", content: "Manage your matrimony profile, interests, and matches" },
     ],
   }),
